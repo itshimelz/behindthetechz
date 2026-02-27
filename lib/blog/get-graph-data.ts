@@ -67,7 +67,7 @@ export function getGraphData(): GraphData {
     );
   }
   for (const node of nodes) {
-    node.val = 1 + (connectionCount.get(node.id) || 0);
+    node.val = 3 + (connectionCount.get(node.id) || 0) * 1.5;
   }
 
   return { nodes, links };

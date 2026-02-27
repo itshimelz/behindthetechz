@@ -8,8 +8,10 @@ import { getBacklinksForSlug } from "@/lib/blog/get-backlinks";
 import remarkWikiLink from "@/lib/blog/remark-wiki-link";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import rehypePrettyCode from "rehype-pretty-code";
 import { PostMeta } from "@/components/blog/post-meta";
 import { TagPill } from "@/components/blog/tag-pill";
+import { CodeBlock } from "@/components/blog/code-block";
 
 type Params = { slug: string };
 
@@ -23,7 +25,8 @@ export async function generateMetadata({
   params: Promise<Params>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const decodedSlug = decodeURIComponent(slug);
+  const post = getPostBySlug(decodedSlug);
 
   if (!post) {
     return { title: "Post Not Found" };
@@ -54,19 +57,20 @@ export async function generateMetadata({
   };
 }
 
-export default async function PostPage({
+export default async function BlogPostPage({
   params,
 }: {
   params: Promise<Params>;
 }) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const decodedSlug = decodeURIComponent(slug);
+  const post = getPostBySlug(decodedSlug);
 
   if (!post) {
     notFound();
   }
 
-  const backlinks = getBacklinksForSlug(slug);
+  const backlinks = getBacklinksForSlug(decodedSlug);
 
   return (
     <article className="flex flex-1 flex-col gap-6 px-4 py-10 md:px-8">
@@ -79,10 +83,18 @@ export default async function PostPage({
       <div className="prose prose-neutral dark:prose-invert mx-auto w-full max-w-3xl">
         <MDXRemote
           source={post.content}
+          components={{
+            pre: (props: React.HTMLAttributes<HTMLPreElement>) => (
+              <CodeBlock {...props} />
+            ),
+          }}
           options={{
             mdxOptions: {
               remarkPlugins: [remarkWikiLink, remarkMath],
-              rehypePlugins: [rehypeKatex],
+              rehypePlugins: [
+                rehypeKatex,
+                [rehypePrettyCode, { theme: "github-light" }],
+              ],
             },
           }}
         />

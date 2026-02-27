@@ -6,13 +6,13 @@ import type { Post, PostFrontmatter } from "@/lib/blog/types";
 
 const POSTS_DIR = path.join(process.cwd(), "content", "posts");
 
-function calculateReadingTime(content: string): number {
+export function calculateReadingTime(content: string): number {
   const wordsPerMinute = 200;
   const words = content.trim().split(/\s+/).length;
   return Math.max(1, Math.ceil(words / wordsPerMinute));
 }
 
-function parsePost(slug: string, fileContent: string): Post {
+export function parsePost(slug: string, fileContent: string): Post {
   const { data, content } = matter(fileContent);
   const frontmatter = data as PostFrontmatter;
 

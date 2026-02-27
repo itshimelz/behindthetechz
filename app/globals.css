@@ -201,9 +201,6 @@
 }
 
 .prose pre {
-  background: var(--muted);
-  border-radius: 0.5rem;
-  padding: 1.25em 1.5em;
   overflow-x: auto;
   margin-bottom: 1.6em;
   font-size: 0.875em;
