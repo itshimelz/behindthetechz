@@ -1,0 +1,27 @@
+---
+title: "Introduction to Rust"
+slug: "intro-to-rust"
+excerpt: "Why Rust is becoming the preferred language for systems programming and high-performance web services."
+date: "2026-02-28"
+coverImage: ""
+category: "Programming"
+tags: ["rust", "systems", "performance"]
+featured: false
+draft: false
+---
+
+Rust is consistently voted as the "most loved" programming language, and for good reason. It offers the performance of C++ with memory safety guarantees that prevent entire categories of bugs.
+
+### Ownership and Borrowing
+
+The core innovation of Rust is its ownership system. Instead of a garbage collector, Rust tracks the lifecycle of every variable at compile time.
+
+```rust
+fn main() {
+    let s = String::from("hello");
+    take_ownership(s);
+    // println!("{}", s); // This would fail to compile!
+}
+```
+
+This safety makes it a perfect candidate for critical infrastructure, including the backend systems powering modern [[web-design-trends-2026]].

@@ -3,6 +3,7 @@
 import type { ComponentProps } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useFavorites } from "@/hooks/use-favorites";
 
 import { NavSecondary } from "@/components/nav-secondary";
 import {
@@ -33,6 +34,7 @@ import {
   MessageQuestionIcon,
   Tag01Icon,
   ChartBubble02Icon,
+  Bookmark02Icon,
 } from "@hugeicons/core-free-icons";
 
 const navMain = [
@@ -52,11 +54,6 @@ const navMain = [
     icon: <HugeiconsIcon icon={GridViewIcon} strokeWidth={2} />,
   },
   {
-    title: "About",
-    url: "/about",
-    icon: <HugeiconsIcon icon={UserIcon} strokeWidth={2} />,
-  },
-  {
     title: "Graph View",
     url: "/graph",
     icon: <HugeiconsIcon icon={ChartBubble02Icon} strokeWidth={2} />,
@@ -64,6 +61,11 @@ const navMain = [
 ];
 
 const navSecondary = [
+  {
+    title: "About",
+    url: "/about",
+    icon: <HugeiconsIcon icon={UserIcon} strokeWidth={2} />,
+  },
   {
     title: "Settings",
     url: "#",
@@ -83,6 +85,7 @@ export function AppSidebar({
   categories?: { name: string; slug: string; count: number }[];
 }) {
   const pathname = usePathname();
+  const { favorites, isMounted } = useFavorites();
 
   return (
     <Sidebar className="border-r-0" {...props}>
@@ -123,24 +126,30 @@ export function AppSidebar({
             <SidebarGroup>
               <SidebarGroupLabel render={<CollapsibleTrigger />}>
                 Categories
+                <span className="bg-muted text-muted-foreground ml-2 rounded-sm px-1.5 py-0.5 text-[10px] font-medium leading-none">
+                  {categories.length}
+                </span>
                 <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
               </SidebarGroupLabel>
               <CollapsibleContent>
                 <SidebarGroupContent>
                   <SidebarMenu>
-                    {categories.map((cat) => (
-                      <SidebarMenuItem key={cat.slug}>
-                        <SidebarMenuButton
-                          render={<Link href={`/categories/${cat.slug}`} />}
-                        >
-                          <HugeiconsIcon icon={Tag01Icon} strokeWidth={2} />
-                          <span>{cat.name}</span>
-                          <span className="text-muted-foreground ml-auto text-xs">
-                            {cat.count}
-                          </span>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
+                    {[...categories]
+                      .sort((a, b) => b.count - a.count)
+                      .slice(0, 5)
+                      .map((cat) => (
+                        <SidebarMenuItem key={cat.slug}>
+                          <SidebarMenuButton
+                            render={<Link href={`/categories/${cat.slug}`} />}
+                          >
+                            <HugeiconsIcon icon={Tag01Icon} strokeWidth={2} />
+                            <span>{cat.name}</span>
+                            <span className="text-muted-foreground ml-auto text-xs">
+                              {cat.count}
+                            </span>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      ))}
                   </SidebarMenu>
                 </SidebarGroupContent>
               </CollapsibleContent>
@@ -158,20 +167,37 @@ export function AppSidebar({
             <CollapsibleContent>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton render={<Link href="#" />}>
-                      <HugeiconsIcon icon={Notebook01Icon} strokeWidth={2} />
-                      <span className="truncate">
-                        Building a Notion-like UI
-                      </span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton render={<Link href="#" />}>
-                      <HugeiconsIcon icon={Notebook01Icon} strokeWidth={2} />
-                      <span className="truncate">Kotlin Multiplatform 101</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  {!isMounted ? (
+                    <SidebarMenuItem>
+                      <SidebarMenuButton disabled>
+                        <span className="text-muted-foreground text-xs">
+                          Loading...
+                        </span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ) : favorites.length === 0 ? (
+                    <SidebarMenuItem>
+                      <SidebarMenuButton disabled>
+                        <span className="text-muted-foreground text-xs">
+                          No favorites yet
+                        </span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ) : (
+                    favorites.map((fav) => (
+                      <SidebarMenuItem key={fav.slug}>
+                        <SidebarMenuButton
+                          render={<Link href={`/blog/${fav.slug}`} />}
+                        >
+                          <HugeiconsIcon
+                            icon={Bookmark02Icon}
+                            strokeWidth={2}
+                          />
+                          <span className="truncate">{fav.title}</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))
+                  )}
                 </SidebarMenu>
               </SidebarGroupContent>
             </CollapsibleContent>

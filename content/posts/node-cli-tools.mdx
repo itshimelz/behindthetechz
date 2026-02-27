@@ -1,0 +1,33 @@
+---
+title: "Building CLI Tools with Node.js"
+slug: "node-cli-tools"
+excerpt: "Learn how to create interactive and powerful command-line interfaces using Node.js and libraries like Commander and Inquirer."
+date: "2026-02-28"
+coverImage: ""
+category: "Development"
+tags: ["nodejs", "cli", "backend"]
+featured: false
+draft: false
+---
+
+Node.js isn't just for web servers. It's an incredible platform for building internal tooling and CLI applications.
+
+### Why Node for CLI?
+
+With the massive NPM ecosystem, you can add argument parsing, colored output, and interactive prompts in minutes.
+
+```javascript
+#!/usr/bin/env node
+const { program } = require("commander");
+
+program
+  .version("1.0.0")
+  .description("My first CLI")
+  .action(() => {
+    console.log("Hello from the command line!");
+  });
+
+program.parse(process.argv);
+```
+
+As we optimize our workflows in [[personal-knowledge-management]], having custom CLI tools to automate repetitive tasks is a game changer.

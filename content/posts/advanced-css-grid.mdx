@@ -1,0 +1,27 @@
+---
+title: "Advanced CSS Grid Patterns"
+slug: "advanced-css-grid"
+excerpt: "Mastering complex layouts using CSS Grid areas, subgrid, and auto-placement algorithms."
+date: "2026-02-28"
+coverImage: ""
+category: "Design"
+tags: ["css", "grid", "frontend"]
+featured: false
+draft: false
+---
+
+CSS Grid is one of the most powerful tools in a web designer's arsenal. While many use it for simple columns, its true power lies in advanced patterns like `grid-template-areas` and the newly supported `subgrid`.
+
+### Auto-flow and Dense Placement
+
+By default, grid items are placed in the order they appear in the source. However, with `grid-auto-flow: dense`, you can tell the browser to backfill holes in the grid.
+
+```css
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-auto-flow: dense;
+}
+```
+
+This is essential for creating Masonry-like layouts without complex JavaScript libraries. For more on fluid design, check out [[web-design-trends-2026]].
