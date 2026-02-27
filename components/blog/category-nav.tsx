@@ -8,6 +8,11 @@ type Props = {
 };
 
 export function CategoryNav({ categories, activeSlug }: Props) {
+  const sortedCategories = [...categories].sort((a, b) => b.count - a.count);
+  const displayCategories = sortedCategories.slice(0, 5);
+  const hasMore = categories.length > 5;
+  const moreCount = categories.length - 5;
+
   return (
     <div className="flex flex-wrap items-center justify-center gap-2.5 sm:justify-start">
       <Link href="/blog">
@@ -22,7 +27,7 @@ export function CategoryNav({ categories, activeSlug }: Props) {
           All
         </Badge>
       </Link>
-      {categories.map((cat) => (
+      {displayCategories.map((cat) => (
         <Link key={cat.slug} href={`/categories/${cat.slug}`}>
           <Badge
             variant={activeSlug === cat.slug ? "default" : "secondary"}
@@ -45,6 +50,16 @@ export function CategoryNav({ categories, activeSlug }: Props) {
           </Badge>
         </Link>
       ))}
+      {hasMore && (
+        <Link href="/categories">
+          <Badge
+            variant="secondary"
+            className="cursor-pointer bg-card text-muted-foreground hover:bg-muted/80 border border-border/40 hover:border-border/80 rounded-full px-4 py-1.5 text-sm font-medium transition-all hover:scale-105"
+          >
+            + {moreCount} more
+          </Badge>
+        </Link>
+      )}
     </div>
   );
 }

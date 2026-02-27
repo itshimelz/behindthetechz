@@ -73,21 +73,31 @@ export function GraphView({ data }: Props) {
       const graphNode = node as ForceGraphNode;
       const radius = 2 + Math.cbrt(graphNode.val) * 1.5;
 
+      // Color based on outgoing connections (hubs are darker)
+      // Base color: #9ca3af (gray-400)
+      // Darkest color for 5+ outgoing: #374151 (gray-700)
+      const outgoing = graphNode.outgoingCount || 0;
+      let fillColor = "#9ca3af";
+      if (outgoing > 0) {
+        if (outgoing >= 5) fillColor = "#374151";
+        else if (outgoing >= 3) fillColor = "#4b5563";
+        else if (outgoing >= 1) fillColor = "#6b7280";
+      }
+
       // Draw Circle
       ctx.beginPath();
       ctx.arc(graphNode.x, graphNode.y, radius, 0, 2 * Math.PI, false);
-      ctx.fillStyle = "#9ca3af";
+      ctx.fillStyle = fillColor;
       ctx.fill();
 
       // Draw Text
-      // Using a graph-space constant size so it perfectly scales with zoom
       const fontSize = Math.min(6, 3 + graphNode.val / 3);
-      // When zoomed way out, hide text to avoid clutter
       if (globalScale > 0.8) {
         ctx.font = `500 ${fontSize}px Inter, Tiro Bangla, sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillStyle = "#374151";
+        // Use a darker text for bigger nodes to maintain contrast
+        ctx.fillStyle = outgoing >= 3 ? "#111827" : "#374151";
         ctx.fillText(
           graphNode.name,
           graphNode.x,
