@@ -1,4 +1,58 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { MDXRemote } from "next-mdx-remote/rsc";
+
+import { getPostBySlug, getAllSlugs } from "@/lib/blog/get-post-by-slug";
+import { getBacklinksForSlug } from "@/lib/blog/get-backlinks";
+import remarkWikiLink from "@/lib/blog/remark-wiki-link";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
+import { PostMeta } from "@/components/blog/post-meta";
+import { TagPill } from "@/components/blog/tag-pill";
+
 type Params = { slug: string };
+
+export async function generateStaticParams() {
+  return getAllSlugs().map((slug) => ({ slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<Params>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
+
+  if (!post) {
+    return { title: "Post Not Found" };
+  }
+
+  const SITE_URL =
+    process.env.NEXT_PUBLIC_SITE_URL || "https://behindthetechz.com";
+
+  return {
+    title: post.title,
+    description: post.excerpt || `Read "${post.title}" on behind the TechZ.`,
+    keywords: [post.category, ...post.tags],
+    openGraph: {
+      type: "article",
+      title: post.title,
+      description: post.excerpt || `Read "${post.title}" on behind the TechZ.`,
+      url: `${SITE_URL}/blog/${post.slug}`,
+      publishedTime: post.date,
+      ...(post.updatedAt && { modifiedTime: post.updatedAt }),
+      authors: ["Rahat Hossain Himel"],
+      tags: post.tags,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: post.excerpt || `Read "${post.title}" on behind the TechZ.`,
+    },
+  };
+}
 
 export default async function PostPage({
   params,
@@ -6,15 +60,53 @@ export default async function PostPage({
   params: Promise<Params>;
 }) {
   const { slug } = await params;
+  const post = getPostBySlug(slug);
+
+  if (!post) {
+    notFound();
+  }
+
+  const backlinks = getBacklinksForSlug(slug);
 
   return (
-    <main className="flex flex-1 flex-col gap-6 px-4 py-10 md:px-8">
-      <article className="prose mx-auto w-full max-w-3xl">
-        <h1 className="font-heading text-3xl font-bold tracking-tight">
-          {slug}
-        </h1>
-        <p className="text-muted-foreground">এই পোস্টটি শীঘ্রই প্রকাশিত হবে।</p>
-      </article>
-    </main>
+    <article className="flex flex-1 flex-col gap-6 px-4 py-10 md:px-8">
+      <div className="mx-auto w-full max-w-3xl space-y-4">
+        <PostMeta post={post} />
+        <TagPill tags={post.tags} />
+      </div>
+
+      {/* MDX content */}
+      <div className="prose prose-neutral dark:prose-invert mx-auto w-full max-w-3xl">
+        <MDXRemote
+          source={post.content}
+          options={{
+            mdxOptions: {
+              remarkPlugins: [remarkWikiLink, remarkMath],
+              rehypePlugins: [rehypeKatex],
+            },
+          }}
+        />
+      </div>
+
+      {/* Backlinks */}
+      {backlinks.length > 0 && (
+        <div className="mx-auto w-full max-w-3xl border-t pt-6">
+          <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+            Linked from
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {backlinks.map((bl) => (
+              <Link
+                key={bl.slug}
+                href={`/blog/${bl.slug}`}
+                className="hover:bg-muted rounded-md border px-3 py-1.5 text-sm transition-colors"
+              >
+                {bl.title}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </article>
   );
 }

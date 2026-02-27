@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 
 import { AppSidebar } from "@/components/app-sidebar";
+import { SiteBreadcrumb } from "@/components/site-breadcrumb";
+import { SiteFooter } from "@/components/site-footer";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
@@ -9,12 +11,48 @@ import {
 } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
+import "katex/dist/katex.min.css";
 import "./globals.css";
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://behindthetechz.com";
+
 export const metadata: Metadata = {
-  title: "Techzblog — প্রযুক্তি ও প্রোগ্রামিং ব্লগ",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "behind the TechZ — Tech & Programming Blog",
+    template: "%s | behind the TechZ",
+  },
   description:
-    "প্রযুক্তি, প্রোগ্রামিং এবং দৈনন্দিন ভাবনা নিয়ে রাহাত হোসেন হিমেলের ব্যক্তিগত ব্লগ।",
+    "A personal blog by Rahat Hossain Himel covering technology, programming, and everyday thoughts.",
+  keywords: [
+    "tech blog",
+    "programming",
+    "Bangla",
+    "web development",
+    "Kotlin",
+    "Next.js",
+  ],
+  authors: [{ name: "Rahat Hossain Himel" }],
+  creator: "Rahat Hossain Himel",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: SITE_URL,
+    siteName: "behind the TechZ",
+    title: "behind the TechZ — Tech & Programming Blog",
+    description:
+      "A personal blog by Rahat Hossain Himel covering technology, programming, and everyday thoughts.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "behind the TechZ",
+    description: "Tech, programming, and everyday stories — mostly in Bangla.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 export default function RootLayout({
@@ -23,7 +61,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="bn">
+    <html lang="en">
       <body className="antialiased">
         <TooltipProvider>
           <SidebarProvider>
@@ -36,9 +74,11 @@ export default function RootLayout({
                     orientation="vertical"
                     className="mr-2 data-vertical:h-4 data-vertical:self-auto"
                   />
+                  <SiteBreadcrumb />
                 </div>
               </header>
               {children}
+              <SiteFooter />
             </SidebarInset>
           </SidebarProvider>
         </TooltipProvider>

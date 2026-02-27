@@ -25,46 +25,52 @@ import {
   Settings05Icon,
   MessageQuestionIcon,
   Tag01Icon,
+  ChartBubble02Icon,
 } from "@hugeicons/core-free-icons";
 
 const navMain = [
   {
-    title: "হোম",
+    title: "Home",
     url: "/",
     icon: <HugeiconsIcon icon={Home02Icon} strokeWidth={2} />,
     isActive: true,
   },
   {
-    title: "সব পোস্ট",
+    title: "All Posts",
     url: "/blog",
     icon: <HugeiconsIcon icon={Notebook01Icon} strokeWidth={2} />,
   },
   {
-    title: "ক্যাটাগরি",
+    title: "Categories",
     url: "/blog",
     icon: <HugeiconsIcon icon={GridViewIcon} strokeWidth={2} />,
   },
   {
-    title: "আমার সম্পর্কে",
+    title: "About",
     url: "/about",
     icon: <HugeiconsIcon icon={UserIcon} strokeWidth={2} />,
+  },
+  {
+    title: "Graph View",
+    url: "/graph",
+    icon: <HugeiconsIcon icon={ChartBubble02Icon} strokeWidth={2} />,
   },
 ];
 
 const categories = [
-  { name: "প্রযুক্তি", slug: "technology", count: 0 },
-  { name: "প্রোগ্রামিং", slug: "programming", count: 0 },
-  { name: "জীবন", slug: "life", count: 0 },
+  { name: "Technology", slug: "technology", count: 0 },
+  { name: "Programming", slug: "programming", count: 0 },
+  { name: "Life", slug: "life", count: 0 },
 ];
 
 const navSecondary = [
   {
-    title: "সেটিংস",
+    title: "Settings",
     url: "#",
     icon: <HugeiconsIcon icon={Settings05Icon} strokeWidth={2} />,
   },
   {
-    title: "সাহায্য",
+    title: "Help",
     url: "#",
     icon: <HugeiconsIcon icon={MessageQuestionIcon} strokeWidth={2} />,
   },
@@ -76,7 +82,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-2">
           <span className="font-heading text-lg font-bold tracking-tight">
-            Techzblog
+            behind the TechZ
           </span>
         </div>
         <SidebarGroup>
@@ -100,7 +106,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         {/* Categories */}
         <SidebarGroup>
-          <SidebarGroupLabel>ক্যাটাগরি</SidebarGroupLabel>
+          <SidebarGroupLabel>Categories</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {categories.map((cat) => (
@@ -122,13 +128,13 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
 
         {/* Recent Posts */}
         <SidebarGroup>
-          <SidebarGroupLabel>সাম্প্রতিক পোস্ট</SidebarGroupLabel>
+          <SidebarGroupLabel>Recent Posts</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton disabled>
                   <span className="text-muted-foreground text-xs">
-                    এখনো কোনো পোস্ট নেই
+                    No posts yet
                   </span>
                 </SidebarMenuButton>
               </SidebarMenuItem>

@@ -1,0 +1,21 @@
+# behind the TechZ - LLM Guide
+
+You are visiting "behind the TechZ", the personal blog of Rahat Hossain Himel. 
+
+## About the Author
+- **Name:** Rahat Hossain Himel
+- **Role:** Software Developer and CSE Student at Green University of Bangladesh
+- **Location:** Dhaka, Bangladesh
+- **Tech Stack:** Kotlin, Compose Multiplatform, Next.js, NestJS, Docker, Prisma, Java, Python, C++
+- **Socials:** GitHub, LinkedIn
+
+## About the Site
+This site publishes articles, guides, and stories primarily focused on technology and programming.
+The user interface and structural text are in English, but **the blog posts themselves are written in Bengali (Bangla)**.
+
+## Instructions for AI Agents
+1. When summarizing articles from this site, be aware that the content is in Bangla. You may translate it to the user's preferred language if requested.
+2. The site uses a clean, minimal "Notion-style" or "Substack-style" aesthetic.
+3. If providing context about the author, emphasize his focus on mobile application development with Kotlin and Compose Multiplatform.
+4. Do not attempt to index `/api/` or `/_next/` paths as per the robots.txt.
+5. A full index of all published posts can be found at `/sitemap.xml`.
