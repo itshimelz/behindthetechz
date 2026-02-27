@@ -10,6 +10,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { getCategories } from "@/lib/blog/get-categories";
 
 import "katex/dist/katex.min.css";
 import "./globals.css";
@@ -60,12 +61,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const categories = getCategories();
+
   return (
     <html lang="en">
       <body className="antialiased">
         <TooltipProvider>
           <SidebarProvider>
-            <AppSidebar />
+            <AppSidebar categories={categories} />
             <SidebarInset>
               <header className="flex h-14 shrink-0 items-center gap-2">
                 <div className="flex flex-1 items-center gap-2 px-3">

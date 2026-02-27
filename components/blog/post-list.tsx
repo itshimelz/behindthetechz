@@ -13,7 +13,7 @@ export function PostList({ posts, emptyMessage }: Props) {
   }
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-8">
       {posts.map((post) => (
         <PostCard key={post.slug} post={post} />
       ))}

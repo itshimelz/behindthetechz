@@ -6,6 +6,7 @@ import { useRef, useCallback, useEffect, useState } from "react";
 import { ZoomIn, ZoomOut, Maximize } from "lucide-react";
 
 import type { GraphData, GraphNode } from "@/lib/blog/get-graph-data";
+import type { ForceGraphMethods } from "react-force-graph-2d";
 
 // Dynamic import to avoid SSR issues with Canvas Graph
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
@@ -19,6 +20,8 @@ const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
   ),
 });
 
+type ForceGraphNode = GraphNode & { x: number; y: number };
+
 type Props = {
   data: GraphData;
 };
@@ -26,7 +29,7 @@ type Props = {
 export function GraphView({ data }: Props) {
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
-  const fgRef = useRef<any>(null);
+  const fgRef = useRef<ForceGraphMethods | undefined>(undefined);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
 
   useEffect(() => {
@@ -55,13 +58,13 @@ export function GraphView({ data }: Props) {
 
   // Custom canvas rendering for nodes: 2D circle with text below it
   const nodeCanvasObject = useCallback(
-    (node: any, ctx: CanvasRenderingContext2D, globalScale: number) => {
-      const graphNode = node as GraphNode;
+    (node: object, ctx: CanvasRenderingContext2D, globalScale: number) => {
+      const graphNode = node as ForceGraphNode;
       const radius = 2 + Math.cbrt(graphNode.val) * 1.5;
 
       // Draw Circle
       ctx.beginPath();
-      ctx.arc(node.x, node.y, radius, 0, 2 * Math.PI, false);
+      ctx.arc(graphNode.x, graphNode.y, radius, 0, 2 * Math.PI, false);
       ctx.fillStyle = "#9ca3af";
       ctx.fill();
 
@@ -76,8 +79,8 @@ export function GraphView({ data }: Props) {
         ctx.fillStyle = "#374151";
         ctx.fillText(
           graphNode.name,
-          node.x,
-          node.y + radius + fontSize / 1.5 + 1,
+          graphNode.x,
+          graphNode.y + radius + fontSize / 1.5 + 1,
         );
       }
     },

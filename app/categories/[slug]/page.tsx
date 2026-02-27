@@ -10,15 +10,16 @@ export default async function CategoryPage({
   params: Promise<Params>;
 }) {
   const { slug } = await params;
-  const posts = getPostsByCategory(slug);
+  const decodedSlug = decodeURIComponent(slug);
+  const posts = getPostsByCategory(decodedSlug);
   const categories = getCategories();
-  const category = categories.find((c) => c.slug === slug);
+  const category = categories.find((c) => c.slug === decodedSlug);
 
   return (
     <div className="flex flex-1 flex-col gap-6 px-4 py-10 md:px-8">
       <div className="mx-auto w-full max-w-4xl space-y-2">
         <h1 className="font-heading text-3xl font-bold tracking-tight">
-          {category?.name || slug}
+          {category?.name || decodedSlug}
         </h1>
         <p className="text-muted-foreground">
           {posts.length} {posts.length === 1 ? "post" : "posts"} in this
@@ -28,7 +29,7 @@ export default async function CategoryPage({
 
       {/* Category filter */}
       <div className="mx-auto w-full max-w-4xl">
-        <CategoryNav categories={categories} activeSlug={slug} />
+        <CategoryNav categories={categories} activeSlug={decodedSlug} />
       </div>
 
       {/* Posts */}

@@ -33,7 +33,7 @@ export default function AboutPage() {
 
           <div className="prose prose-neutral dark:prose-invert">
             <p>
-              Hello! I'm Himel. I'm a passionate software developer currently
+              Hello! I&apos;m Himel. I&apos;m a passionate software developer currently
               pursuing my CSE degree. My primary focus is on mobile application
               development using <strong>Kotlin</strong> and{" "}
               <strong>Compose Multiplatform (CMP)</strong>, but I also enjoy

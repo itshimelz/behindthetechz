@@ -1,83 +1,146 @@
 import Link from "next/link";
 import Image from "next/image";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
+import {
+  ArrowRight01Icon,
+  ChartBubble02Icon,
+} from "@hugeicons/core-free-icons";
 
 import { getAllPosts } from "@/lib/blog/get-all-posts";
-import { PostList } from "@/components/blog/post-list";
+import { getCategories } from "@/lib/blog/get-categories";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 export default function HomePage() {
   const allPosts = getAllPosts();
-  const latestPosts = allPosts.slice(0, 5);
-  const featuredPosts = allPosts.filter((_, i) => i < 2);
+  const categories = getCategories();
+  const latestPosts = allPosts.slice(0, 6);
 
   return (
-    <div className="flex flex-1 flex-col gap-12 px-4 py-8 md:px-8 lg:py-16">
+    <div className="mx-auto max-w-3xl px-6 py-12 md:py-20 flex flex-col gap-16 md:gap-24">
       {/* Hero Section */}
-      <section className="mx-auto flex w-full max-w-5xl flex-col items-center gap-8 text-center md:flex-row md:text-left">
-        <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-full border-4 border-background shadow-xl md:h-48 md:w-48">
-          <Image
-            src="/logo.png"
-            alt="behind the TechZ Logo"
-            fill
-            className="object-cover"
-            priority
-          />
-        </div>
-        <div className="flex flex-col gap-4">
-          <h1 className="font-heading text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-            behind the TechZ
-          </h1>
-          <p className="text-muted-foreground max-w-[600px] text-lg leading-relaxed sm:text-xl">
-            A personal blog about technology, programming, and everyday
-            thoughts. Dev guides, tutorials, and stories — mostly in Bangla.
-          </p>
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2 md:justify-start">
-            <Link href="/blog">
-              <Button size="lg" className="rounded-full shadow-md">
-                Read All Posts
-                <HugeiconsIcon
-                  icon={ArrowRight01Icon}
-                  className="ml-2 h-4 w-4"
-                />
-              </Button>
-            </Link>
-            <Link href="/about">
-              <Button size="lg" variant="outline" className="rounded-full">
-                About Me
-              </Button>
-            </Link>
+      <section className="space-y-6">
+        <div className="flex items-center gap-4">
+          <div className="relative h-16 w-16 overflow-hidden rounded-full border bg-background shrink-0">
+            <Image
+              src="/logo.png"
+              alt="TechZ Logo"
+              fill
+              className="object-cover"
+              priority
+            />
           </div>
+          <div>
+            <h1 className="font-heading text-3xl font-bold tracking-tight md:text-4xl text-foreground">
+              behind the TechZ
+            </h1>
+            <p className="text-muted-foreground text-sm md:text-base mt-1">
+              By Rahat Hossain Himel
+            </p>
+          </div>
+        </div>
+
+        <p className="text-muted-foreground text-lg leading-relaxed">
+          A minimal knowledge-focused space for development guides, engineering
+          stories, and experiments from day-to-day software building.
+        </p>
+
+        <div className="flex flex-wrap items-center gap-3 pt-4">
+          <Link href="/blog">
+            <Button className="rounded-full">
+              Read Blog
+              <HugeiconsIcon icon={ArrowRight01Icon} className="ml-2 h-4 w-4" />
+            </Button>
+          </Link>
+          <Link href="/graph">
+            <Button variant="outline" className="rounded-full">
+              <HugeiconsIcon
+                icon={ChartBubble02Icon}
+                className="mr-2 h-4 w-4"
+              />
+              Graph Map
+            </Button>
+          </Link>
+          <Link href="/about">
+            <Button variant="ghost" className="rounded-full">
+              About Me
+            </Button>
+          </Link>
         </div>
       </section>
 
-      {/* Featured Posts */}
-      {featuredPosts.length > 0 && (
-        <section className="mx-auto w-full max-w-4xl space-y-6">
-          <div className="flex items-center justify-between border-b pb-2">
-            <h2 className="font-heading text-2xl font-semibold tracking-tight">
-              Featured Posts
-            </h2>
-          </div>
-          <PostList posts={featuredPosts} />
-        </section>
-      )}
-
       {/* Latest Posts */}
-      <section className="mx-auto w-full max-w-4xl space-y-6">
-        <div className="flex items-center justify-between border-b pb-2">
-          <h2 className="font-heading text-2xl font-semibold tracking-tight">
-            Latest Posts
+      <section className="space-y-8">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+            Recent Writings
           </h2>
           <Link
             href="/blog"
-            className="text-muted-foreground hover:text-foreground text-sm font-medium transition-colors"
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
           >
-            View all →
+            View all archive
+            <HugeiconsIcon icon={ArrowRight01Icon} className="h-4 w-4" />
           </Link>
         </div>
-        <PostList posts={latestPosts} />
+
+        <div className="flex flex-col gap-8">
+          {latestPosts.length > 0 ? (
+            latestPosts.map((post) => (
+              <Link
+                key={post.slug}
+                href={`/blog/${post.slug}`}
+                className="group flex flex-col gap-2"
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4">
+                  <h3 className="text-lg font-medium group-hover:text-primary transition-colors line-clamp-1 text-foreground">
+                    {post.title}
+                  </h3>
+                  <span className="text-sm text-muted-foreground shrink-0 tabular-nums">
+                    {new Date(post.date).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </span>
+                </div>
+                <p className="text-muted-foreground text-sm line-clamp-2">
+                  {post.excerpt}
+                </p>
+              </Link>
+            ))
+          ) : (
+            <p className="text-muted-foreground text-sm">
+              No posts published yet.
+            </p>
+          )}
+        </div>
+      </section>
+
+      {/* Categories */}
+      <section className="space-y-6 text-foreground">
+        <h2 className="text-2xl font-semibold tracking-tight">
+          Explore Topics
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          {categories.length > 0 ? (
+            categories.map((category) => (
+              <Link key={category.slug} href={`/categories/${category.slug}`}>
+                <Badge
+                  variant="secondary"
+                  className="rounded-md px-3 py-1.5 font-normal hover:bg-muted transition-colors text-sm"
+                >
+                  {category.name}
+                  <span className="text-muted-foreground ml-1.5 text-xs bg-background/50 px-1.5 py-0.5 rounded-sm">
+                    {category.count}
+                  </span>
+                </Badge>
+              </Link>
+            ))
+          ) : (
+            <p className="text-muted-foreground text-sm">No categories yet.</p>
+          )}
+        </div>
       </section>
     </div>
   );

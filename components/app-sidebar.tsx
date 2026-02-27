@@ -2,6 +2,7 @@
 
 import type { ComponentProps } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { NavSecondary } from "@/components/nav-secondary";
 import {
@@ -16,6 +17,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { ChevronRight } from "lucide-react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Home02Icon,
@@ -33,7 +40,6 @@ const navMain = [
     title: "Home",
     url: "/",
     icon: <HugeiconsIcon icon={Home02Icon} strokeWidth={2} />,
-    isActive: true,
   },
   {
     title: "All Posts",
@@ -42,7 +48,7 @@ const navMain = [
   },
   {
     title: "Categories",
-    url: "/blog",
+    url: "/categories",
     icon: <HugeiconsIcon icon={GridViewIcon} strokeWidth={2} />,
   },
   {
@@ -55,12 +61,6 @@ const navMain = [
     url: "/graph",
     icon: <HugeiconsIcon icon={ChartBubble02Icon} strokeWidth={2} />,
   },
-];
-
-const categories = [
-  { name: "Technology", slug: "technology", count: 0 },
-  { name: "Programming", slug: "programming", count: 0 },
-  { name: "Life", slug: "life", count: 0 },
 ];
 
 const navSecondary = [
@@ -76,7 +76,14 @@ const navSecondary = [
   },
 ];
 
-export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
+export function AppSidebar({
+  categories = [],
+  ...props
+}: ComponentProps<typeof Sidebar> & {
+  categories?: { name: string; slug: string; count: number }[];
+}) {
+  const pathname = usePathname();
+
   return (
     <Sidebar className="border-r-0" {...props}>
       <SidebarHeader>
@@ -88,59 +95,111 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navMain.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    render={<Link href={item.url} />}
-                    isActive={item.isActive}
-                  >
-                    {item.icon}
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {navMain.map((item) => {
+                const isActive =
+                  item.url === "/"
+                    ? pathname === "/"
+                    : pathname.startsWith(item.url);
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      render={<Link href={item.url} />}
+                      isActive={isActive}
+                    >
+                      {item.icon}
+                      <span>{item.title}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarHeader>
       <SidebarContent>
         {/* Categories */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Categories</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {categories.map((cat) => (
-                <SidebarMenuItem key={cat.slug}>
-                  <SidebarMenuButton
-                    render={<Link href={`/categories/${cat.slug}`} />}
-                  >
-                    <HugeiconsIcon icon={Tag01Icon} strokeWidth={2} />
-                    <span>{cat.name}</span>
-                    <span className="text-muted-foreground ml-auto text-xs">
-                      {cat.count}
-                    </span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {categories.length > 0 && (
+          <Collapsible defaultOpen className="group/collapsible">
+            <SidebarGroup>
+              <SidebarGroupLabel render={<CollapsibleTrigger />}>
+                Categories
+                <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+              </SidebarGroupLabel>
+              <CollapsibleContent>
+                <SidebarGroupContent>
+                  <SidebarMenu>
+                    {categories.map((cat) => (
+                      <SidebarMenuItem key={cat.slug}>
+                        <SidebarMenuButton
+                          render={<Link href={`/categories/${cat.slug}`} />}
+                        >
+                          <HugeiconsIcon icon={Tag01Icon} strokeWidth={2} />
+                          <span>{cat.name}</span>
+                          <span className="text-muted-foreground ml-auto text-xs">
+                            {cat.count}
+                          </span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </CollapsibleContent>
+            </SidebarGroup>
+          </Collapsible>
+        )}
+
+        {/* Saved / Favorites */}
+        <Collapsible defaultOpen className="group/collapsible">
+          <SidebarGroup>
+            <SidebarGroupLabel render={<CollapsibleTrigger />}>
+              Favorites
+              <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+            </SidebarGroupLabel>
+            <CollapsibleContent>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton render={<Link href="#" />}>
+                      <HugeiconsIcon icon={Notebook01Icon} strokeWidth={2} />
+                      <span className="truncate">
+                        Building a Notion-like UI
+                      </span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton render={<Link href="#" />}>
+                      <HugeiconsIcon icon={Notebook01Icon} strokeWidth={2} />
+                      <span className="truncate">Kotlin Multiplatform 101</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </CollapsibleContent>
+          </SidebarGroup>
+        </Collapsible>
 
         {/* Recent Posts */}
-        <SidebarGroup>
-          <SidebarGroupLabel>Recent Posts</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton disabled>
-                  <span className="text-muted-foreground text-xs">
-                    No posts yet
-                  </span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <Collapsible defaultOpen className="group/collapsible">
+          <SidebarGroup>
+            <SidebarGroupLabel render={<CollapsibleTrigger />}>
+              Recent Posts
+              <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+            </SidebarGroupLabel>
+            <CollapsibleContent>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton disabled>
+                      <span className="text-muted-foreground text-xs">
+                        No posts yet
+                      </span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </CollapsibleContent>
+          </SidebarGroup>
+        </Collapsible>
 
         <NavSecondary items={navSecondary} className="mt-auto" />
       </SidebarContent>

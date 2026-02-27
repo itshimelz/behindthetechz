@@ -1,7 +1,6 @@
 import { getAllPosts } from "@/lib/blog/get-all-posts";
 import { getCategories } from "@/lib/blog/get-categories";
-import { PostList } from "@/components/blog/post-list";
-import { CategoryNav } from "@/components/blog/category-nav";
+import { BlogSearchWrapper } from "@/components/blog/blog-search-wrapper";
 
 export default function BlogPage() {
   const posts = getAllPosts();
@@ -16,15 +15,7 @@ export default function BlogPage() {
         <p className="text-muted-foreground">Browse all published articles.</p>
       </div>
 
-      {/* Category filter */}
-      <div className="mx-auto w-full max-w-4xl">
-        <CategoryNav categories={categories} />
-      </div>
-
-      {/* Post list */}
-      <div className="mx-auto w-full max-w-4xl">
-        <PostList posts={posts} />
-      </div>
+      <BlogSearchWrapper posts={posts} categories={categories} />
     </div>
   );
 }

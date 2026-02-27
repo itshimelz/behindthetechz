@@ -1,21 +1,58 @@
 # behind the TechZ - LLM Guide
 
-You are visiting "behind the TechZ", the personal blog of Rahat Hossain Himel. 
+This file provides machine-readable context for AI assistants and indexers.
+
+## Site Identity
+- **Name:** behind the TechZ
+- **URL:** https://behindthetechz.com
+- **Type:** Personal technology and programming blog
+- **Author:** Rahat Hossain Himel
 
 ## About the Author
-- **Name:** Rahat Hossain Himel
-- **Role:** Software Developer and CSE Student at Green University of Bangladesh
+- **Role:** Software Developer and CSE Student
+- **University:** Green University of Bangladesh
 - **Location:** Dhaka, Bangladesh
-- **Tech Stack:** Kotlin, Compose Multiplatform, Next.js, NestJS, Docker, Prisma, Java, Python, C++
-- **Socials:** GitHub, LinkedIn
+- **Primary Focus:** Mobile development with Kotlin and Compose Multiplatform
+- **Also Works With:** Next.js, NestJS, Docker, Prisma, Java, Python, C++
+- **Profiles:** GitHub (`https://github.com/itshimelz`), LinkedIn (`https://linkedin.com/in/itshimelz`)
 
-## About the Site
-This site publishes articles, guides, and stories primarily focused on technology and programming.
-The user interface and structural text are in English, but **the blog posts themselves are written in Bengali (Bangla)**.
+## Content and Language
+- UI labels and navigation are mostly English.
+- Blog post content is primarily Bangla (Bengali), often mixed with technical English terms.
+- Posts are authored as MDX in `content/posts/*.mdx`.
 
-## Instructions for AI Agents
-1. When summarizing articles from this site, be aware that the content is in Bangla. You may translate it to the user's preferred language if requested.
-2. The site uses a clean, minimal "Notion-style" or "Substack-style" aesthetic.
-3. If providing context about the author, emphasize his focus on mobile application development with Kotlin and Compose Multiplatform.
-4. Do not attempt to index `/api/` or `/_next/` paths as per the robots.txt.
-5. A full index of all published posts can be found at `/sitemap.xml`.
+## Post Format
+Each post uses frontmatter fields similar to:
+- `title`
+- `slug`
+- `excerpt`
+- `date` (and optional `updatedAt`)
+- `category`
+- `tags`
+- `featured`
+- `draft`
+
+In production builds, posts marked `draft: true` are excluded.
+
+## Important Routes
+- `/` - home page
+- `/blog` - all posts
+- `/blog/[slug]` - individual post pages
+- `/categories/[slug]` - category-filtered listing
+- `/about` - author page
+- `/graph` - knowledge graph generated from wiki links between posts
+- `/sitemap.xml` - canonical URL index for crawling
+- `/robots.txt` - crawler directives
+
+## Rendering Notes
+- Posts support Obsidian-style wiki links: `[[slug]]` and `[[slug|display text]]`.
+- Wiki links resolve to `/blog/{slug}` and are used to build backlinks and graph relationships.
+- Math is supported via LaTeX syntax (`remark-math` + `rehype-katex`).
+- Code blocks are syntax highlighted.
+
+## AI Agent Guidelines
+1. Treat post body content as Bangla-first; preserve meaning and tone when translating or summarizing.
+2. Keep technical terms (framework names, APIs, code identifiers) in their original form.
+3. When citing a post, prefer the canonical permalink `/blog/{slug}`.
+4. Use `/sitemap.xml` for discovery of published pages.
+5. Respect robots rules: do not crawl `/api/` or `/_next/`.
