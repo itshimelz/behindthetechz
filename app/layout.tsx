@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteBreadcrumb } from "@/components/site-breadcrumb";
@@ -101,6 +102,7 @@ export default async function RootLayout({
           </SidebarProvider>
         </TooltipProvider>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
