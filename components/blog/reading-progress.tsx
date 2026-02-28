@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useReadingProgressPreference } from "@/hooks/use-reading-progress";
 
 export function ReadingProgress() {
   const [progress, setProgress] = useState(0);
+  const { enabled } = useReadingProgressPreference();
 
   useEffect(() => {
     const updateProgress = () => {
@@ -30,6 +32,10 @@ export function ReadingProgress() {
       window.removeEventListener("resize", updateProgress);
     };
   }, []);
+
+  if (!enabled) {
+    return null;
+  }
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 h-[3px] bg-transparent pointer-events-none">

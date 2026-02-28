@@ -3,7 +3,8 @@
 import type { ComponentProps } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useFavorites } from "@/hooks/use-favorites";
+import { ChevronRight } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
 
 import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
@@ -26,8 +27,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { ChevronRight } from "lucide-react";
-import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Home02Icon,
   Notebook01Icon,
@@ -38,6 +37,14 @@ import {
   ChartBubble02Icon,
   Bookmark02Icon,
 } from "@hugeicons/core-free-icons";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+import { useFavorites } from "@/hooks/use-favorites";
 
 const navMain = [
   {
@@ -70,16 +77,18 @@ const navSecondary = [
   },
   {
     title: "Help",
-    url: "#",
+    url: "/help",
     icon: <HugeiconsIcon icon={MessageQuestionIcon} strokeWidth={2} />,
   },
 ];
 
 export function AppSidebar({
   categories = [],
+  recentPosts = [],
   ...props
 }: ComponentProps<typeof Sidebar> & {
   categories?: { name: string; slug: string; count: number }[];
+  recentPosts?: { slug: string; title: string }[];
 }) {
   const pathname = usePathname();
   const { favorites, isMounted } = useFavorites();
@@ -209,20 +218,35 @@ export function AppSidebar({
               Recent Posts
               <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
             </SidebarGroupLabel>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton disabled>
-                      <span className="text-muted-foreground text-xs">
-                        No posts yet
-                      </span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
+              <CollapsibleContent>
+                <SidebarGroupContent>
+                  {recentPosts.length === 0 ? (
+                    <Empty className="mx-1 py-6 px-3">
+                      <EmptyHeader className="gap-1.5">
+                        <EmptyMedia className="size-8">
+                          <HugeiconsIcon icon={Notebook01Icon} strokeWidth={1.8} />
+                        </EmptyMedia>
+                        <EmptyTitle className="text-sm">No recent posts</EmptyTitle>
+                        <EmptyDescription className="text-xs">
+                          Publish your first post to populate this section.
+                        </EmptyDescription>
+                      </EmptyHeader>
+                    </Empty>
+                  ) : (
+                    <SidebarMenu>
+                      {recentPosts.map((post) => (
+                        <SidebarMenuItem key={post.slug}>
+                          <SidebarMenuButton render={<Link href={`/blog/${post.slug}`} />}>
+                            <HugeiconsIcon icon={Notebook01Icon} strokeWidth={2} />
+                            <span className="truncate">{post.title}</span>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      ))}
+                    </SidebarMenu>
+                  )}
+                </SidebarGroupContent>
+              </CollapsibleContent>
+            </SidebarGroup>
         </Collapsible>
 
         <NavSecondary items={navSecondary} className="mt-auto" />

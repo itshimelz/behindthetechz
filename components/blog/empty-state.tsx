@@ -1,13 +1,30 @@
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Notebook01Icon } from "@hugeicons/core-free-icons";
+
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+
 type Props = {
   message?: string;
 };
 
 export function EmptyState({ message }: Props) {
   return (
-    <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
-      <p className="text-muted-foreground text-sm">
-        {message || "No posts published yet."}
-      </p>
-    </div>
+    <Empty className="py-14">
+      <EmptyHeader>
+        <EmptyMedia>
+          <HugeiconsIcon icon={Notebook01Icon} strokeWidth={1.8} />
+        </EmptyMedia>
+        <EmptyTitle>No posts found</EmptyTitle>
+        <EmptyDescription>
+          {message || "No posts published yet."}
+        </EmptyDescription>
+      </EmptyHeader>
+    </Empty>
   );
 }

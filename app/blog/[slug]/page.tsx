@@ -13,6 +13,7 @@ import { TagPill } from "@/components/blog/tag-pill";
 import { CodeBlock } from "@/components/blog/code-block";
 import { ReadingProgress } from "@/components/blog/reading-progress";
 import { BacklinksSection } from "@/components/blog/backlinks-section";
+import { ScrollToTop } from "@/components/blog/scroll-to-top";
 
 type Params = { slug: string };
 
@@ -76,6 +77,7 @@ export default async function BlogPostPage({
   return (
     <>
       <ReadingProgress />
+      <ScrollToTop />
       <article className="flex flex-1 flex-col gap-6 px-4 py-10 md:px-8">
         <div className="mx-auto w-full max-w-3xl space-y-4">
           <PostMeta post={post} />

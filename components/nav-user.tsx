@@ -46,6 +46,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useTheme } from "@/hooks/use-theme";
 import { useFavorites } from "@/hooks/use-favorites";
+import { useReadingProgressPreference } from "@/hooks/use-reading-progress";
 
 const user = {
   name: "Rahat Hossain",
@@ -88,6 +89,8 @@ function SettingRow({
 export function NavUser() {
   const { isMobile } = useSidebar();
   const { theme, toggleTheme } = useTheme();
+  const { enabled: readingProgressEnabled, setEnabled: setReadingProgress } =
+    useReadingProgressPreference();
   const { favorites, toggleFavorite, isMounted } = useFavorites();
   const [favoritesOpen, setFavoritesOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
@@ -285,7 +288,10 @@ export function NavUser() {
               label="Reading Progress"
               description="Show reading progress bar on posts"
             >
-              <Switch defaultChecked />
+              <Switch
+                checked={readingProgressEnabled}
+                onCheckedChange={setReadingProgress}
+              />
             </SettingRow>
           </div>
         </DialogContent>

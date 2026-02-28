@@ -84,6 +84,14 @@
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.705 0.015 286.067);
+  --graph-bg: #f5f7f8;
+  --graph-link: rgba(124, 133, 145, 0.32);
+  --graph-link-dim: rgba(145, 153, 162, 0.16);
+  --graph-link-active: rgba(95, 107, 123, 0.64);
+  --graph-node-dim: #cfd5dc;
+  --graph-node-selected: #56677c;
+  --graph-label: #374151;
+  --graph-label-muted: #6b7280;
 }
 
 .dark {
@@ -118,6 +126,14 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.552 0.016 285.938);
+  --graph-bg: #12161b;
+  --graph-link: rgba(148, 156, 168, 0.28);
+  --graph-link-dim: rgba(101, 111, 123, 0.14);
+  --graph-link-active: rgba(196, 205, 214, 0.68);
+  --graph-node-dim: #3f4652;
+  --graph-node-selected: #bcc7d5;
+  --graph-label: #dbe2ea;
+  --graph-label-muted: #9aa5b3;
 }
 
 @layer base {

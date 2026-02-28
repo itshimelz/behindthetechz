@@ -60,17 +60,18 @@ export function useFavorites() {
       }
     };
 
-    window.addEventListener("favorites-updated", handleStorageChange);
-    // Also listen to actual storage events for cross-tab synchronization
-    window.addEventListener("storage", (e) => {
+    const handleStorageEvent = (e: StorageEvent) => {
       if (e.key === FAVORITES_KEY) {
         handleStorageChange();
       }
-    });
+    };
+
+    window.addEventListener("favorites-updated", handleStorageChange);
+    window.addEventListener("storage", handleStorageEvent);
 
     return () => {
       window.removeEventListener("favorites-updated", handleStorageChange);
-      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("storage", handleStorageEvent);
     };
   }, []);
 

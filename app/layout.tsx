@@ -6,6 +6,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { getCategories } from "@/lib/blog/get-categories";
+import { getAllPosts } from "@/lib/blog/get-all-posts";
 
 import "katex/dist/katex.min.css";
 import "./globals.css";
@@ -57,6 +58,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const categories = getCategories();
+  const recentPosts = getAllPosts().slice(0, 5).map((post) => ({
+    slug: post.slug,
+    title: post.title,
+  }));
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -70,7 +75,7 @@ export default function RootLayout({
       <body className="antialiased">
         <TooltipProvider>
           <SidebarProvider>
-            <AppSidebar categories={categories} />
+            <AppSidebar categories={categories} recentPosts={recentPosts} />
             <SidebarInset>
               <header className="flex h-14 shrink-0 items-center gap-2">
                 <div className="flex flex-1 items-center gap-2 px-3">

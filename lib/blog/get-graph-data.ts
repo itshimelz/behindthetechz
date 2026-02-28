@@ -8,6 +8,7 @@ export type GraphNode = {
   excerpt: string;
   val: number; // node size weight
   outgoingCount: number;
+  incomingCount: number;
 };
 
 export type GraphLink = {
@@ -35,6 +36,7 @@ export function getGraphData(): GraphData {
     excerpt: post.excerpt,
     val: 1,
     outgoingCount: 0,
+    incomingCount: 0,
   }));
 
   const links: GraphLink[] = [];
@@ -58,18 +60,22 @@ export function getGraphData(): GraphData {
 
   // Calculate connections
   const outgoingCount = new Map<string, number>();
+  const incomingCount = new Map<string, number>();
   const totalCount = new Map<string, number>();
 
   for (const link of links) {
     outgoingCount.set(link.source, (outgoingCount.get(link.source) || 0) + 1);
+    incomingCount.set(link.target, (incomingCount.get(link.target) || 0) + 1);
     totalCount.set(link.source, (totalCount.get(link.source) || 0) + 1);
     totalCount.set(link.target, (totalCount.get(link.target) || 0) + 1);
   }
 
   for (const node of nodes) {
     const outgoing = outgoingCount.get(node.id) || 0;
+    const incoming = incomingCount.get(node.id) || 0;
     const total = totalCount.get(node.id) || 0;
     node.outgoingCount = outgoing;
+    node.incomingCount = incoming;
     // Sizing: prioritize outgoing links but consider total connectivity
     node.val = 3 + total * 1.5 + outgoing * 2;
   }
