@@ -13,14 +13,14 @@ export default async function CategoryPage({
 }) {
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
-  const categories = getCategories();
+  const categories = await getCategories();
   const category = categories.find((c) => c.slug === decodedSlug);
 
   if (!category) {
     notFound();
   }
 
-  const posts = getPostsByCategory(decodedSlug);
+  const posts = await getPostsByCategory(decodedSlug);
 
   return (
     <div className="flex flex-1 flex-col gap-6 px-4 py-10 md:px-8">

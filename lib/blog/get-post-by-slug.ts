@@ -1,28 +1,57 @@
-import fs from "fs";
-import path from "path";
+import { unstable_cache } from "next/cache";
+
+import { prisma } from "@/lib/prisma";
 import type { Post } from "@/lib/blog/types";
-import { parsePost } from "@/lib/blog/get-all-posts";
+import {
+  getPostStatusWhere,
+  mapDbPostToPost,
+  postWithRelationsInclude,
+} from "@/lib/blog/get-all-posts";
 
-const POSTS_DIR = path.join(process.cwd(), "content", "posts");
-
-export function getPostBySlug(slug: string): Post | null {
-  const filePath = path.join(POSTS_DIR, `${slug}.mdx`);
-
-  if (!fs.existsSync(filePath)) {
-    return null;
-  }
-
-  const fileContent = fs.readFileSync(filePath, "utf-8");
-  return parsePost(slug, fileContent);
+export async function getPostBySlug(slug: string): Promise<Post | null> {
+  const includeDrafts = process.env.NODE_ENV !== "production";
+  return getPostBySlugCached(slug, includeDrafts);
 }
 
-export function getAllSlugs(): string[] {
-  if (!fs.existsSync(POSTS_DIR)) {
-    return [];
-  }
-
-  return fs
-    .readdirSync(POSTS_DIR)
-    .filter((f) => f.endsWith(".mdx"))
-    .map((f) => f.replace(/\.mdx$/, ""));
+export async function getAllSlugs(): Promise<string[]> {
+  const includeDrafts = process.env.NODE_ENV !== "production";
+  return getAllSlugsCached(includeDrafts);
 }
+
+const BLOG_REVALIDATE_SECONDS = 300;
+
+const getPostBySlugCached = unstable_cache(
+  async (slug: string, includeDrafts: boolean) => {
+    const post = await prisma.post.findFirst({
+      where: {
+        slug,
+        ...getPostStatusWhere(includeDrafts),
+      },
+      include: postWithRelationsInclude,
+    });
+
+    if (!post) return null;
+    return mapDbPostToPost(post);
+  },
+  ["blog-post-by-slug"],
+  {
+    revalidate: BLOG_REVALIDATE_SECONDS,
+    tags: ["blog:posts"],
+  },
+);
+
+const getAllSlugsCached = unstable_cache(
+  async (includeDrafts: boolean) => {
+    const posts = await prisma.post.findMany({
+      where: getPostStatusWhere(includeDrafts),
+      select: { slug: true },
+    });
+
+    return posts.map((post) => post.slug);
+  },
+  ["blog-all-slugs"],
+  {
+    revalidate: BLOG_REVALIDATE_SECONDS,
+    tags: ["blog:posts"],
+  },
+);

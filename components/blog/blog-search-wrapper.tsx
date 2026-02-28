@@ -1,11 +1,18 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Search01Icon } from "@hugeicons/core-free-icons";
 import { Input } from "@/components/ui/input";
 import { CategoryNav } from "@/components/blog/category-nav";
 import { PostList } from "@/components/blog/post-list";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { Post, Category } from "@/lib/blog/types";
 import {
   Pagination,
@@ -17,6 +24,9 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
+const ITEMS_PER_PAGE_STORAGE_KEY = "blog-items-per-page";
+const ITEMS_PER_PAGE_OPTIONS = [10, 20, 30, 40] as const;
+
 type Props = {
   posts: Post[];
   categories: Category[];
@@ -25,7 +35,27 @@ type Props = {
 export function BlogSearchWrapper({ posts, categories }: Props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const [itemsPerPage, setItemsPerPage] = useState<number>(() => {
+    if (typeof window === "undefined") return 10;
+
+    const savedValue = window.localStorage.getItem(ITEMS_PER_PAGE_STORAGE_KEY);
+    const parsedValue = Number(savedValue);
+
+    if (
+      ITEMS_PER_PAGE_OPTIONS.includes(
+        parsedValue as (typeof ITEMS_PER_PAGE_OPTIONS)[number],
+      )
+    ) {
+      return parsedValue;
+    }
+
+    return 10;
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(ITEMS_PER_PAGE_STORAGE_KEY, String(itemsPerPage));
+  }, [itemsPerPage]);
 
   const filteredPosts = useMemo(() => {
     const query = searchQuery.toLowerCase();
@@ -44,7 +74,7 @@ export function BlogSearchWrapper({ posts, categories }: Props) {
   const currentPosts = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     return filteredPosts.slice(startIndex, startIndex + itemsPerPage);
-  }, [filteredPosts, currentPage]);
+  }, [filteredPosts, currentPage, itemsPerPage]);
 
   const handlePageChange = (page: number) => {
     if (page < 1 || page > totalPages) return;
@@ -85,6 +115,7 @@ export function BlogSearchWrapper({ posts, categories }: Props) {
       <div className="mx-auto w-full max-w-4xl">
         <PostList
           posts={currentPosts}
+          searchQuery={searchQuery}
           emptyMessage={
             searchQuery
               ? "No posts found matching your search."
@@ -94,8 +125,36 @@ export function BlogSearchWrapper({ posts, categories }: Props) {
       </div>
 
       {/* Pagination */}
-      {totalPages > 1 && (
+      {filteredPosts.length > 0 && (
         <div className="mx-auto w-full max-w-4xl pt-8 pb-10">
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <p className="text-sm text-muted-foreground">
+              Showing {currentPosts.length} of {filteredPosts.length} posts
+            </p>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-muted-foreground">Per page</span>
+              <Select
+                value={String(itemsPerPage)}
+                onValueChange={(value) => {
+                  setItemsPerPage(Number(value));
+                  setCurrentPage(1);
+                }}
+              >
+                <SelectTrigger className="h-8 w-[88px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {ITEMS_PER_PAGE_OPTIONS.map((option) => (
+                    <SelectItem key={option} value={String(option)}>
+                      {option}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {totalPages > 1 && (
           <Pagination>
             <PaginationContent>
               <PaginationItem>
@@ -170,6 +229,7 @@ export function BlogSearchWrapper({ posts, categories }: Props) {
               </PaginationItem>
             </PaginationContent>
           </Pagination>
+          )}
         </div>
       )}
     </div>

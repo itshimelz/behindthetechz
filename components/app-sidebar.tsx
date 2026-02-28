@@ -1,6 +1,6 @@
 "use client";
 
-import type { ComponentProps } from "react";
+import { useMemo, type ComponentProps } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight } from "lucide-react";
@@ -82,16 +82,33 @@ const navSecondary = [
   },
 ];
 
+const CATEGORY_ICON_BY_KEY: Record<string, React.ComponentProps<typeof HugeiconsIcon>["icon"]> = {
+  tag: Tag01Icon,
+  programming: Notebook01Icon,
+  development: Notebook01Icon,
+  design: GridViewIcon,
+  productivity: Bookmark02Icon,
+  graph: ChartBubble02Icon,
+};
+
+function getCategoryIconByKey(iconKey?: string) {
+  if (!iconKey) return Tag01Icon;
+  return CATEGORY_ICON_BY_KEY[iconKey] ?? Tag01Icon;
+}
+
 export function AppSidebar({
   categories = [],
   recentPosts = [],
+  publishedPostsCount = 0,
   ...props
 }: ComponentProps<typeof Sidebar> & {
-  categories?: { name: string; slug: string; count: number }[];
+  categories?: { name: string; slug: string; count: number; iconKey?: string }[];
   recentPosts?: { slug: string; title: string }[];
+  publishedPostsCount?: number;
 }) {
   const pathname = usePathname();
   const { favorites, isMounted } = useFavorites();
+  const topCategories = useMemo(() => categories.slice(0, 5), [categories]);
 
   return (
     <Sidebar collapsible="icon" className="border-r-0" {...props}>
@@ -141,22 +158,22 @@ export function AppSidebar({
               <CollapsibleContent>
                 <SidebarGroupContent>
                   <SidebarMenu>
-                    {[...categories]
-                      .sort((a, b) => b.count - a.count)
-                      .slice(0, 5)
-                      .map((cat) => (
-                        <SidebarMenuItem key={cat.slug}>
-                          <SidebarMenuButton
-                            render={<Link href={`/categories/${cat.slug}`} />}
-                          >
-                            <HugeiconsIcon icon={Tag01Icon} strokeWidth={2} />
-                            <span>{cat.name}</span>
-                            <span className="text-muted-foreground ml-auto text-xs">
-                              {cat.count}
-                            </span>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      ))}
+                    {topCategories.map((cat) => (
+                      <SidebarMenuItem key={cat.slug}>
+                        <SidebarMenuButton
+                          render={<Link href={`/categories/${cat.slug}`} />}
+                        >
+                          <HugeiconsIcon
+                            icon={getCategoryIconByKey(cat.iconKey)}
+                            strokeWidth={2}
+                          />
+                          <span>{cat.name}</span>
+                          <span className="text-muted-foreground ml-auto text-xs">
+                            {cat.count}
+                          </span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
                   </SidebarMenu>
                 </SidebarGroupContent>
               </CollapsibleContent>
@@ -252,7 +269,7 @@ export function AppSidebar({
         <NavSecondary items={navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser />
+        <NavUser publishedPostsCount={publishedPostsCount} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

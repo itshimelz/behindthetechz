@@ -11,9 +11,11 @@ import { getCategories } from "@/lib/blog/get-categories";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
-export default function HomePage() {
-  const allPosts = getAllPosts();
-  const categories = getCategories();
+export default async function HomePage() {
+  const [allPosts, categories] = await Promise.all([
+    getAllPosts(),
+    getCategories(),
+  ]);
   const latestPosts = allPosts.slice(0, 6);
 
   return (

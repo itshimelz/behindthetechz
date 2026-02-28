@@ -5,9 +5,10 @@ import type { Post } from "@/lib/blog/types";
 type Props = {
   posts: Post[];
   emptyMessage?: string;
+  searchQuery?: string;
 };
 
-export function PostList({ posts, emptyMessage }: Props) {
+export function PostList({ posts, emptyMessage, searchQuery }: Props) {
   if (posts.length === 0) {
     return <EmptyState message={emptyMessage} />;
   }
@@ -15,7 +16,7 @@ export function PostList({ posts, emptyMessage }: Props) {
   return (
     <div className="flex flex-col gap-8">
       {posts.map((post) => (
-        <PostCard key={post.slug} post={post} />
+        <PostCard key={post.slug} post={post} searchQuery={searchQuery} />
       ))}
     </div>
   );

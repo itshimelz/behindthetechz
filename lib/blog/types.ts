@@ -21,6 +21,7 @@ export type Category = {
   name: string;
   slug: string;
   count: number;
+  iconKey?: string;
 };
 
 export type Tag = {

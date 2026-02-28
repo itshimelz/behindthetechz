@@ -18,7 +18,8 @@ import { ScrollToTop } from "@/components/blog/scroll-to-top";
 type Params = { slug: string };
 
 export async function generateStaticParams() {
-  return getAllSlugs().map((slug) => ({ slug }));
+  const slugs = await getAllSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -28,7 +29,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
-  const post = getPostBySlug(decodedSlug);
+  const post = await getPostBySlug(decodedSlug);
 
   if (!post) {
     return { title: "Post Not Found" };
@@ -66,13 +67,13 @@ export default async function BlogPostPage({
 }) {
   const { slug } = await params;
   const decodedSlug = decodeURIComponent(slug);
-  const post = getPostBySlug(decodedSlug);
+  const post = await getPostBySlug(decodedSlug);
 
   if (!post) {
     notFound();
   }
 
-  const backlinks = getBacklinksForSlug(decodedSlug);
+  const backlinks = await getBacklinksForSlug(decodedSlug);
 
   return (
     <>
