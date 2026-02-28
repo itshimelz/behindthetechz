@@ -49,12 +49,12 @@ import { useFavorites } from "@/hooks/use-favorites";
 import { useReadingProgressPreference } from "@/hooks/use-reading-progress";
 
 const user = {
-  name: "Rahat Hossain",
-  email: "himel@techzblog.com",
-  avatar: "/avatar.png",
+  name: "Rahat H. Himel",
+  email: "himelhasan1215@gmail.com",
+  avatar: "himel-avatar.jpg",
   role: "Author & Developer",
   joinedDate: "February 2026",
-  website: "behindthetechz.com",
+  website: "behindthetechz.me",
   postsCount: 11,
   favoritesCount: 0,
 };
