@@ -3,20 +3,32 @@
 ## Objective
 Move from filesystem MDX loading (`content/posts/*.mdx`) to dynamic database-backed blog delivery while preserving current routes, SEO, and reader experience.
 
-## Current Baseline
-- Posts are parsed from MDX files via `lib/blog/get-all-posts.ts` and `lib/blog/get-post-by-slug.ts`.
-- Categories/tags/graph/backlinks are derived in-memory from file content.
-- Routes already map well to DB-backed queries:
+## Current Baseline (Updated)
+- Runtime blog reads are database-backed via Prisma (`lib/blog/*`).
+- MDX files in `content/posts/*.mdx` are now source content for import/sync scripts, not runtime page reads.
+- Categories, tags, backlinks, and graph data are computed from DB-sourced post content.
+- Routes currently served from DB-backed queries:
   - `/blog`
   - `/blog/[slug]`
   - `/categories/[slug]`
   - `/sitemap.xml`
   - `/graph`
 
+## Implementation Status (As of 2026-02-28)
+
+| Phase | Status | Notes |
+|---|---|---|
+| Phase 1 - Schema and Infrastructure | Implemented | Prisma schema + migrations active on Supabase. |
+| Phase 2 - Data Migration from MDX Files | Implemented (with minor policy gap) | Import/prune workflow exists; language normalization policy still optional. |
+| Phase 3 - Repository Layer and Query Replacement | Implemented | Runtime loaders in `lib/blog/*` are DB-backed. |
+| Phase 4 - Wiki Links, Backlinks, and Graph Support | Implemented | Graph/backlinks use DB post content. |
+| Phase 5 - Caching, Revalidation, and Performance | Implemented (with minor resilience gap) | `unstable_cache` + tag revalidation + pagination done; advanced DB-fallback policy optional. |
+| Phase 6 - Cutover and Cleanup | Implemented (docs/ops now updated) | DB is runtime source of truth; import pipeline retained for content syncing. |
+
 ---
 
 ## Recommended Target Architecture
-- **Database:** PostgreSQL (managed: Neon/Supabase/Railway or self-hosted)
+- **Database:** PostgreSQL (managed: Supabase)
 - **ORM:** Prisma (already aligned with project stack)
 - **Content format:** store canonical MDX body as text (`contentMdx`) in DB
 - **Rendering:** keep current `next-mdx-remote/rsc` pipeline (`remark-wiki-link`, `remark-math`, `rehype-katex`, `rehype-pretty-code`)
@@ -186,6 +198,32 @@ Fully switch production to DB-backed content.
 ### Definition of Done
 - Production uses DB only.
 - No required runtime dependency on `content/posts`.
+
+---
+
+## Monitoring and Operations (Current)
+
+### Implemented
+- `app/api/revalidate/route.ts` supports tag-based cache invalidation for blog data.
+- Revalidation token support via `REVALIDATE_SECRET`.
+- Optional importer-triggered revalidation via `REVALIDATE_URL` in `scripts/import-mdx-to-prisma.mjs`.
+- Build-time verification includes Prisma generate + migration deploy + Next build.
+
+### Recommended Runtime Monitoring
+- Track server logs for Prisma query errors (connection, timeout, and known request errors).
+- Monitor `/api/revalidate` status codes and response times.
+- Add periodic checks for:
+  - published post count,
+  - category count,
+  - sitemap generation success.
+
+### Runbook Commands
+- Sync MDX to DB: `npm run db:import-mdx`
+- Sync with cleanup: `npm run db:import-mdx:prune`
+- Dry-run sync: `npm run db:import-mdx:dry`
+- Dry-run cleanup: `npm run db:import-mdx:prune:dry`
+- Manual cache refresh:
+  - `POST /api/revalidate` with optional `x-revalidate-token` header
 
 ---
 

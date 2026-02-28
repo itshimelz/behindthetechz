@@ -7,7 +7,7 @@ Techzblog is a modern, high-performance blog platform designed for interlinked c
 ## ✨ Features
 
 - **🕸️ Interactive Graph View**: Visualize connections between posts in a 2D force-directed graph.
-- **📝 MDX-Powered Content**: Write beautiful posts using Markdown with full support for React components.
+- **📝 DB-Backed MDX Content**: Author in MDX, then sync to PostgreSQL via Prisma for runtime delivery.
 - **📓 Notion-Style Sidebar**: A clean, collapsible sidebar for easy navigation through categories and favorite posts.
 - **🔍 Smart Search**: Instant search and filtering to find exactly what you're looking for.
 - **🎨 Stunning Aesthetics**: Modern design with glassmorphism, smooth animations, and a focus on readability.
@@ -21,6 +21,7 @@ Techzblog is a modern, high-performance blog platform designed for interlinked c
 - **Visuals**: [React Force Graph](https://github.com/vasturiano/react-force-graph)
 - **Icons**: [Hugeicons](https://hugeicons.com/)
 - **Content**: [next-mdx-remote](https://github.com/hashicorp/next-mdx-remote) & [gray-matter](https://github.com/jonschlinkert/gray-matter)
+- **Database/ORM**: [Supabase Postgres](https://supabase.com/) + [Prisma](https://www.prisma.io/)
 - **Typography**: Geist Sans & Geist Mono
 
 ## 🚀 Getting Started
@@ -58,8 +59,22 @@ Techzblog is a modern, high-performance blog platform designed for interlinked c
 - `/app`: Next.js App Router pages and layouts.
 - `/components`: Reusable UI components (Sidebar, Graph, Blog cards, etc.).
 - `/content/posts`: MDX files containing the blog content.
+- `/scripts/import-mdx-to-prisma.mjs`: MDX -> DB sync/import script.
 - `/lib`: Utility functions and shared logic.
 - `/hooks`: Custom React hooks.
+
+## Database Content Workflow
+
+- Import MDX to DB: `npm run db:import-mdx`
+- Import + prune stale DB rows: `npm run db:import-mdx:prune`
+- Dry-run import: `npm run db:import-mdx:dry`
+- Dry-run import + prune: `npm run db:import-mdx:prune:dry`
+
+## Cache Revalidation
+
+- Endpoint: `POST /api/revalidate`
+- Protect with `REVALIDATE_SECRET` (optional)
+- Import script can auto-trigger revalidation when `REVALIDATE_URL` is set
 
 ## 🤝 Contributing
 

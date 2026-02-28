@@ -7,14 +7,12 @@ import {
   UserIcon,
   Moon02Icon,
   Sun03Icon,
-  Logout03Icon,
   ArrowUpDownIcon,
   Bookmark02Icon,
   Delete02Icon,
   Mail01Icon,
   Calendar03Icon,
   GlobalIcon,
-  Notification03Icon,
   AnalyticsUpIcon,
   EyeIcon,
 } from "@hugeicons/core-free-icons";
@@ -55,7 +53,6 @@ const user = {
   role: "Author & Developer",
   joinedDate: "February 2026",
   website: "behindthetechz.me",
-  postsCount: 11,
   favoritesCount: 0,
 };
 
@@ -86,7 +83,7 @@ function SettingRow({
   );
 }
 
-export function NavUser() {
+export function NavUser({ publishedPostsCount = 0 }: { publishedPostsCount?: number }) {
   const { isMobile } = useSidebar();
   const { theme, toggleTheme } = useTheme();
   const { enabled: readingProgressEnabled, setEnabled: setReadingProgress } =
@@ -158,18 +155,13 @@ export function NavUser() {
               <DropdownMenuGroup>
                 <DropdownMenuItem onClick={() => setAccountOpen(true)}>
                   <HugeiconsIcon icon={UserIcon} strokeWidth={2} />
-                  Account
+                  About Author
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setFavoritesOpen(true)}>
                   <HugeiconsIcon icon={Bookmark02Icon} strokeWidth={2} />
                   Favorites
                 </DropdownMenuItem>
               </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <HugeiconsIcon icon={Logout03Icon} strokeWidth={2} />
-                Log out
-              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </SidebarMenuItem>
@@ -179,9 +171,10 @@ export function NavUser() {
       <Dialog open={accountOpen} onOpenChange={setAccountOpen}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Account</DialogTitle>
+            <DialogTitle>About the Author</DialogTitle>
             <DialogDescription>
-              Your profile information and preferences.
+              You are viewing the author profile. Reading preferences below are
+              local to your browser.
             </DialogDescription>
           </DialogHeader>
 
@@ -238,7 +231,7 @@ export function NavUser() {
                 strokeWidth={2}
               />
               <span className="text-xs text-foreground">
-                {user.postsCount} posts published
+                {publishedPostsCount} posts published
               </span>
             </div>
           </div>
@@ -247,7 +240,7 @@ export function NavUser() {
 
           {/* Preferences */}
           <div className="space-y-0">
-            <p className="text-sm font-medium mb-1">Preferences</p>
+            <p className="text-sm font-medium mb-1">Your Reading Preferences</p>
             <SettingRow
               icon={
                 <HugeiconsIcon
@@ -263,19 +256,6 @@ export function NavUser() {
                 checked={theme === "dark"}
                 onCheckedChange={toggleTheme}
               />
-            </SettingRow>
-            <SettingRow
-              icon={
-                <HugeiconsIcon
-                  icon={Notification03Icon}
-                  className="size-4"
-                  strokeWidth={2}
-                />
-              }
-              label="Notifications"
-              description="Receive updates on new posts"
-            >
-              <Switch defaultChecked />
             </SettingRow>
             <SettingRow
               icon={
@@ -303,7 +283,8 @@ export function NavUser() {
           <DialogHeader>
             <DialogTitle>Your Favorites</DialogTitle>
             <DialogDescription>
-              Posts you&apos;ve saved for quick access.
+              Posts you&apos;ve saved for quick access. This list is stored only in
+              your browser (local storage) and is not saved in the database.
             </DialogDescription>
           </DialogHeader>
           <div className="max-h-72 overflow-y-auto">
@@ -362,6 +343,9 @@ export function NavUser() {
               </ul>
             )}
           </div>
+          <p className="text-xs text-muted-foreground">
+            Favorites are private to this device/browser.
+          </p>
         </DialogContent>
       </Dialog>
     </>

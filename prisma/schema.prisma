@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Post {
+  id          String         @id @default(uuid()) @db.Uuid
+  slug        String         @unique
+  title       String
+  excerpt     String
+  contentMdx  String         @map("content_mdx") @db.Text
+  coverImage  String?        @map("cover_image")
+  status      PostStatus     @default(DRAFT)
+  isFeatured  Boolean        @default(false) @map("is_featured")
+  publishedAt DateTime?      @map("published_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  categories  PostCategory[]
+  tags        PostTag[]
+
+  @@index([status, publishedAt], map: "posts_status_published_at_idx")
+  @@map("posts")
+}
+
+model Category {
+  id        String         @id @default(uuid()) @db.Uuid
+  name      String
+  slug      String         @unique
+  iconKey   String         @default("tag") @map("icon_key")
+  createdAt DateTime       @default(now()) @map("created_at")
+  updatedAt DateTime       @updatedAt @map("updated_at")
+  posts     PostCategory[]
+
+  @@map("categories")
+}
+
+model Tag {
+  id        String    @id @default(uuid()) @db.Uuid
+  name      String
+  slug      String    @unique
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  posts     PostTag[]
+
+  @@map("tags")
+}
+
+model PostCategory {
+  postId     String   @map("post_id") @db.Uuid
+  categoryId String   @map("category_id") @db.Uuid
+  assignedAt DateTime @default(now()) @map("assigned_at")
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([postId, categoryId])
+  @@index([categoryId], map: "post_categories_category_id_idx")
+  @@map("post_categories")
+}
+
+model PostTag {
+  postId     String   @map("post_id") @db.Uuid
+  tagId      String   @map("tag_id") @db.Uuid
+  assignedAt DateTime @default(now()) @map("assigned_at")
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag        Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+  @@index([tagId], map: "post_tags_tag_id_idx")
+  @@map("post_tags")
+}

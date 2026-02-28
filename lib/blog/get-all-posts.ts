@@ -1,10 +1,8 @@
-import fs from "fs";
-import path from "path";
-import matter from "gray-matter";
+import { Prisma, PostStatus } from "@prisma/client";
+import { unstable_cache } from "next/cache";
 
+import { prisma } from "@/lib/prisma";
 import type { Post, PostFrontmatter } from "@/lib/blog/types";
-
-const POSTS_DIR = path.join(process.cwd(), "content", "posts");
 
 export function calculateReadingTime(content: string): number {
   const wordsPerMinute = 200;
@@ -12,47 +10,123 @@ export function calculateReadingTime(content: string): number {
   return Math.max(1, Math.ceil(words / wordsPerMinute));
 }
 
-export function parsePost(slug: string, fileContent: string): Post {
-  const { data, content } = matter(fileContent);
-  const frontmatter = data as PostFrontmatter;
+export const postWithRelationsInclude = Prisma.validator<Prisma.PostInclude>()({
+  categories: {
+    orderBy: { assignedAt: "asc" },
+    include: { category: true },
+  },
+  tags: {
+    include: { tag: true },
+  },
+});
 
+export type DbPostWithRelations = Prisma.PostGetPayload<{
+  include: typeof postWithRelationsInclude;
+}>;
+
+export function getPostStatusWhere(includeDrafts: boolean): Prisma.PostWhereInput {
+  return includeDrafts
+    ? { status: { in: [PostStatus.DRAFT, PostStatus.PUBLISHED] } }
+    : { status: PostStatus.PUBLISHED };
+}
+
+export function mapDbPostToPost(post: DbPostWithRelations): Post {
+  const content = post.contentMdx;
   const wordCount = content.trim().split(/\s+/).length;
   const readingTime = calculateReadingTime(content);
+  const primaryCategory = post.categories[0]?.category.name || "Uncategorized";
+
+  const frontmatter: PostFrontmatter = {
+    title: post.title,
+    slug: post.slug,
+    excerpt: post.excerpt,
+    date: (post.publishedAt ?? post.createdAt).toISOString(),
+    updatedAt: post.updatedAt.toISOString(),
+    category: primaryCategory,
+    tags: post.tags.map((entry) => entry.tag.name),
+    featured: post.isFeatured,
+    draft: post.status !== PostStatus.PUBLISHED,
+  };
 
   return {
     ...frontmatter,
-    slug: frontmatter.slug || slug,
     content,
     readingTime,
     wordCount,
   };
 }
 
-export function getAllPosts(): Post[] {
-  if (!fs.existsSync(POSTS_DIR)) {
-    return [];
-  }
+const BLOG_REVALIDATE_SECONDS = 300;
 
-  const files = fs.readdirSync(POSTS_DIR).filter((f) => f.endsWith(".mdx"));
+const getAllPostsCached = unstable_cache(
+  async (includeDrafts: boolean) => {
+    const posts = await prisma.post.findMany({
+      where: getPostStatusWhere(includeDrafts),
+      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+      include: postWithRelationsInclude,
+    });
 
-  const posts = files
-    .map((file) => {
-      const slug = file.replace(/\.mdx$/, "");
-      const filePath = path.join(POSTS_DIR, file);
-      const fileContent = fs.readFileSync(filePath, "utf-8");
-      return parsePost(slug, fileContent);
-    })
-    .filter((post) => {
-      if (process.env.NODE_ENV === "production") {
-        return !post.draft;
-      }
-      return true;
-    })
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    return posts.map(mapDbPostToPost);
+  },
+  ["blog-all-posts"],
+  {
+    revalidate: BLOG_REVALIDATE_SECONDS,
+    tags: ["blog:posts"],
+  },
+);
 
-  return posts;
+const getRecentPostLinksCached = unstable_cache(
+  async (includeDrafts: boolean, limit: number) => {
+    return prisma.post.findMany({
+      where: getPostStatusWhere(includeDrafts),
+      orderBy: [{ publishedAt: "desc" }, { createdAt: "desc" }],
+      take: limit,
+      select: {
+        slug: true,
+        title: true,
+      },
+    });
+  },
+  ["blog-recent-post-links"],
+  {
+    revalidate: BLOG_REVALIDATE_SECONDS,
+    tags: ["blog:posts"],
+  },
+);
+
+const getPublishedPostCountCached = unstable_cache(
+  async () => {
+    return prisma.post.count({
+      where: { status: PostStatus.PUBLISHED },
+    });
+  },
+  ["blog-published-post-count"],
+  {
+    revalidate: BLOG_REVALIDATE_SECONDS,
+    tags: ["blog:posts"],
+  },
+);
+
+export async function getAllPosts(): Promise<Post[]> {
+  const includeDrafts = process.env.NODE_ENV !== "production";
+  return getAllPostsCached(includeDrafts);
 }
 
-export function getFeaturedPosts(): Post[] {
-  return getAllPosts().filter((post) => post.featured);
+export async function getFeaturedPosts(): Promise<Post[]> {
+  const posts = await getAllPosts();
+  return posts.filter((post) => post.featured);
+}
+
+export type RecentPostLink = {
+  slug: string;
+  title: string;
+};
+
+export async function getRecentPostLinks(limit = 5): Promise<RecentPostLink[]> {
+  const includeDrafts = process.env.NODE_ENV !== "production";
+  return getRecentPostLinksCached(includeDrafts, limit);
+}
+
+export async function getPublishedPostCount(): Promise<number> {
+  return getPublishedPostCountCached();
 }

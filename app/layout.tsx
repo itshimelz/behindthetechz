@@ -11,7 +11,10 @@ import {
 } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { getCategories } from "@/lib/blog/get-categories";
-import { getAllPosts } from "@/lib/blog/get-all-posts";
+import {
+  getPublishedPostCount,
+  getRecentPostLinks,
+} from "@/lib/blog/get-all-posts";
 
 import "katex/dist/katex.min.css";
 import "./globals.css";
@@ -57,18 +60,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const categories = getCategories();
-  const recentPosts = getAllPosts()
-    .slice(0, 5)
-    .map((post) => ({
-      slug: post.slug,
-      title: post.title,
-    }));
+  const [categories, recentPosts, publishedPostsCount] = await Promise.all([
+    getCategories(),
+    getRecentPostLinks(5),
+    getPublishedPostCount(),
+  ]);
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -82,7 +83,11 @@ export default function RootLayout({
       <body className="antialiased">
         <TooltipProvider>
           <SidebarProvider>
-            <AppSidebar categories={categories} recentPosts={recentPosts} />
+            <AppSidebar
+              categories={categories}
+              recentPosts={recentPosts}
+              publishedPostsCount={publishedPostsCount}
+            />
             <SidebarInset>
               <header className="flex h-14 shrink-0 items-center gap-2">
                 <div className="flex flex-1 items-center gap-2 px-3">

@@ -3,8 +3,8 @@ import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { GridViewIcon } from "@hugeicons/core-free-icons";
 
-export default function CategoriesPage() {
-  const categories = getCategories();
+export default async function CategoriesPage() {
+  const categories = await getCategories();
 
   return (
     <div className="flex flex-1 flex-col gap-6 px-4 py-10 md:px-8">
