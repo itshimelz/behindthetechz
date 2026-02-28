@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { MDXRemote } from "next-mdx-remote/rsc";
 
 import { getPostBySlug, getAllSlugs } from "@/lib/blog/get-post-by-slug";
@@ -12,6 +11,8 @@ import rehypePrettyCode from "rehype-pretty-code";
 import { PostMeta } from "@/components/blog/post-meta";
 import { TagPill } from "@/components/blog/tag-pill";
 import { CodeBlock } from "@/components/blog/code-block";
+import { ReadingProgress } from "@/components/blog/reading-progress";
+import { BacklinksSection } from "@/components/blog/backlinks-section";
 
 type Params = { slug: string };
 
@@ -73,52 +74,38 @@ export default async function BlogPostPage({
   const backlinks = getBacklinksForSlug(decodedSlug);
 
   return (
-    <article className="flex flex-1 flex-col gap-6 px-4 py-10 md:px-8">
-      <div className="mx-auto w-full max-w-3xl space-y-4">
-        <PostMeta post={post} />
-        <TagPill tags={post.tags} />
-      </div>
-
-      {/* MDX content */}
-      <div className="prose prose-neutral dark:prose-invert mx-auto w-full max-w-3xl">
-        <MDXRemote
-          source={post.content}
-          components={{
-            pre: (props: React.HTMLAttributes<HTMLPreElement>) => (
-              <CodeBlock {...props} />
-            ),
-          }}
-          options={{
-            mdxOptions: {
-              remarkPlugins: [remarkWikiLink, remarkMath],
-              rehypePlugins: [
-                rehypeKatex,
-                [rehypePrettyCode, { theme: "github-light" }],
-              ],
-            },
-          }}
-        />
-      </div>
-
-      {/* Backlinks */}
-      {backlinks.length > 0 && (
-        <div className="mx-auto w-full max-w-3xl border-t pt-6">
-          <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            Linked from
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            {backlinks.map((bl) => (
-              <Link
-                key={bl.slug}
-                href={`/blog/${bl.slug}`}
-                className="hover:bg-muted rounded-md border px-3 py-1.5 text-sm transition-colors"
-              >
-                {bl.title}
-              </Link>
-            ))}
-          </div>
+    <>
+      <ReadingProgress />
+      <article className="flex flex-1 flex-col gap-6 px-4 py-10 md:px-8">
+        <div className="mx-auto w-full max-w-3xl space-y-4">
+          <PostMeta post={post} />
+          <TagPill tags={post.tags} />
         </div>
-      )}
-    </article>
+
+        {/* MDX content */}
+        <div className="prose prose-neutral dark:prose-invert mx-auto w-full max-w-3xl">
+          <MDXRemote
+            source={post.content}
+            components={{
+              pre: (props: React.HTMLAttributes<HTMLPreElement>) => (
+                <CodeBlock {...props} />
+              ),
+            }}
+            options={{
+              mdxOptions: {
+                remarkPlugins: [remarkWikiLink, remarkMath],
+                rehypePlugins: [
+                  rehypeKatex,
+                  [rehypePrettyCode, { theme: "github-light" }],
+                ],
+              },
+            }}
+          />
+        </div>
+
+        {/* Backlinks */}
+        <BacklinksSection backlinks={backlinks} />
+      </article>
+    </>
   );
 }

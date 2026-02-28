@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useRef, useCallback, useEffect, useState } from "react";
 import { ZoomIn, ZoomOut, Maximize } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
 
 import type { GraphData, GraphNode } from "@/lib/blog/get-graph-data";
 import type { ForceGraphMethods } from "react-force-graph-2d";
@@ -28,6 +29,8 @@ type Props = {
 
 export function GraphView({ data }: Props) {
   const router = useRouter();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const containerRef = useRef<HTMLDivElement>(null);
   const [fgRef, setFgRef] = useState<ForceGraphMethods | null>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
@@ -73,15 +76,23 @@ export function GraphView({ data }: Props) {
       const graphNode = node as ForceGraphNode;
       const radius = 2 + Math.cbrt(graphNode.val) * 1.5;
 
-      // Color based on outgoing connections (hubs are darker)
-      // Base color: #9ca3af (gray-400)
-      // Darkest color for 5+ outgoing: #374151 (gray-700)
       const outgoing = graphNode.outgoingCount || 0;
-      let fillColor = "#9ca3af";
+      let fillColor = isDark ? "#4b5563" : "#9ca3af"; // Base gray
+
       if (outgoing > 0) {
-        if (outgoing >= 5) fillColor = "#374151";
-        else if (outgoing >= 3) fillColor = "#4b5563";
-        else if (outgoing >= 1) fillColor = "#6b7280";
+        if (isDark) {
+          if (outgoing >= 5)
+            fillColor = "#d1d5db"; // gray-300
+          else if (outgoing >= 3)
+            fillColor = "#9ca3af"; // gray-400
+          else if (outgoing >= 1) fillColor = "#6b7280"; // gray-500
+        } else {
+          if (outgoing >= 5)
+            fillColor = "#374151"; // gray-700
+          else if (outgoing >= 3)
+            fillColor = "#4b5563"; // gray-600
+          else if (outgoing >= 1) fillColor = "#6b7280"; // gray-500
+        }
       }
 
       // Draw Circle
@@ -96,8 +107,13 @@ export function GraphView({ data }: Props) {
         ctx.font = `500 ${fontSize}px Inter, Tiro Bangla, sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        // Use a darker text for bigger nodes to maintain contrast
-        ctx.fillStyle = outgoing >= 3 ? "#111827" : "#374151";
+
+        if (isDark) {
+          ctx.fillStyle = outgoing >= 3 ? "#f9fafb" : "#d1d5db";
+        } else {
+          ctx.fillStyle = outgoing >= 3 ? "#111827" : "#374151";
+        }
+
         ctx.fillText(
           graphNode.name,
           graphNode.x,
@@ -105,7 +121,7 @@ export function GraphView({ data }: Props) {
         );
       }
     },
-    [],
+    [isDark],
   );
 
   const handleZoomIn = useCallback(() => {
@@ -140,12 +156,16 @@ export function GraphView({ data }: Props) {
             graphData={data}
             width={dimensions.width}
             height={dimensions.height}
-            backgroundColor="#f8f9fa"
+            backgroundColor={isDark ? "transparent" : "#f8f9fa"}
             // Nodes: use custom canvas
             nodeCanvasObject={nodeCanvasObject}
-            // Links: thin subtle gray lines
-            linkColor={() => "rgba(156, 163, 175, 1)"}
+            // Links: thin subtle gray lines with arrows
+            linkColor={() =>
+              isDark ? "rgba(107, 114, 128, 0.4)" : "rgba(156, 163, 175, 1)"
+            }
             linkWidth={2}
+            linkDirectionalArrowLength={3.5}
+            linkDirectionalArrowRelPos={1.5}
             // Interaction
             onNodeClick={handleNodeClick}
             enableNodeDrag={true}

@@ -1,0 +1,159 @@
+---
+title: "Developer Second Brain Playbook"
+slug: "developer-second-brain-playbook"
+excerpt: "A practical, long-term system for capturing, linking, and retrieving technical knowledge so developers can think clearly and ship faster."
+date: "2026-03-06"
+coverImage: ""
+category: "Productivity"
+tags: ["productivity", "pkm", "learning", "engineering"]
+featured: false
+draft: false
+---
+
+Most developers do not have a coding problem - they have a memory problem.
+
+You learn a framework today, debug a strange issue next week, and discover a useful optimization next month. Without a reliable knowledge system, those insights disappear and you repeatedly solve the same problems.
+
+This is where a second-brain workflow becomes a technical advantage, not just a note-taking hobby. If you have read [[personal-knowledge-management]], this guide goes deeper into engineering-specific execution.
+
+## What a Developer PKM System Must Do
+
+A useful engineering knowledge system must support four jobs:
+
+1. **Capture**: save ideas fast with low friction.
+2. **Structure**: make retrieval predictable.
+3. **Connect**: link ideas through context and dependencies.
+4. **Apply**: convert notes into decisions and shipped work.
+
+If one of these is missing, your notes become a passive archive.
+
+## A Note Model That Scales
+
+Use a consistent template for technical notes.
+
+```md
+# Title
+
+## Context
+- Why this matters
+
+## Core Idea
+- 3-7 bullets in plain language
+
+## Example
+- code, diagram, or command
+
+## Tradeoffs
+- when this fails
+
+## Links
+- [[related-post-a]]
+- [[related-post-b]]
+```
+
+This structure optimizes future-you, not present-you.
+
+## Linking Strategy: From Notes to Knowledge Graph
+
+Backlinks are the compounding mechanism. They turn isolated notes into a decision network.
+
+When documenting frontend architecture choices, link directly to implementation discussions like [[mastering-nextjs-app-router]].
+When noting visual system decisions, connect them to [[web-design-trends-2026]].
+When documenting performance exploration, connect to [[wasm-future]] and [[intro-to-rust]].
+
+### Linking rules that work
+
+- Add links where they explain *why*, not only *what*.
+- Prefer a few strong links over many weak links.
+- Create a hub note for each major domain (frontend, infra, ML, productivity).
+
+Over time, this mirrors how engineers actually reason: by relationships, not folders.
+
+## The Weekly Maintenance Cycle
+
+A second brain only helps if you keep it alive.
+
+Run this weekly 45-minute routine:
+
+1. Archive stale scratch notes.
+2. Promote 3-5 useful notes to permanent notes.
+3. Add missing backlinks.
+4. Tag one "high-leverage" note to review next week.
+
+This process pairs naturally with focus blocks from [[time-management-devs]].
+
+## Make It Operational with Automation
+
+Manual maintenance does not scale. Add lightweight scripts inspired by [[node-cli-tools]].
+
+Useful commands:
+
+```bash
+npm run notes:orphans
+npm run notes:broken-links
+npm run notes:recent
+npm run notes:review
+```
+
+Command behavior:
+
+- `notes:orphans`: finds notes without inbound links.
+- `notes:broken-links`: validates `[[slug]]` references.
+- `notes:recent`: summarizes notes changed in the last 7 days.
+- `notes:review`: prints the next review queue.
+
+Small automation keeps the system trustworthy.
+
+## Turning Notes into Better Engineering Decisions
+
+The strongest benefit of PKM is decision quality.
+
+Before starting a feature, query your note graph:
+
+- Have we solved a similar issue before?
+- Which tradeoffs did we reject and why?
+- What metrics did we use?
+- What failed in previous attempts?
+
+This avoids repeating historical mistakes and speeds up architectural alignment.
+
+For example, when evaluating client-side model preprocessing, connect implementation notes with conceptual grounding from [[math-in-ml]] and practical constraints from [[ai-intro-bd]].
+
+## Team-level PKM: From Personal Habit to Shared Asset
+
+Individual notes are useful. Shared, searchable engineering notes are transformative.
+
+Team conventions to adopt:
+
+- one canonical note per core system
+- explicit decision records (problem, options, decision, consequences)
+- linked postmortems and runbooks
+- monthly cleanup rotation
+
+This keeps institutional knowledge from leaving with individuals.
+
+## Avoid These Common Failure Modes
+
+1. **Capture everything, organize nothing**: leads to noisy archives.
+2. **Perfect structure obsession**: blocks real writing.
+3. **No review rhythm**: links rot and notes decay.
+4. **Tool hopping**: migration churn destroys continuity.
+
+Pick a simple structure and stay consistent for months, not days.
+
+## 30-day Rollout Plan
+
+If you want to start immediately, use this rollout:
+
+- Week 1: create templates, tags, and domain hubs.
+- Week 2: backfill notes from recent projects.
+- Week 3: automate broken-link and orphan checks.
+- Week 4: run first monthly review and prune low-value notes.
+
+By day 30, your note system should already reduce repeated debugging and re-learning.
+
+## Final Thoughts
+
+A developer second brain is not about writing more notes. It is about reducing cognitive load so you can spend more energy on design, coding, and decisions that matter.
+
+Combine structure from [[personal-knowledge-management]], focus habits from [[time-management-devs]], and practical automation from [[node-cli-tools]]. The result is a system that helps you think better and build faster over the long term.

@@ -6,9 +6,11 @@ import { usePathname } from "next/navigation";
 import { useFavorites } from "@/hooks/use-favorites";
 
 import { NavSecondary } from "@/components/nav-secondary";
+import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarRail,
   SidebarGroup,
@@ -17,6 +19,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import {
   Collapsible,
@@ -30,7 +33,6 @@ import {
   Notebook01Icon,
   GridViewIcon,
   UserIcon,
-  Settings05Icon,
   MessageQuestionIcon,
   Tag01Icon,
   ChartBubble02Icon,
@@ -67,11 +69,6 @@ const navSecondary = [
     icon: <HugeiconsIcon icon={UserIcon} strokeWidth={2} />,
   },
   {
-    title: "Settings",
-    url: "#",
-    icon: <HugeiconsIcon icon={Settings05Icon} strokeWidth={2} />,
-  },
-  {
     title: "Help",
     url: "#",
     icon: <HugeiconsIcon icon={MessageQuestionIcon} strokeWidth={2} />,
@@ -88,12 +85,13 @@ export function AppSidebar({
   const { favorites, isMounted } = useFavorites();
 
   return (
-    <Sidebar className="border-r-0" {...props}>
+    <Sidebar collapsible="icon" className="border-r-0" {...props}>
       <SidebarHeader>
-        <div className="flex items-center gap-2 px-2 py-2">
-          <span className="font-heading text-lg font-bold tracking-tight">
+        <div className="flex items-center justify-between px-2 py-2">
+          <span className="font-heading text-lg font-bold tracking-tight truncate group-data-[collapsible=icon]:hidden">
             behind the TechZ
           </span>
+          <SidebarTrigger className="group-data-[collapsible=icon]:mx-auto" />
         </div>
         <SidebarGroup>
           <SidebarGroupContent>
@@ -229,6 +227,9 @@ export function AppSidebar({
 
         <NavSecondary items={navSecondary} className="mt-auto" />
       </SidebarContent>
+      <SidebarFooter>
+        <NavUser />
+      </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   );

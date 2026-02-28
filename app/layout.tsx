@@ -3,12 +3,7 @@ import type { Metadata } from "next";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteBreadcrumb } from "@/components/site-breadcrumb";
 import { SiteFooter } from "@/components/site-footer";
-import { Separator } from "@/components/ui/separator";
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { getCategories } from "@/lib/blog/get-categories";
 
@@ -64,7 +59,14 @@ export default function RootLayout({
   const categories = getCategories();
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()`,
+          }}
+        />
+      </head>
       <body className="antialiased">
         <TooltipProvider>
           <SidebarProvider>
@@ -72,11 +74,6 @@ export default function RootLayout({
             <SidebarInset>
               <header className="flex h-14 shrink-0 items-center gap-2">
                 <div className="flex flex-1 items-center gap-2 px-3">
-                  <SidebarTrigger />
-                  <Separator
-                    orientation="vertical"
-                    className="mr-2 data-vertical:h-4 data-vertical:self-auto"
-                  />
                   <SiteBreadcrumb />
                 </div>
               </header>

@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import type { Post } from "@/lib/blog/types";
 import { FavoriteButton } from "@/components/blog/favorite-button";
+import { ShareButton } from "@/components/blog/share-button";
 
 type Props = {
   post: Post;
@@ -29,7 +30,8 @@ export function PostMeta({ post }: Props) {
         <h1 className="font-heading text-3xl font-bold tracking-tight sm:text-4xl">
           {post.title}
         </h1>
-        <div className="pt-1">
+        <div className="flex items-center gap-1 pt-1">
+          <ShareButton slug={post.slug} title={post.title} />
           <FavoriteButton slug={post.slug} title={post.title} />
         </div>
       </div>
