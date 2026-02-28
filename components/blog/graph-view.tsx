@@ -57,6 +57,23 @@ export function GraphView({ data }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const fgRef = useRef<ForceGraphMethods | null>(null);
 
+  // Callback ref: fires the instant ForceGraph2D mounts and provides its API.
+  // This is the ONLY reliable way to register forces before the simulation
+  // computes its first tick (useEffect and onEngineStop both fire too late).
+  const setFgRef = useCallback((instance: ForceGraphMethods | null) => {
+    fgRef.current = instance;
+    if (!instance) return;
+
+    // Register collision force immediately
+    instance.d3Force("collide", forceCollide(24) as never);
+
+    // Strengthen charge repulsion
+    const chargeForce = instance.d3Force("charge");
+    if (chargeForce) {
+      chargeForce.strength(-300);
+    }
+  }, []);
+
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
   const [linkDistance, setLinkDistance] = useState(120);
   const [zoomLevel, setZoomLevel] = useState(1);
@@ -240,6 +257,7 @@ export function GraphView({ data }: Props) {
     [data.nodes],
   );
 
+  // Update link distance whenever the slider changes.
   useEffect(() => {
     const graphApi = fgRef.current;
     if (!graphApi) return;
@@ -249,12 +267,6 @@ export function GraphView({ data }: Props) {
       linkForce.distance(linkDistance);
     }
 
-    const chargeForce = graphApi.d3Force("charge");
-    if (chargeForce) {
-      chargeForce.strength(-300);
-    }
-
-    graphApi.d3Force("collide", forceCollide(24) as never);
     graphApi.d3ReheatSimulation();
   }, [linkDistance]);
 
@@ -436,7 +448,9 @@ export function GraphView({ data }: Props) {
       ) : (
         <>
           <ForceGraph2D
-            ref={fgRef as unknown as React.MutableRefObject<ForceGraphMethods>}
+            ref={
+              setFgRef as unknown as React.MutableRefObject<ForceGraphMethods>
+            }
             graphData={data}
             width={dimensions.width}
             height={dimensions.height}
@@ -461,8 +475,6 @@ export function GraphView({ data }: Props) {
               return base / visualScale;
             }}
             linkDirectionalArrowRelPos={1}
-            warmupTicks={80} // Pre-calculate physics so nodes start spread out
-            cooldownTicks={200}
             onZoom={handleZoom}
             onNodeClick={handleNodeClick}
             onNodeHover={(node) => {

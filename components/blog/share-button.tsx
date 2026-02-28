@@ -85,7 +85,7 @@ export function ShareButton({ slug, title }: Props) {
 
   const shareOptions = [
     {
-      label: "X / Twitter",
+      label: "X",
       color: "bg-neutral-900 dark:bg-neutral-100",
       icon: (
         <svg
