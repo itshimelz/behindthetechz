@@ -1,11 +1,11 @@
 # Blog Database Loading Plan
 
 ## Objective
-Move from filesystem MDX loading (`content/posts/*.mdx`) to dynamic database-backed blog delivery while preserving current routes, SEO, and reader experience.
+Complete the cutover from filesystem MDX loading to dynamic database-backed blog delivery while preserving routes, SEO, and reader experience.
 
 ## Current Baseline (Updated)
 - Runtime blog reads are database-backed via Prisma (`lib/blog/*`).
-- MDX files in `content/posts/*.mdx` are now source content for import/sync scripts, not runtime page reads.
+- File-based post source directories have been removed from runtime and maintenance workflows.
 - Categories, tags, backlinks, and graph data are computed from DB-sourced post content.
 - Routes currently served from DB-backed queries:
   - `/blog`
@@ -23,7 +23,7 @@ Move from filesystem MDX loading (`content/posts/*.mdx`) to dynamic database-bac
 | Phase 3 - Repository Layer and Query Replacement | Implemented | Runtime loaders in `lib/blog/*` are DB-backed. |
 | Phase 4 - Wiki Links, Backlinks, and Graph Support | Implemented | Graph/backlinks use DB post content. |
 | Phase 5 - Caching, Revalidation, and Performance | Implemented (with minor resilience gap) | `unstable_cache` + tag revalidation + pagination done; advanced DB-fallback policy optional. |
-| Phase 6 - Cutover and Cleanup | Implemented (docs/ops now updated) | DB is runtime source of truth; import pipeline retained for content syncing. |
+| Phase 6 - Cutover and Cleanup | Implemented | DB is runtime source of truth; file import pipeline removed and backup runbook in place. |
 
 ---
 
@@ -206,7 +206,7 @@ Fully switch production to DB-backed content.
 ### Implemented
 - `app/api/revalidate/route.ts` supports tag-based cache invalidation for blog data.
 - Revalidation token support via `REVALIDATE_SECRET`.
-- Optional importer-triggered revalidation via `REVALIDATE_URL` in `scripts/import-mdx-to-prisma.mjs`.
+- DB backup script available at `scripts/backup-db-posts.mjs`.
 - Build-time verification includes Prisma generate + migration deploy + Next build.
 
 ### Recommended Runtime Monitoring
@@ -218,10 +218,7 @@ Fully switch production to DB-backed content.
   - sitemap generation success.
 
 ### Runbook Commands
-- Sync MDX to DB: `npm run db:import-mdx`
-- Sync with cleanup: `npm run db:import-mdx:prune`
-- Dry-run sync: `npm run db:import-mdx:dry`
-- Dry-run cleanup: `npm run db:import-mdx:prune:dry`
+- Backup DB content snapshot: `npm run db:backup:json`
 - Manual cache refresh:
   - `POST /api/revalidate` with optional `x-revalidate-token` header
 

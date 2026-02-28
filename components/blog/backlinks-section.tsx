@@ -65,7 +65,7 @@ export function BacklinksSection({ backlinks }: Props) {
               All {backlinks.length} posts that link to this page.
             </DialogDescription>
           </DialogHeader>
-          <div className="max-h-72 overflow-y-auto">
+          <div className="max-h-72 overflow-y-auto scrollbar-minimal pr-2 border-r border-transparent">
             <ul className="divide-y divide-border">
               {backlinks.map((bl) => (
                 <li key={bl.slug} className="py-2.5">

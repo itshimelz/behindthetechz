@@ -150,6 +150,26 @@
   font-family: "Inter", "Tiro Bangla", sans-serif;
 }
 
+@utility scrollbar-minimal {
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted-foreground) transparent;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--muted-foreground);
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: var(--foreground);
+  }
+}
+
 /* Blog prose content: Medium / Substack reading style */
 .prose {
   text-align: justify;

@@ -12,7 +12,7 @@ This file gives coding agents a fast, reliable way to work in this repository wi
 - **Styling**: Tailwind CSS `v4` + `tw-animate-css` + shadcn styling (`base-nova` preset)
 - **Component primitives**: `@base-ui/react` (all shadcn components use base-ui, NOT Radix)
 - **Icons**: `@hugeicons/react` + `@hugeicons/core-free-icons` (do NOT use Lucide icons)
-- **Content**: MDX blog posts in `content/posts/`, parsed with `next-mdx-remote` + `gray-matter`
+- **Content**: DB-backed blog content in PostgreSQL (Supabase) rendered with `next-mdx-remote`
 - **Package manager**: `npm` (lockfile is `package-lock.json`)
 
 ## Repository Layout
@@ -37,8 +37,8 @@ components/
 ├── nav-secondary.tsx   # Secondary nav items (About, Help)
 ├── site-breadcrumb.tsx # Breadcrumb navigation
 ├── site-footer.tsx     # Site footer
-content/
-└── posts/              # MDX blog post files with frontmatter
+scripts/
+└── backup-db-posts.mjs # DB JSON backup script
 hooks/
 ├── use-favorites.ts    # localStorage-based favorites with cross-tab sync
 ├── use-theme.ts        # Theme toggle (useSyncExternalStore + MutationObserver)
@@ -93,8 +93,8 @@ lib/
 
 ## Blog Content System
 
-- Posts are MDX files in `content/posts/` with YAML frontmatter.
-- Frontmatter fields: `title`, `slug`, `excerpt`, `date`, `category`, `tags`, `featured`, `draft`.
+- Posts are stored in PostgreSQL and queried via Prisma (`lib/blog/*`).
+- MDX source is `contentMdx` in DB and rendered with the existing MDX pipeline.
 - Wiki-style interlinking: `[[slug]]` syntax in MDX rendered as internal links.
 - Code blocks use `rehype-pretty-code` with Shiki syntax highlighting.
 - Math blocks use `remark-math` + `rehype-katex`.
