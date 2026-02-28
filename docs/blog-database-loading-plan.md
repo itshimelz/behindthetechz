@@ -16,7 +16,7 @@ Move from filesystem MDX loading (`content/posts/*.mdx`) to dynamic database-bac
 ---
 
 ## Recommended Target Architecture
-- **Database:** PostgreSQL (managed: Neon/Supabase/Railway or self-hosted)
+- **Database:** PostgreSQL (managed: Supabase)
 - **ORM:** Prisma (already aligned with project stack)
 - **Content format:** store canonical MDX body as text (`contentMdx`) in DB
 - **Rendering:** keep current `next-mdx-remote/rsc` pipeline (`remark-wiki-link`, `remark-math`, `rehype-katex`, `rehype-pretty-code`)
