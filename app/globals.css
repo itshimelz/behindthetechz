@@ -263,3 +263,34 @@
 .wiki-link:hover {
   text-decoration-style: solid;
 }
+
+/* Mobile prose overrides */
+@media (max-width: 767px) {
+  .prose {
+    font-size: 1rem;
+    text-align: left;
+    line-height: 1.6;
+  }
+  .prose h1,
+  .prose h2,
+  .prose h3,
+  .prose h4 {
+    line-height: 1.25;
+  }
+  .prose h1 {
+    font-size: 1.5rem;
+  }
+  .prose h2 {
+    font-size: 1.25rem;
+  }
+  .prose h3 {
+    font-size: 1.125rem;
+  }
+  .prose pre {
+    max-width: calc(100vw - 2rem);
+  }
+  .prose img {
+    max-width: 100%;
+    height: auto;
+  }
+}

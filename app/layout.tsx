@@ -3,7 +3,11 @@ import type { Metadata } from "next";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteBreadcrumb } from "@/components/site-breadcrumb";
 import { SiteFooter } from "@/components/site-footer";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { getCategories } from "@/lib/blog/get-categories";
 import { getAllPosts } from "@/lib/blog/get-all-posts";
@@ -58,10 +62,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const categories = getCategories();
-  const recentPosts = getAllPosts().slice(0, 5).map((post) => ({
-    slug: post.slug,
-    title: post.title,
-  }));
+  const recentPosts = getAllPosts()
+    .slice(0, 5)
+    .map((post) => ({
+      slug: post.slug,
+      title: post.title,
+    }));
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -79,6 +85,7 @@ export default function RootLayout({
             <SidebarInset>
               <header className="flex h-14 shrink-0 items-center gap-2">
                 <div className="flex flex-1 items-center gap-2 px-3">
+                  <SidebarTrigger className="md:hidden" />
                   <SiteBreadcrumb />
                 </div>
               </header>

@@ -26,11 +26,11 @@ export function PostMeta({ post }: Props) {
           · {post.wordCount} words
         </span>
       </div>
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
         <h1 className="font-heading text-3xl font-bold tracking-tight sm:text-4xl">
           {post.title}
         </h1>
-        <div className="flex items-center gap-1 pt-1">
+        <div className="flex items-center gap-1 sm:pt-1">
           <ShareButton slug={post.slug} title={post.title} />
           <FavoriteButton slug={post.slug} title={post.title} />
         </div>

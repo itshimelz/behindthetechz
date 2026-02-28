@@ -17,29 +17,30 @@ export default function HomePage() {
   const latestPosts = allPosts.slice(0, 6);
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-12 md:py-20 flex flex-col gap-16 md:gap-24">
+    <div className="mx-auto max-w-3xl px-6 pt-6 md:py-20 flex flex-col gap-16 md:gap-24">
+      {/* Sticky identity bar (mobile only) */}
+      <div className="sticky top-0 z-40 -mx-6 flex items-center gap-4 bg-background/95 px-6 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:static md:mx-0 md:bg-transparent md:p-0 md:backdrop-blur-none transition-colors">
+        <div className="relative h-16 w-16 overflow-hidden rounded-full border bg-background shrink-0">
+          <Image
+            src="/logo.png"
+            alt="TechZ Logo"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+        <div>
+          <h1 className="font-heading text-3xl font-bold tracking-tight md:text-4xl text-foreground">
+            behind the TechZ
+          </h1>
+          <p className="text-muted-foreground text-sm md:text-base mt-1">
+            By Rahat Hossain Himel
+          </p>
+        </div>
+      </div>
+
       {/* Hero Section */}
       <section className="space-y-6">
-        <div className="flex items-center gap-4">
-          <div className="relative h-16 w-16 overflow-hidden rounded-full border bg-background shrink-0">
-            <Image
-              src="/logo.png"
-              alt="TechZ Logo"
-              fill
-              className="object-cover"
-              priority
-            />
-          </div>
-          <div>
-            <h1 className="font-heading text-3xl font-bold tracking-tight md:text-4xl text-foreground">
-              behind the TechZ
-            </h1>
-            <p className="text-muted-foreground text-sm md:text-base mt-1">
-              By Rahat Hossain Himel
-            </p>
-          </div>
-        </div>
-
         <p className="text-muted-foreground text-lg leading-relaxed">
           A minimal knowledge-focused space for development guides, engineering
           stories, and experiments from day-to-day software building.
