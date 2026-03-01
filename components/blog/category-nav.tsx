@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -5,6 +6,7 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { useRouter } from "next/navigation";
 import type { Category } from "@/lib/blog/types";
 import { getCategoryColorClass, cn } from "@/lib/utils";
 
@@ -14,6 +16,7 @@ type Props = {
 };
 
 export function CategoryNav({ categories, activeSlug }: Props) {
+  const router = useRouter();
   const sortedCategories = [...categories].sort((a, b) => b.count - a.count);
   const displayCategories = sortedCategories.slice(0, 4);
   const hiddenCategories = sortedCategories.slice(4);
@@ -65,15 +68,16 @@ export function CategoryNav({ categories, activeSlug }: Props) {
       ))}
       {hasMore && (
         <HoverCard>
-          <HoverCardTrigger>
-            <Link href="/categories" className="shrink-0">
-              <Badge
-                variant="secondary"
-                className="cursor-pointer bg-card text-muted-foreground hover:bg-muted/80 border border-dashed border-border/80 hover:border-border rounded-full px-2.5 py-1 text-xs font-medium sm:px-4 sm:py-1.5 sm:text-sm transition-all"
-              >
-                + {moreCount} more
-              </Badge>
-            </Link>
+          <HoverCardTrigger
+            onClick={() => router.push("/categories")}
+            className="shrink-0"
+          >
+            <Badge
+              variant="secondary"
+              className="cursor-pointer bg-card text-muted-foreground hover:bg-muted/80 border border-dashed border-border/80 hover:border-border rounded-full px-2.5 py-1 text-xs font-medium sm:px-4 sm:py-1.5 sm:text-sm transition-all"
+            >
+              + {moreCount} more
+            </Badge>
           </HoverCardTrigger>
           <HoverCardContent align="start" className="w-auto p-3">
             <div className="space-y-2">
