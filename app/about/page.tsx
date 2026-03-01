@@ -1,6 +1,13 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { Github, Linkedin, Mail, MapPin, GraduationCap } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  GithubIcon,
+  Linkedin02Icon,
+  Mail01Icon,
+  Location01Icon,
+  Mortarboard01Icon,
+} from "@hugeicons/core-free-icons";
 
 export const metadata: Metadata = {
   title: "About | behind the TechZ",
@@ -22,20 +29,20 @@ export default function AboutPage() {
               Software Developer & CSE Student
             </p>
             <div className="text-muted-foreground mt-2 flex items-center gap-2 text-sm">
-              <MapPin className="h-4 w-4" />
+              <HugeiconsIcon icon={Location01Icon} className="h-4 w-4" />
               <span>Dhaka, Bangladesh</span>
             </div>
             <div className="text-muted-foreground mt-1 flex items-center gap-2 text-sm">
-              <GraduationCap className="h-4 w-4" />
+              <HugeiconsIcon icon={Mortarboard01Icon} className="h-4 w-4" />
               <span>Green University of Bangladesh</span>
             </div>
           </div>
 
           <div className="prose prose-neutral dark:prose-invert">
             <p>
-              Hello! I&apos;m Himel. I&apos;m a passionate software developer currently
-              pursuing my CSE degree. My primary focus is on mobile application
-              development using <strong>Kotlin</strong> and{" "}
+              Hello! I&apos;m Himel. I&apos;m a passionate software developer
+              currently pursuing my CSE degree. My primary focus is on mobile
+              application development using <strong>Kotlin</strong> and{" "}
               <strong>Compose Multiplatform (CMP)</strong>, but I also enjoy
               working across the full stack.
             </p>
@@ -89,7 +96,7 @@ export default function AboutPage() {
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 aria-label="GitHub"
               >
-                <Github className="h-6 w-6" />
+                <HugeiconsIcon icon={GithubIcon} className="h-6 w-6" />
               </Link>
               <Link
                 href="https://linkedin.com/in/rahathossainhimel"
@@ -97,14 +104,14 @@ export default function AboutPage() {
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 aria-label="LinkedIn"
               >
-                <Linkedin className="h-6 w-6" />
+                <HugeiconsIcon icon={Linkedin02Icon} className="h-6 w-6" />
               </Link>
               <Link
                 href="mailto:himel@example.com"
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 aria-label="Email"
               >
-                <Mail className="h-6 w-6" />
+                <HugeiconsIcon icon={Mail01Icon} className="h-6 w-6" />
               </Link>
             </div>
           </div>

@@ -3,7 +3,6 @@
 import { useMemo, type ComponentProps } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronRight } from "lucide-react";
 import { HugeiconsIcon } from "@hugeicons/react";
 
 import { NavSecondary } from "@/components/nav-secondary";
@@ -36,6 +35,7 @@ import {
   Tag01Icon,
   ChartBubble02Icon,
   Bookmark02Icon,
+  ArrowRight01Icon,
 } from "@hugeicons/core-free-icons";
 import {
   Empty,
@@ -82,7 +82,10 @@ const navSecondary = [
   },
 ];
 
-const CATEGORY_ICON_BY_KEY: Record<string, React.ComponentProps<typeof HugeiconsIcon>["icon"]> = {
+const CATEGORY_ICON_BY_KEY: Record<
+  string,
+  React.ComponentProps<typeof HugeiconsIcon>["icon"]
+> = {
   tag: Tag01Icon,
   programming: Notebook01Icon,
   development: Notebook01Icon,
@@ -102,7 +105,12 @@ export function AppSidebar({
   publishedPostsCount = 0,
   ...props
 }: ComponentProps<typeof Sidebar> & {
-  categories?: { name: string; slug: string; count: number; iconKey?: string }[];
+  categories?: {
+    name: string;
+    slug: string;
+    count: number;
+    iconKey?: string;
+  }[];
   recentPosts?: { slug: string; title: string }[];
   publishedPostsCount?: number;
 }) {
@@ -153,7 +161,10 @@ export function AppSidebar({
                 <span className="bg-muted text-muted-foreground ml-2 rounded-sm px-1.5 py-0.5 text-[10px] font-medium leading-none">
                   {categories.length}
                 </span>
-                <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+                <HugeiconsIcon
+                  icon={ArrowRight01Icon}
+                  className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90"
+                />
               </SidebarGroupLabel>
               <CollapsibleContent>
                 <SidebarGroupContent>
@@ -186,7 +197,10 @@ export function AppSidebar({
           <SidebarGroup>
             <SidebarGroupLabel render={<CollapsibleTrigger />}>
               Favorites
-              <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+              <HugeiconsIcon
+                icon={ArrowRight01Icon}
+                className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90"
+              />
             </SidebarGroupLabel>
             <CollapsibleContent>
               <SidebarGroupContent>
@@ -233,37 +247,50 @@ export function AppSidebar({
           <SidebarGroup>
             <SidebarGroupLabel render={<CollapsibleTrigger />}>
               Recent Posts
-              <ChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
+              <HugeiconsIcon
+                icon={ArrowRight01Icon}
+                className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90"
+              />
             </SidebarGroupLabel>
-              <CollapsibleContent>
-                <SidebarGroupContent>
-                  {recentPosts.length === 0 ? (
-                    <Empty className="mx-1 py-6 px-3">
-                      <EmptyHeader className="gap-1.5">
-                        <EmptyMedia className="size-8">
-                          <HugeiconsIcon icon={Notebook01Icon} strokeWidth={1.8} />
-                        </EmptyMedia>
-                        <EmptyTitle className="text-sm">No recent posts</EmptyTitle>
-                        <EmptyDescription className="text-xs">
-                          Publish your first post to populate this section.
-                        </EmptyDescription>
-                      </EmptyHeader>
-                    </Empty>
-                  ) : (
-                    <SidebarMenu>
-                      {recentPosts.map((post) => (
-                        <SidebarMenuItem key={post.slug}>
-                          <SidebarMenuButton render={<Link href={`/blog/${post.slug}`} />}>
-                            <HugeiconsIcon icon={Notebook01Icon} strokeWidth={2} />
-                            <span className="truncate">{post.title}</span>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      ))}
-                    </SidebarMenu>
-                  )}
-                </SidebarGroupContent>
-              </CollapsibleContent>
-            </SidebarGroup>
+            <CollapsibleContent>
+              <SidebarGroupContent>
+                {recentPosts.length === 0 ? (
+                  <Empty className="mx-1 py-6 px-3">
+                    <EmptyHeader className="gap-1.5">
+                      <EmptyMedia className="size-8">
+                        <HugeiconsIcon
+                          icon={Notebook01Icon}
+                          strokeWidth={1.8}
+                        />
+                      </EmptyMedia>
+                      <EmptyTitle className="text-sm">
+                        No recent posts
+                      </EmptyTitle>
+                      <EmptyDescription className="text-xs">
+                        Publish your first post to populate this section.
+                      </EmptyDescription>
+                    </EmptyHeader>
+                  </Empty>
+                ) : (
+                  <SidebarMenu>
+                    {recentPosts.map((post) => (
+                      <SidebarMenuItem key={post.slug}>
+                        <SidebarMenuButton
+                          render={<Link href={`/blog/${post.slug}`} />}
+                        >
+                          <HugeiconsIcon
+                            icon={Notebook01Icon}
+                            strokeWidth={2}
+                          />
+                          <span className="truncate">{post.title}</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                )}
+              </SidebarGroupContent>
+            </CollapsibleContent>
+          </SidebarGroup>
         </Collapsible>
 
         <NavSecondary items={navSecondary} className="mt-auto" />

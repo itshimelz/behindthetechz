@@ -1,7 +1,13 @@
 "use client";
 
 import { useState, useRef, ReactNode } from "react";
-import { Check, Copy, X, Maximize2 } from "lucide-react";
+import { HugeiconsIcon } from "@hugeicons/react";
+import {
+  Tick01Icon,
+  Copy01Icon,
+  Cancel01Icon,
+  Maximize01Icon,
+} from "@hugeicons/core-free-icons";
 import { cn } from "@/lib/utils";
 
 interface CodeBlockProps extends React.HTMLAttributes<HTMLPreElement> {
@@ -47,9 +53,9 @@ export function CodeBlock({ children, className, ...props }: CodeBlockProps) {
             aria-label="Toggle Code Expansion"
           >
             {isExpanded ? (
-              <X className="h-4 w-4" />
+              <HugeiconsIcon icon={Cancel01Icon} className="h-4 w-4" />
             ) : (
-              <Maximize2 className="h-4 w-4" />
+              <HugeiconsIcon icon={Maximize01Icon} className="h-4 w-4" />
             )}
           </button>
 
@@ -61,12 +67,15 @@ export function CodeBlock({ children, className, ...props }: CodeBlockProps) {
           >
             {isCopied ? (
               <>
-                <Check className="h-4 w-4 text-green-500" />
+                <HugeiconsIcon
+                  icon={Tick01Icon}
+                  className="h-4 w-4 text-green-500"
+                />
                 <span className="text-green-500">Copied</span>
               </>
             ) : (
               <>
-                <Copy className="h-4 w-4" />
+                <HugeiconsIcon icon={Copy01Icon} className="h-4 w-4" />
                 <span>Copy</span>
               </>
             )}

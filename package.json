@@ -1,12 +1,14 @@
 {
-  "name": "techzblog",
+  "name": "behindthetechz",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "npm run prisma:generate && npm run prisma:deploy && next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "oxlint && eslint",
+    "lint:es": "eslint",
+    "lint:ox": "oxlint",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
@@ -23,7 +25,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.3.1",
-    "lucide-react": "^0.575.0",
     "next": "16.1.6",
     "next-mdx-remote": "^6.0.0",
     "react": "19.2.3",
@@ -44,6 +45,8 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
+    "eslint-plugin-oxlint": "^1.50.0",
+    "oxlint": "^1.50.0",
     "prisma": "^6.17.1",
     "tailwindcss": "^4",
     "typescript": "^5"

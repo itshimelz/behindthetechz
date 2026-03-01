@@ -6,14 +6,15 @@ This file gives coding agents a fast, reliable way to work in this repository wi
 
 ## Project Snapshot
 
-- **App name**: behind the TechZ (Techzblog)
+- **App name**: behind the TechZ (behindTheTechz)
 - **Framework**: Next.js `16` with App Router (`app/` directory)
 - **Language**: TypeScript + React `19`
 - **Styling**: Tailwind CSS `v4` + `tw-animate-css` + shadcn styling (`base-nova` preset)
 - **Component primitives**: `@base-ui/react` (all shadcn components use base-ui, NOT Radix)
-- **Icons**: `@hugeicons/react` + `@hugeicons/core-free-icons` (do NOT use Lucide icons)
+- **Icons**: `@hugeicons/react` + `@hugeicons/core-free-icons` (do NOT use Lucide icons, which have been entirely removed)
 - **Content**: DB-backed blog content in PostgreSQL (Supabase) rendered with `next-mdx-remote`
 - **Package manager**: `npm` (lockfile is `package-lock.json`)
+- **Linting**: `oxlint` (Primary) + `eslint`
 
 ## Repository Layout
 
@@ -22,9 +23,9 @@ app/
 ├── layout.tsx          # Root layout with SidebarProvider, theme hydration
 ├── page.tsx            # Home page
 ├── globals.css         # Design tokens, theme variables, prose styles
-├── blog/[slug]/        # Individual blog post page (Server Component)
+├── blog/[slug]/        # Individual blog post page (Server Component) with dynamic search and loading skeletons
 ├── blog/               # All posts listing with search/filter
-├── categories/         # Category listing and per-category pages
+├── categories/         # Category listing and per-category pages with Suspense loading skeletons
 ├── graph/              # Interactive graph view of post connections
 ├── about/              # About page
 ├── robots.ts           # SEO robots config
@@ -52,7 +53,7 @@ lib/
 
 - Install deps: `npm install`
 - Start dev server: `npm run dev`
-- Lint: `npm run lint`
+- Lint: `npm run lint` (runs oxlint first, then eslint)
 - Build production bundle: `npm run build`
 - Start production server: `npm run start`
 
@@ -70,7 +71,7 @@ lib/
 ## Icon Convention
 
 - **Always use Hugeicons** (`@hugeicons/react` + `@hugeicons/core-free-icons`).
-- Do NOT use Lucide React icons (only exception: `ChevronRight` in collapsible sections).
+- Do NOT use Lucide React icons under any circumstances.
 - Import pattern:
   ```tsx
   import { HugeiconsIcon } from "@hugeicons/react";
@@ -116,6 +117,7 @@ lib/
 ## Next.js Client/Server Boundary Rules
 
 - Treat files in `app/*` as Server Components by default unless they start with `"use client"`.
+- Make use of `loading.tsx` and `Suspense` for loading states on heavy server-rendering routes (e.g., categories, blog, graph).
 - Never call functions imported from client-only modules inside Server Components.
 - You may render a client component from a Server Component, but do not invoke client exports directly.
 - Before finishing high-impact changes, run `npm run lint` and `npm run build` to catch errors.

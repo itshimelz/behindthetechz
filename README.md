@@ -1,8 +1,8 @@
-# 🚀 Techzblog
+# 🚀 behindTheTechz
 
-Techzblog is a modern, high-performance blog platform designed for interlinked content. It combines the simplicity of Markdown with the power of a digital garden, featuring an interactive graph visualization of your knowledge base.
+behindTheTechz is a modern, high-performance blog platform designed for interlinked content. It combines the simplicity of Markdown with the power of a digital garden, featuring an interactive graph visualization of your knowledge base.
 
-![Techzblog Banner](https://placehold.co/1200x400/0f172a/ffffff?text=Techzblog+Digital+Garden)
+![behindTheTechz Banner](https://placehold.co/1200x400/0f172a/ffffff?text=behindTheTechz+Digital+Garden)
 
 ## ✨ Features
 
@@ -13,6 +13,10 @@ Techzblog is a modern, high-performance blog platform designed for interlinked c
 - **🎨 Stunning Aesthetics**: Modern design with glassmorphism, smooth animations, and a focus on readability.
 - **🔢 Math & Code**: First-class support for KaTeX math blocks and Shiki-powered syntax highlighting.
 - **🇧🇩 Bengali Support**: Optimized typography and interlinking specifically for Bengali language content.
+- **⭐ Post Favorites**: Save and easily access your favorite articles locally.
+- **📱 Fully Responsive**: Thoughtfully adjusted layouts to ensure a seamless experience across mobile and desktop.
+- **☁️ Scalable Media**: Integrated Supabase storage for fast and reliable image/file hosting.
+- **🚀 Analytics & Monitoring**: Deployed on Vercel with integrated Speed Insights and Analytics.
 
 ## 🛠️ Tech Stack
 
@@ -21,7 +25,8 @@ Techzblog is a modern, high-performance blog platform designed for interlinked c
 - **Visuals**: [React Force Graph](https://github.com/vasturiano/react-force-graph)
 - **Icons**: [Hugeicons](https://hugeicons.com/)
 - **Content Rendering**: [next-mdx-remote](https://github.com/hashicorp/next-mdx-remote)
-- **Database/ORM**: [Supabase Postgres](https://supabase.com/) + [Prisma](https://www.prisma.io/)
+- **Database & Storage**: [Supabase](https://supabase.com/) (Postgres + Storage buckets)
+- **ORM**: [Prisma](https://www.prisma.io/)
 - **Typography**: Geist Sans & Geist Mono
 
 ## 🚀 Getting Started
@@ -36,8 +41,8 @@ Techzblog is a modern, high-performance blog platform designed for interlinked c
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/techzblog.git
-   cd techzblog
+   git clone https://github.com/your-username/behindthetechz.git
+   cd behindthetechz
    ```
 
 2. Install dependencies:

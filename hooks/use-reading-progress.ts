@@ -2,7 +2,7 @@
 
 import { useCallback, useSyncExternalStore } from "react";
 
-const READING_PROGRESS_KEY = "techzblog-reading-progress";
+const READING_PROGRESS_KEY = "behindthetechz-reading-progress";
 const READING_PROGRESS_EVENT = "reading-progress-updated";
 
 function readPreference(): boolean {
@@ -38,7 +38,11 @@ function subscribe(callback: () => void) {
 }
 
 export function useReadingProgressPreference() {
-  const enabled = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const enabled = useSyncExternalStore(
+    subscribe,
+    getSnapshot,
+    getServerSnapshot,
+  );
 
   const setEnabled = useCallback((value: boolean) => {
     localStorage.setItem(READING_PROGRESS_KEY, String(value));

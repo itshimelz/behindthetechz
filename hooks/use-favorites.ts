@@ -7,7 +7,7 @@ export type FavoriteItem = {
   title: string;
 };
 
-const FAVORITES_KEY = "techzblog-favorites";
+const FAVORITES_KEY = "behindthetechz-favorites";
 
 export function useFavorites() {
   const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
