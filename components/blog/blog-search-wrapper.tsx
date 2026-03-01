@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Search01Icon } from "@hugeicons/core-free-icons";
+import { Search01Icon, Cancel01Icon } from "@hugeicons/core-free-icons";
 import { Input } from "@/components/ui/input";
 import { CategoryNav } from "@/components/blog/category-nav";
 import { PostList } from "@/components/blog/post-list";
@@ -33,8 +34,21 @@ type Props = {
 };
 
 export function BlogSearchWrapper({ posts, categories }: Props) {
-  const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const tagParam = searchParams.get("tag");
+
+  const [searchQuery, setSearchQuery] = useState(tagParam || "");
+  const [prevTagParam, setPrevTagParam] = useState(tagParam);
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Sync URL tag parameter with local search state without useEffect
+  if (tagParam !== prevTagParam) {
+    setPrevTagParam(tagParam);
+    setSearchQuery(tagParam || "");
+    setCurrentPage(1);
+  }
+
   const [itemsPerPage, setItemsPerPage] = useState<number>(() => {
     if (typeof window === "undefined") return 10;
 
@@ -54,8 +68,16 @@ export function BlogSearchWrapper({ posts, categories }: Props) {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    window.localStorage.setItem(ITEMS_PER_PAGE_STORAGE_KEY, String(itemsPerPage));
+    window.localStorage.setItem(
+      ITEMS_PER_PAGE_STORAGE_KEY,
+      String(itemsPerPage),
+    );
   }, [itemsPerPage]);
+
+  const clearTag = () => {
+    setSearchQuery("");
+    router.push("/blog", { scroll: false });
+  };
 
   const filteredPosts = useMemo(() => {
     const query = searchQuery.toLowerCase();
@@ -111,6 +133,25 @@ export function BlogSearchWrapper({ posts, categories }: Props) {
         <CategoryNav categories={categories} />
       </div>
 
+      {/* Active tag indicator */}
+      {tagParam && (
+        <div className="mx-auto w-full max-w-4xl flex items-center gap-2">
+          <span className="text-sm text-muted-foreground">
+            Filtering by tag:
+          </span>
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 pl-3 pr-2 py-1 text-sm font-medium text-primary transition-colors">
+            {tagParam}
+            <button
+              onClick={clearTag}
+              className="rounded-full p-0.5 hover:bg-primary/20 hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50"
+              aria-label={`Clear ${tagParam} tag filter`}
+            >
+              <HugeiconsIcon icon={Cancel01Icon} className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Post list */}
       <div className="mx-auto w-full max-w-4xl">
         <PostList
@@ -155,80 +196,80 @@ export function BlogSearchWrapper({ posts, categories }: Props) {
           </div>
 
           {totalPages > 1 && (
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handlePageChange(currentPage - 1);
-                  }}
-                  className={
-                    currentPage === 1
-                      ? "pointer-events-none opacity-50"
-                      : "cursor-pointer"
-                  }
-                />
-              </PaginationItem>
-
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => {
-                  // Only show a few pages if there are many
-                  if (totalPages > 7) {
-                    if (
-                      page !== 1 &&
-                      page !== totalPages &&
-                      Math.abs(page - currentPage) > 1
-                    ) {
-                      if (
-                        page === currentPage - 2 ||
-                        page === currentPage + 2
-                      ) {
-                        return (
-                          <PaginationItem key={page}>
-                            <PaginationEllipsis />
-                          </PaginationItem>
-                        );
-                      }
-                      return null;
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handlePageChange(currentPage - 1);
+                    }}
+                    className={
+                      currentPage === 1
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
                     }
-                  }
+                  />
+                </PaginationItem>
 
-                  return (
-                    <PaginationItem key={page}>
-                      <PaginationLink
-                        href="#"
-                        isActive={currentPage === page}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handlePageChange(page);
-                        }}
-                        className="cursor-pointer"
-                      >
-                        {page}
-                      </PaginationLink>
-                    </PaginationItem>
-                  );
-                },
-              )}
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => {
+                    // Only show a few pages if there are many
+                    if (totalPages > 7) {
+                      if (
+                        page !== 1 &&
+                        page !== totalPages &&
+                        Math.abs(page - currentPage) > 1
+                      ) {
+                        if (
+                          page === currentPage - 2 ||
+                          page === currentPage + 2
+                        ) {
+                          return (
+                            <PaginationItem key={page}>
+                              <PaginationEllipsis />
+                            </PaginationItem>
+                          );
+                        }
+                        return null;
+                      }
+                    }
 
-              <PaginationItem>
-                <PaginationNext
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handlePageChange(currentPage + 1);
-                  }}
-                  className={
-                    currentPage === totalPages
-                      ? "pointer-events-none opacity-50"
-                      : "cursor-pointer"
-                  }
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+                    return (
+                      <PaginationItem key={page}>
+                        <PaginationLink
+                          href="#"
+                          isActive={currentPage === page}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handlePageChange(page);
+                          }}
+                          className="cursor-pointer"
+                        >
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  },
+                )}
+
+                <PaginationItem>
+                  <PaginationNext
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handlePageChange(currentPage + 1);
+                    }}
+                    className={
+                      currentPage === totalPages
+                        ? "pointer-events-none opacity-50"
+                        : "cursor-pointer"
+                    }
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           )}
         </div>
       )}

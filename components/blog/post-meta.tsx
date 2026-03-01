@@ -1,7 +1,13 @@
 import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { Post } from "@/lib/blog/types";
 import { FavoriteButton } from "@/components/blog/favorite-button";
 import { ShareButton } from "@/components/blog/share-button";
+import { getCategoryColorClass, cn } from "@/lib/utils";
 
 type Props = {
   post: Post;
@@ -11,14 +17,32 @@ export function PostMeta({ post }: Props) {
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
-        <Badge variant="secondary">{post.category}</Badge>
-        <span className="text-muted-foreground text-sm">
-          {new Date(post.date).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
-        </span>
+        <Badge
+          variant="secondary"
+          className={cn("border", getCategoryColorClass(post.category))}
+        >
+          {post.category}
+        </Badge>
+        <Tooltip>
+          <TooltipTrigger>
+            <span className="text-muted-foreground text-sm cursor-help">
+              {new Date(post.date).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>
+              Published around{" "}
+              {new Date(post.date).toLocaleTimeString("en-US", {
+                hour: "numeric",
+                minute: "2-digit",
+              })}
+            </p>
+          </TooltipContent>
+        </Tooltip>
         <span className="text-muted-foreground text-sm">
           · {post.readingTime} min read
         </span>

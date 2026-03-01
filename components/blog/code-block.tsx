@@ -8,6 +8,11 @@ import {
   Cancel01Icon,
   Maximize01Icon,
 } from "@hugeicons/core-free-icons";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 
 interface CodeBlockProps extends React.HTMLAttributes<HTMLPreElement> {
@@ -46,40 +51,56 @@ export function CodeBlock({ children, className, ...props }: CodeBlockProps) {
           </span>
         </div>
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="flex items-center justify-center text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
-            title={isExpanded ? "Collapse code" : "Expand code"}
-            aria-label="Toggle Code Expansion"
-          >
-            {isExpanded ? (
-              <HugeiconsIcon icon={Cancel01Icon} className="h-4 w-4" />
-            ) : (
-              <HugeiconsIcon icon={Maximize01Icon} className="h-4 w-4" />
-            )}
-          </button>
-
-          <button
-            onClick={handleCopy}
-            className="flex items-center justify-center gap-1.5 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
-            title="Copy code"
-            aria-label="Copy to Clipboard"
-          >
-            {isCopied ? (
-              <>
-                <HugeiconsIcon
-                  icon={Tick01Icon}
-                  className="h-4 w-4 text-green-500"
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <button
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  className="flex items-center justify-center text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+                  aria-label="Toggle Code Expansion"
                 />
-                <span className="text-green-500">Copied</span>
-              </>
-            ) : (
-              <>
-                <HugeiconsIcon icon={Copy01Icon} className="h-4 w-4" />
-                <span>Copy</span>
-              </>
-            )}
-          </button>
+              }
+            >
+              {isExpanded ? (
+                <HugeiconsIcon icon={Cancel01Icon} className="h-4 w-4" />
+              ) : (
+                <HugeiconsIcon icon={Maximize01Icon} className="h-4 w-4" />
+              )}
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{isExpanded ? "Collapse code" : "Expand code"}</p>
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <button
+                  onClick={handleCopy}
+                  className="flex items-center justify-center gap-1.5 text-zinc-400 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
+                  aria-label="Copy to Clipboard"
+                />
+              }
+            >
+              {isCopied ? (
+                <>
+                  <HugeiconsIcon
+                    icon={Tick01Icon}
+                    className="h-4 w-4 text-green-500"
+                  />
+                  <span className="text-green-500">Copied</span>
+                </>
+              ) : (
+                <>
+                  <HugeiconsIcon icon={Copy01Icon} className="h-4 w-4" />
+                  <span>Copy</span>
+                </>
+              )}
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Copy code</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
 

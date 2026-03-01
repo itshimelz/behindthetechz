@@ -248,6 +248,22 @@
   padding: 0;
 }
 
+html:not(.dark) .prose pre {
+  background-color: var(--shiki-light-bg, #f8f9fa) !important;
+}
+
+html:not(.dark) .prose code span {
+  color: var(--shiki-light) !important;
+}
+
+html.dark .prose pre {
+  background-color: var(--shiki-dark-bg) !important;
+}
+
+html.dark .prose code span {
+  color: var(--shiki-dark) !important;
+}
+
 .prose hr {
   border: none;
   border-top: 1px solid var(--border);

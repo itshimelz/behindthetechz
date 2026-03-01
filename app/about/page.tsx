@@ -91,7 +91,7 @@ export default function AboutPage() {
             </h3>
             <div className="flex gap-4">
               <Link
-                href="https://github.com/himel8776"
+                href="https://github.com/itshimelz"
                 target="_blank"
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 aria-label="GitHub"
@@ -99,7 +99,7 @@ export default function AboutPage() {
                 <HugeiconsIcon icon={GithubIcon} className="h-6 w-6" />
               </Link>
               <Link
-                href="https://linkedin.com/in/rahathossainhimel"
+                href="https://linkedin.com/in/itshimelz"
                 target="_blank"
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 aria-label="LinkedIn"
@@ -107,7 +107,7 @@ export default function AboutPage() {
                 <HugeiconsIcon icon={Linkedin02Icon} className="h-6 w-6" />
               </Link>
               <Link
-                href="mailto:himel@example.com"
+                href={`mailto:${process.env.EMAIL_ADDRESS}`}
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 aria-label="Email"
               >

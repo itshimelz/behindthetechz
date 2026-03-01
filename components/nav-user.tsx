@@ -83,7 +83,11 @@ function SettingRow({
   );
 }
 
-export function NavUser({ publishedPostsCount = 0 }: { publishedPostsCount?: number }) {
+export function NavUser({
+  publishedPostsCount = 0,
+}: {
+  publishedPostsCount?: number;
+}) {
   const { isMobile } = useSidebar();
   const { theme, toggleTheme } = useTheme();
   const { enabled: readingProgressEnabled, setEnabled: setReadingProgress } =
@@ -100,6 +104,7 @@ export function NavUser({ publishedPostsCount = 0 }: { publishedPostsCount?: num
             <DropdownMenuTrigger
               render={
                 <SidebarMenuButton
+                  tooltip="Profile Settings"
                   size="lg"
                   className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                 />
@@ -283,8 +288,8 @@ export function NavUser({ publishedPostsCount = 0 }: { publishedPostsCount?: num
           <DialogHeader>
             <DialogTitle>Your Favorites</DialogTitle>
             <DialogDescription>
-              Posts you&apos;ve saved for quick access. This list is stored only in
-              your browser (local storage) and is not saved in the database.
+              Posts you&apos;ve saved for quick access. This list is stored only
+              in your browser (local storage) and is not saved in the database.
             </DialogDescription>
           </DialogHeader>
           <div className="max-h-72 overflow-y-auto">

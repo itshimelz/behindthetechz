@@ -99,7 +99,15 @@ export default async function BlogPostPage({
                 remarkPlugins: [remarkWikiLink, remarkMath],
                 rehypePlugins: [
                   rehypeKatex,
-                  [rehypePrettyCode, { theme: "github-light" }],
+                  [
+                    rehypePrettyCode,
+                    {
+                      theme: {
+                        light: "github-light",
+                        dark: "github-dark",
+                      },
+                    },
+                  ],
                 ],
               },
             }}

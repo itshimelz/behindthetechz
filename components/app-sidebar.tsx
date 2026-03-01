@@ -138,6 +138,7 @@ export function AppSidebar({
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
+                      tooltip={item.title}
                       render={<Link href={item.url} />}
                       isActive={isActive}
                     >
@@ -172,6 +173,7 @@ export function AppSidebar({
                     {topCategories.map((cat) => (
                       <SidebarMenuItem key={cat.slug}>
                         <SidebarMenuButton
+                          tooltip={cat.name}
                           render={<Link href={`/categories/${cat.slug}`} />}
                         >
                           <HugeiconsIcon
@@ -225,6 +227,7 @@ export function AppSidebar({
                     favorites.map((fav) => (
                       <SidebarMenuItem key={fav.slug}>
                         <SidebarMenuButton
+                          tooltip={fav.title}
                           render={<Link href={`/blog/${fav.slug}`} />}
                         >
                           <HugeiconsIcon
@@ -276,6 +279,7 @@ export function AppSidebar({
                     {recentPosts.map((post) => (
                       <SidebarMenuItem key={post.slug}>
                         <SidebarMenuButton
+                          tooltip={post.title}
                           render={<Link href={`/blog/${post.slug}`} />}
                         >
                           <HugeiconsIcon

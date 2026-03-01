@@ -10,6 +10,7 @@ import { getAllPosts } from "@/lib/blog/get-all-posts";
 import { getCategories } from "@/lib/blog/get-categories";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { getCategoryColorClass, cn } from "@/lib/utils";
 
 export default async function HomePage() {
   const [allPosts, categories] = await Promise.all([
@@ -21,7 +22,7 @@ export default async function HomePage() {
   return (
     <div className="mx-auto max-w-3xl px-6 py-6 md:py-20 flex flex-col gap-16 md:gap-24">
       {/* Sticky identity bar (mobile only) */}
-      <div className="sticky top-0 z-40 -mx-6 flex items-center gap-4 bg-background/95 px-6 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:static md:mx-0 md:bg-transparent md:p-0 md:backdrop-blur-none transition-colors">
+      <div className="sticky top-0 z-40 -mx-6 flex items-center gap-4 bg-background/95 px-6 py-2 backdrop-blur supports-backdrop-filter:bg-background/60 md:static md:mx-0 md:bg-transparent md:p-0 md:backdrop-blur-none transition-colors">
         <div className="relative h-16 w-16 overflow-hidden rounded-full border bg-background shrink-0">
           <Image
             src="/logo.png"
@@ -131,10 +132,13 @@ export default async function HomePage() {
               <Link key={category.slug} href={`/categories/${category.slug}`}>
                 <Badge
                   variant="secondary"
-                  className="rounded-md px-3 py-1.5 font-normal hover:bg-muted transition-colors text-sm"
+                  className={cn(
+                    "rounded-md px-3 py-1.5 font-normal hover:opacity-80 transition-colors text-sm border",
+                    getCategoryColorClass(category.name),
+                  )}
                 >
                   {category.name}
-                  <span className="text-muted-foreground ml-1.5 text-xs bg-background/50 px-1.5 py-0.5 rounded-sm">
+                  <span className="text-foreground/70 ml-1.5 text-xs bg-background/50 px-1.5 py-0.5 rounded-sm">
                     {category.count}
                   </span>
                 </Badge>
