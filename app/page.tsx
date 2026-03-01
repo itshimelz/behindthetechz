@@ -20,7 +20,7 @@ export default async function HomePage() {
   const latestPosts = allPosts.slice(0, 6);
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-6 md:py-20 flex flex-col gap-16 md:gap-24">
+    <div className="mx-auto max-w-3xl px-6 py-6 md:py-20 flex flex-col">
       {/* Sticky identity bar (mobile only) */}
       <div className="sticky top-0 z-40 -mx-6 flex items-center gap-4 bg-background/95 px-6 py-2 backdrop-blur supports-backdrop-filter:bg-background/60 md:static md:mx-0 md:bg-transparent md:p-0 md:backdrop-blur-none transition-colors">
         <div className="relative h-16 w-16 overflow-hidden rounded-full border bg-background shrink-0">
@@ -43,7 +43,7 @@ export default async function HomePage() {
       </div>
 
       {/* Hero Section */}
-      <section className="space-y-6">
+      <section className="space-y-6 mt-8 md:mt-10">
         <p className="text-muted-foreground text-lg leading-relaxed">
           A minimal knowledge-focused space for development guides, engineering
           stories, and experiments from day-to-day software building.
@@ -74,7 +74,7 @@ export default async function HomePage() {
       </section>
 
       {/* Latest Posts */}
-      <section className="space-y-8">
+      <section className="space-y-8 mt-16 md:mt-24">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-semibold tracking-tight text-foreground">
             Recent Writings
@@ -122,7 +122,7 @@ export default async function HomePage() {
       </section>
 
       {/* Categories */}
-      <section className="space-y-6 text-foreground">
+      <section className="space-y-6 text-foreground mt-16 md:mt-24">
         <h2 className="text-2xl font-semibold tracking-tight">
           Explore Topics
         </h2>
