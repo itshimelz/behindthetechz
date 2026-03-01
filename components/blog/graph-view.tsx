@@ -153,9 +153,22 @@ export function GraphView({ data }: Props) {
       map.set(node.id, new Set());
     }
 
+    const getId = (ref: string | { id?: string } | unknown) => {
+      if (!ref) return "";
+      if (typeof ref === "string") return ref;
+      if (typeof ref === "object" && "id" in ref) {
+        return String((ref as { id?: string }).id || "");
+      }
+      return "";
+    };
+
     for (const link of data.links) {
-      map.get(link.source)?.add(link.target);
-      map.get(link.target)?.add(link.source);
+      const sourceId = getId(link.source);
+      const targetId = getId(link.target);
+      if (sourceId && targetId) {
+        map.get(sourceId)?.add(targetId);
+        map.get(targetId)?.add(sourceId);
+      }
     }
 
     return map;
