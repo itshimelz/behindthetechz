@@ -10,6 +10,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { getCategories } from "@/lib/blog/get-categories";
 import {
@@ -99,6 +100,7 @@ export default async function RootLayout({
               {children}
               <SiteFooter />
             </SidebarInset>
+            <Toaster position="top-center" />
           </SidebarProvider>
         </TooltipProvider>
         <Analytics />

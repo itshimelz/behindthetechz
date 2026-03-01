@@ -11,6 +11,7 @@ import rehypePrettyCode from "rehype-pretty-code";
 import { PostMeta } from "@/components/blog/post-meta";
 import { TagPill } from "@/components/blog/tag-pill";
 import { CodeBlock } from "@/components/blog/code-block";
+import { InlineCode } from "@/components/blog/inline-code";
 import { ReadingProgress } from "@/components/blog/reading-progress";
 import { BacklinksSection } from "@/components/blog/backlinks-section";
 import { ScrollToTop } from "@/components/blog/scroll-to-top";
@@ -92,6 +93,9 @@ export default async function BlogPostPage({
             components={{
               pre: (props: React.HTMLAttributes<HTMLPreElement>) => (
                 <CodeBlock {...props} />
+              ),
+              code: (props: React.HTMLAttributes<HTMLElement>) => (
+                <InlineCode {...props} />
               ),
             }}
             options={{

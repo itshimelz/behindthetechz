@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, ReactNode } from "react";
+import { toast } from "sonner";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Tick01Icon,
@@ -34,6 +35,7 @@ export function CodeBlock({ children, className, ...props }: CodeBlockProps) {
       // textContent will extract just the raw text.
       const text = preRef.current.textContent || "";
       await navigator.clipboard.writeText(text);
+      toast.success("Code copied to clipboard");
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
     }

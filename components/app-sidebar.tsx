@@ -127,6 +127,8 @@ export function AppSidebar({
           </span>
           <SidebarTrigger className="group-data-[collapsible=icon]:mx-auto" />
         </div>
+      </SidebarHeader>
+      <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
@@ -151,8 +153,7 @@ export function AppSidebar({
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-      </SidebarHeader>
-      <SidebarContent>
+
         {/* Categories */}
         {categories.length > 0 && (
           <Collapsible defaultOpen className="group/collapsible">
