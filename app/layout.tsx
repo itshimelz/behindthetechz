@@ -22,7 +22,7 @@ import "katex/dist/katex.min.css";
 import "./globals.css";
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://behindthetechz.com";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://behindthetechz.live";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

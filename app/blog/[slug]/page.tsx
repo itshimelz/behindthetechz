@@ -37,7 +37,7 @@ export async function generateMetadata({
   }
 
   const SITE_URL =
-    process.env.NEXT_PUBLIC_SITE_URL || "https://behindthetechz.com";
+    process.env.NEXT_PUBLIC_SITE_URL || "https://behindthetechz.live";
 
   return {
     title: post.title,
