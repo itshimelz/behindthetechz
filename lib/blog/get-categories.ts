@@ -72,11 +72,11 @@ const getPostsByCategoryCached = unstable_cache(
 );
 
 export async function getCategories(): Promise<Category[]> {
-  const includeDrafts = process.env.NODE_ENV !== "production";
+  const includeDrafts = false; // Always hide drafts
   return getCategoriesCached(includeDrafts);
 }
 
 export async function getPostsByCategory(categorySlug: string) {
-  const includeDrafts = process.env.NODE_ENV !== "production";
+  const includeDrafts = false; // Always hide drafts
   return getPostsByCategoryCached(categorySlug, includeDrafts);
 }

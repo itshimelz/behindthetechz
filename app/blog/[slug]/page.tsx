@@ -1,20 +1,26 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
-
-import { getPostBySlug, getAllSlugs } from "@/lib/blog/get-post-by-slug";
-import { getBacklinksForSlug } from "@/lib/blog/get-backlinks";
-import remarkWikiLink from "@/lib/blog/remark-wiki-link";
-import remarkMath from "remark-math";
+import rehypeAutolinkHeadings from "rehype-autolink-headings";
 import rehypeKatex from "rehype-katex";
 import rehypePrettyCode from "rehype-pretty-code";
-import { PostMeta } from "@/components/blog/post-meta";
-import { TagPill } from "@/components/blog/tag-pill";
-import { CodeBlock } from "@/components/blog/code-block";
-import { InlineCode } from "@/components/blog/inline-code";
-import { ReadingProgress } from "@/components/blog/reading-progress";
+import rehypeSlug from "rehype-slug";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+
 import { BacklinksSection } from "@/components/blog/backlinks-section";
+import { CodeBlock } from "@/components/blog/code-block";
+import { HeadingCopyLinkEnhancer } from "@/components/blog/heading-copy-link-enhancer";
+import { InlineCode } from "@/components/blog/inline-code";
+import { PostMeta } from "@/components/blog/post-meta";
+import { ReadingProgress } from "@/components/blog/reading-progress";
 import { ScrollToTop } from "@/components/blog/scroll-to-top";
+import { TagPill } from "@/components/blog/tag-pill";
+import { getBacklinksForSlug } from "@/lib/blog/get-backlinks";
+import { getPostBySlug, getAllSlugs } from "@/lib/blog/get-post-by-slug";
+import remarkCallouts from "@/lib/blog/remark-callouts";
+import remarkWikiLink from "@/lib/blog/remark-wiki-link";
 
 type Params = { slug: string };
 
@@ -80,14 +86,31 @@ export default async function BlogPostPage({
     <>
       <ReadingProgress />
       <ScrollToTop />
+      <HeadingCopyLinkEnhancer />
       <article className="flex flex-1 flex-col gap-6 px-4 py-10 md:px-8">
         <div className="mx-auto w-full max-w-3xl space-y-4">
           <PostMeta post={post} />
           <TagPill tags={post.tags} />
         </div>
 
+        {/* Cover image */}
+        {post.coverImage && (
+          <div className="mx-auto w-full max-w-3xl">
+            <div className="relative aspect-video w-full overflow-hidden rounded-xl border">
+              <Image
+                src={post.coverImage}
+                alt={post.title}
+                fill
+                priority
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 768px"
+              />
+            </div>
+          </div>
+        )}
+
         {/* MDX content */}
-        <div className="prose prose-neutral dark:prose-invert mx-auto w-full max-w-3xl">
+        <div className="prose prose-neutral dark:prose-invert mx-auto w-full max-w-3xl md:prose-p:leading-snug md:prose-li:leading-snug md:prose-headings:leading-tight lg:prose-p:leading-normal lg:prose-li:leading-normal">
           <MDXRemote
             source={post.content}
             components={{
@@ -100,9 +123,35 @@ export default async function BlogPostPage({
             }}
             options={{
               mdxOptions: {
-                remarkPlugins: [remarkWikiLink, remarkMath],
+                remarkPlugins: [
+                  remarkWikiLink,
+                  remarkCallouts,
+                  remarkGfm,
+                  remarkMath,
+                ],
                 rehypePlugins: [
                   rehypeKatex,
+                  rehypeSlug,
+                  [
+                    rehypeAutolinkHeadings,
+                    {
+                      behavior: "append",
+                      properties: {
+                        className: ["heading-anchor"],
+                        "aria-label": "Copy section link",
+                        "data-heading-anchor": "true",
+                        title: "Copy link to this section",
+                      },
+                      content: [
+                        {
+                          type: "element",
+                          tagName: "span",
+                          properties: { "aria-hidden": "true" },
+                          children: [{ type: "text", value: "#" }],
+                        },
+                      ],
+                    },
+                  ],
                   [
                     rehypePrettyCode,
                     {

@@ -24,7 +24,9 @@ export type DbPostWithRelations = Prisma.PostGetPayload<{
   include: typeof postWithRelationsInclude;
 }>;
 
-export function getPostStatusWhere(includeDrafts: boolean): Prisma.PostWhereInput {
+export function getPostStatusWhere(
+  includeDrafts: boolean,
+): Prisma.PostWhereInput {
   return includeDrafts
     ? { status: { in: [PostStatus.DRAFT, PostStatus.PUBLISHED] } }
     : { status: PostStatus.PUBLISHED };
@@ -42,6 +44,7 @@ export function mapDbPostToPost(post: DbPostWithRelations): Post {
     excerpt: post.excerpt,
     date: (post.publishedAt ?? post.createdAt).toISOString(),
     updatedAt: post.updatedAt.toISOString(),
+    coverImage: post.coverImage || undefined,
     category: primaryCategory,
     tags: post.tags.map((entry) => entry.tag.name),
     featured: post.isFeatured,
@@ -108,7 +111,7 @@ const getPublishedPostCountCached = unstable_cache(
 );
 
 export async function getAllPosts(): Promise<Post[]> {
-  const includeDrafts = process.env.NODE_ENV !== "production";
+  const includeDrafts = false; // Always hide drafts
   return getAllPostsCached(includeDrafts);
 }
 
@@ -123,7 +126,7 @@ export type RecentPostLink = {
 };
 
 export async function getRecentPostLinks(limit = 5): Promise<RecentPostLink[]> {
-  const includeDrafts = process.env.NODE_ENV !== "production";
+  const includeDrafts = false; // Always hide drafts
   return getRecentPostLinksCached(includeDrafts, limit);
 }
 
