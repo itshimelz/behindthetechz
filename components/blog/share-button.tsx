@@ -42,6 +42,7 @@ function ShareOption({
 }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       className="flex flex-col items-center gap-2 rounded-xl p-3 transition-colors group"
     >
@@ -231,11 +232,11 @@ export function ShareButton({ slug, title }: Props) {
           </div>
 
           {/* Copy link */}
-          <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/30 p-2">
+          <div className="flex min-w-0 items-center gap-2 rounded-lg border border-border bg-muted/30 p-2">
             <input
               readOnly
               value={postUrl}
-              className="flex-1 bg-transparent text-sm text-foreground outline-none truncate px-1"
+              className="min-w-0 flex-1 truncate bg-transparent px-1 text-sm text-foreground outline-none"
             />
             <Button
               variant="secondary"
