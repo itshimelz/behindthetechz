@@ -19,7 +19,8 @@
 
 # production
 /build
-/docs
+# /docs
+/.agents
 
 # misc
 .DS_Store

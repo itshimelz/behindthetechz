@@ -3,7 +3,7 @@ import { getAllPosts } from "@/lib/blog/get-all-posts";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const SITE_URL =
-    process.env.NEXT_PUBLIC_SITE_URL || "https://behindthetechz.com";
+    process.env.NEXT_PUBLIC_SITE_URL || "https://behindthetechz.live";
 
   const posts = await getAllPosts();
 
