@@ -92,6 +92,8 @@
   --graph-node-selected: #56677c;
   --graph-label: #374151;
   --graph-label-muted: #6b7280;
+  --wiki-link: oklch(0.488 0.243 264.376);
+  --wiki-link-hover: oklch(0.424 0.199 265.638);
 }
 
 .dark {
@@ -134,6 +136,8 @@
   --graph-node-selected: #bcc7d5;
   --graph-label: #dbe2ea;
   --graph-label-muted: #9aa5b3;
+  --wiki-link: oklch(0.8 0.12 255);
+  --wiki-link-hover: oklch(0.86 0.1 255);
 }
 
 @layer base {
@@ -296,7 +300,7 @@ html.dark .prose code span {
 
 /* Wiki link styling */
 .wiki-link {
-  color: var(--primary);
+  color: var(--wiki-link);
   text-decoration: none;
   text-decoration-style: none;
   text-underline-offset: 3px;
@@ -305,6 +309,7 @@ html.dark .prose code span {
     text-decoration-color 0.15s ease;
 }
 .wiki-link:hover {
+  color: var(--wiki-link-hover);
   text-decoration-style: solid;
 }
 
