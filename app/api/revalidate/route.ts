@@ -1,13 +1,6 @@
-import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
-const DEFAULT_TAGS = [
-  "blog:posts",
-  "blog:categories",
-  "blog:tags",
-  "blog:backlinks",
-  "blog:graph",
-];
+import { BLOG_DEFAULT_REVALIDATE_TAGS, revalidateCacheTags } from "@/lib/blog/cache-tags";
 
 export async function POST(request: Request) {
   const secret = process.env.REVALIDATE_SECRET;
@@ -16,10 +9,13 @@ export async function POST(request: Request) {
     new URL(request.url).searchParams.get("secret");
 
   if (secret && providedToken !== secret) {
-    return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { ok: false, message: "Unauthorized" },
+      { status: 401 },
+    );
   }
 
-  let tags = DEFAULT_TAGS;
+  let tags: string[] = [...BLOG_DEFAULT_REVALIDATE_TAGS];
 
   try {
     const payload = (await request.json()) as { tags?: string[] };
@@ -30,8 +26,7 @@ export async function POST(request: Request) {
     // Keep default tags when no JSON body is provided.
   }
 
-  const uniqueTags = [...new Set(tags.filter(Boolean))];
-  uniqueTags.forEach((tag) => revalidateTag(tag, "max"));
+  const uniqueTags = revalidateCacheTags(tags);
 
   return NextResponse.json({
     ok: true,

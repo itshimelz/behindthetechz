@@ -9,12 +9,12 @@ import {
 } from "@/lib/blog/get-all-posts";
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
-  const includeDrafts = process.env.NODE_ENV !== "production";
+  const includeDrafts = false; // Always hide drafts
   return getPostBySlugCached(slug, includeDrafts);
 }
 
 export async function getAllSlugs(): Promise<string[]> {
-  const includeDrafts = process.env.NODE_ENV !== "production";
+  const includeDrafts = false; // Always hide drafts
   return getAllSlugsCached(includeDrafts);
 }
 

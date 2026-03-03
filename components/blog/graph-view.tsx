@@ -517,7 +517,7 @@ export function GraphView({ data }: Props) {
               </div>
 
               {searchQuery.trim() ? (
-                <div className="mt-2 max-h-52 overflow-y-auto rounded-lg border bg-card">
+                <div className="mt-2 max-h-52 overflow-y-auto scrollbar-minimal rounded-lg border bg-card">
                   {searchResults.length > 0 ? (
                     <ul className="divide-y divide-border">
                       {searchResults.map((node) => (
@@ -653,7 +653,7 @@ export function GraphView({ data }: Props) {
                   <p className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
                     Nearby nodes
                   </p>
-                  <ul className="divide-y divide-border/50 max-h-40 overflow-y-auto">
+                  <ul className="divide-y divide-border/50 max-h-40 overflow-y-auto scrollbar-minimal pr-1">
                     {selectedNeighbors.map((node, index) => {
                       // Determine direction relative to selectedNode
                       // An outgoing link means selectedNode -> node

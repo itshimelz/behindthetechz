@@ -1,5 +1,7 @@
-import { getAllPosts } from "@/lib/blog/get-all-posts";
 import { unstable_cache } from "next/cache";
+
+import { BLOG_CACHE_TAGS } from "@/lib/blog/cache-tags";
+import { getAllPosts } from "@/lib/blog/get-all-posts";
 import { extractWikiLinkSlugs } from "@/lib/blog/remark-wiki-link";
 
 export type GraphNode = {
@@ -26,7 +28,8 @@ const BLOG_REVALIDATE_SECONDS = 300;
 
 const getGraphDataCached = unstable_cache(
   async (): Promise<GraphData> => {
-    const posts = await getAllPosts();
+    const allPosts = await getAllPosts();
+    const posts = allPosts.filter((p) => !p.draft);
     const slugSet = new Set(posts.map((p) => p.slug));
 
     const nodes: GraphNode[] = posts.map((post) => ({
@@ -82,7 +85,7 @@ const getGraphDataCached = unstable_cache(
   ["blog-graph-data"],
   {
     revalidate: BLOG_REVALIDATE_SECONDS,
-    tags: ["blog:posts", "blog:graph"],
+    tags: [BLOG_CACHE_TAGS.posts, BLOG_CACHE_TAGS.graph],
   },
 );
 

@@ -1,5 +1,7 @@
-import { getAllPosts } from "@/lib/blog/get-all-posts";
 import { unstable_cache } from "next/cache";
+
+import { BLOG_CACHE_TAGS } from "@/lib/blog/cache-tags";
+import { getAllPosts } from "@/lib/blog/get-all-posts";
 import { extractWikiLinkSlugs } from "@/lib/blog/remark-wiki-link";
 
 export type BacklinkEntry = {
@@ -28,7 +30,7 @@ const getBacklinksForSlugCached = unstable_cache(
   ["blog-backlinks-for-slug"],
   {
     revalidate: BLOG_REVALIDATE_SECONDS,
-    tags: ["blog:posts", "blog:backlinks"],
+    tags: [BLOG_CACHE_TAGS.posts, BLOG_CACHE_TAGS.backlinks],
   },
 );
 
@@ -54,7 +56,7 @@ const getAllBacklinksCached = unstable_cache(
   ["blog-all-backlinks"],
   {
     revalidate: BLOG_REVALIDATE_SECONDS,
-    tags: ["blog:posts", "blog:backlinks"],
+    tags: [BLOG_CACHE_TAGS.posts, BLOG_CACHE_TAGS.backlinks],
   },
 );
 

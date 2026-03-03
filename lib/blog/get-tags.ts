@@ -1,7 +1,9 @@
-import { prisma } from "@/lib/prisma";
 import { unstable_cache } from "next/cache";
+
+import { BLOG_CACHE_TAGS } from "@/lib/blog/cache-tags";
 import { getPostStatusWhere } from "@/lib/blog/get-all-posts";
 import type { Tag } from "@/lib/blog/types";
+import { prisma } from "@/lib/prisma";
 
 const BLOG_REVALIDATE_SECONDS = 300;
 
@@ -35,7 +37,7 @@ const getTagsCached = unstable_cache(
   ["blog-tags"],
   {
     revalidate: BLOG_REVALIDATE_SECONDS,
-    tags: ["blog:posts", "blog:tags"],
+    tags: [BLOG_CACHE_TAGS.posts, BLOG_CACHE_TAGS.tags],
   },
 );
 

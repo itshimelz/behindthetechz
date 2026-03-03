@@ -213,6 +213,36 @@
   font-size: 1.25rem;
 }
 
+.prose :is(h1, h2, h3, h4, h5, h6) {
+  scroll-margin-top: 6rem;
+}
+
+.prose .heading-anchor {
+  margin-left: 0.45rem;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  font-weight: 500;
+}
+
+.prose :is(h1, h2, h3, h4, h5, h6):hover .heading-anchor,
+.prose :is(h1, h2, h3, h4, h5, h6):focus-within .heading-anchor {
+  opacity: 1;
+}
+
+.prose .heading-anchor.is-copied {
+  opacity: 1;
+}
+
+.prose .heading-anchor.is-copied span::after {
+  content: " copied";
+  font-size: 0.72rem;
+  margin-left: 0.28rem;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 .prose ul,
 .prose ol {
   padding-left: 1.6em;
@@ -226,6 +256,95 @@
 
 .prose li > p {
   margin-bottom: 0.4em;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.6em 0;
+  font-size: 0.95em;
+  text-align: left;
+}
+
+.prose thead {
+  border-bottom: 1px solid var(--border);
+}
+
+.prose th,
+.prose td {
+  border-bottom: 1px solid var(--border);
+  padding: 0.55em 0.75em;
+  vertical-align: top;
+}
+
+.prose th {
+  font-weight: 700;
+}
+
+.prose tr:last-child td {
+  border-bottom: none;
+}
+
+.prose del {
+  color: var(--muted-foreground);
+}
+
+.prose input[type="checkbox"] {
+  margin-right: 0.5em;
+}
+
+.prose .callout {
+  border: 1px solid var(--border);
+  border-left-width: 4px;
+  border-radius: 0.75rem;
+  margin: 1.4em 0;
+  padding: 0.9em 1em;
+  background: color-mix(in oklch, var(--muted) 30%, var(--background));
+}
+
+.prose .callout[data-callout="note"],
+.prose .callout[data-callout="important"] {
+  border-left-color: var(--primary);
+}
+
+.prose .callout[data-callout="tip"] {
+  border-left-color: var(--ring);
+}
+
+.prose .callout[data-callout="warning"],
+.prose .callout[data-callout="caution"] {
+  border-left-color: var(--destructive);
+}
+
+.prose .callout .callout-title {
+  margin: 0 0 0.45em;
+}
+
+.prose .callout p:last-child,
+.prose .callout ul:last-child,
+.prose .callout ol:last-child {
+  margin-bottom: 0;
+}
+
+.prose sup {
+  line-height: 0;
+}
+
+.prose .footnotes {
+  margin-top: 2.2em;
+  padding-top: 1.2em;
+  border-top: 1px solid var(--border);
+  font-size: 0.9em;
+}
+
+.prose .footnotes ol {
+  margin-top: 0.8em;
+  padding-left: 1.4em;
+}
+
+.prose [data-footnote-backref] {
+  margin-left: 0.35em;
+  text-decoration: none;
 }
 
 .prose blockquote {
@@ -330,11 +449,22 @@ html.dark .prose code span {
   .prose h3 {
     font-size: 1.125rem;
   }
+  .prose .heading-anchor {
+    opacity: 1;
+  }
   .prose pre {
     max-width: calc(100vw - 2rem);
+  }
+  .prose table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
   }
   .prose img {
     max-width: 100%;
     height: auto;
+  }
+  .prose .callout {
+    padding: 0.8em 0.85em;
   }
 }
