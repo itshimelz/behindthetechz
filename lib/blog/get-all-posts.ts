@@ -49,6 +49,13 @@ export function mapDbPostToPost(post: DbPostWithRelations): Post {
     tags: post.tags.map((entry) => entry.tag.name),
     featured: post.isFeatured,
     draft: post.status !== PostStatus.PUBLISHED,
+    // We type-cast here because the TS server might be lagging on the new DB columns
+    viewCount: ((post as Record<string, unknown>).viewCount as number) ?? 0,
+    clapCount: ((post as Record<string, unknown>).clapCount as number) ?? 0,
+    seriesId:
+      ((post as Record<string, unknown>).seriesId as string) || undefined,
+    seriesOrder:
+      ((post as Record<string, unknown>).seriesOrder as number) ?? undefined,
   };
 
   return {

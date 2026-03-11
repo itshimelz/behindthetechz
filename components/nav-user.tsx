@@ -15,6 +15,7 @@ import {
   GlobalIcon,
   AnalyticsUpIcon,
   EyeIcon,
+  Menu01Icon,
 } from "@hugeicons/core-free-icons";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -45,6 +46,7 @@ import {
 import { useTheme } from "@/hooks/use-theme";
 import { useFavorites } from "@/hooks/use-favorites";
 import { useReadingProgressPreference } from "@/hooks/use-reading-progress";
+import { useTocPreference } from "@/hooks/use-toc";
 
 const user = {
   name: "Rahat H. Himel",
@@ -92,6 +94,7 @@ export function NavUser({
   const { theme, toggleTheme } = useTheme();
   const { enabled: readingProgressEnabled, setEnabled: setReadingProgress } =
     useReadingProgressPreference();
+  const { enabled: tocEnabled, setEnabled: setTocEnabled } = useTocPreference();
   const { favorites, toggleFavorite, isMounted } = useFavorites();
   const [favoritesOpen, setFavoritesOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
@@ -277,6 +280,19 @@ export function NavUser({
                 checked={readingProgressEnabled}
                 onCheckedChange={setReadingProgress}
               />
+            </SettingRow>
+            <SettingRow
+              icon={
+                <HugeiconsIcon
+                  icon={Menu01Icon}
+                  className="size-4"
+                  strokeWidth={2}
+                />
+              }
+              label="Table of Contents"
+              description="Show in-page table of contents"
+            >
+              <Switch checked={tocEnabled} onCheckedChange={setTocEnabled} />
             </SettingRow>
           </div>
         </DialogContent>

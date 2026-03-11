@@ -102,3 +102,71 @@ _(All admin routes require standard admin authentication via the `validateAdminR
   }
   ```
 - **Returns:** Results of each operation and the revalidated cache tags.
+
+---
+
+## 5. Post Metrics & Interaction
+
+These endpoints are public and do not require admin authentication. They manage user interactions with individual blog posts.
+
+### `GET /api/posts/[slug]/views`
+
+- **Description:** Retrieve the current view count for a specific post.
+- **Parameters:** `slug` (Path parameter)
+- **Returns:** 
+  ```json
+  { "viewCount": 0 }
+  ```
+
+### `POST /api/posts/[slug]/views`
+
+- **Description:** Increment the view count for a specific post. Prevents duplicate views per user by generating a `btz_viewed_posts` cookie.
+- **Parameters:** `slug` (Path parameter)
+- **Returns:** 
+  ```json
+  { "viewCount": 1, "counted": true }
+  ```
+
+### `GET /api/posts/[slug]/claps`
+
+- **Description:** Retrieve the current clap count for a specific post.
+- **Parameters:** `slug` (Path parameter)
+- **Returns:** 
+  ```json
+  { "clapCount": 0 }
+  ```
+
+### `POST /api/posts/[slug]/claps`
+
+- **Description:** Increment the clap count for a specific post. Supports multiple claps per request (up to 10). Rate limits apply. Enforces a maximum of 50 claps per post per session using the `btz_clap_session` cookie and database locking. 
+- **Parameters:** `slug` (Path parameter)
+- **Payload:**
+  ```json
+  { "count": 1 } // Optional, defaults to 1. Must be between 1 and 10.
+  ```
+- **Returns:** 
+  ```json
+  { "clapCount": 1, "counted": true, "remainingClaps": 49 }
+  ```
+
+---
+
+## 6. Admin Uploads
+
+### `POST /api/admin/images/upload`
+
+- **Description:** Upload one or more image files directly to the Supabase Storage bucket. Requires standard admin authentication.
+- **Query Parameters:** `?bucket=cover-images|post-images` (Optional, defaults to `post-images`)
+- **Payload:** `multipart/form-data` containing one or more `file` fields holding the binary data.
+- **Returns:** 
+  ```json
+  {
+    "ok": true,
+    "uploaded": [
+      { 
+        "name": "example-image.png", 
+        "url": "https://<supabase-url>/storage/v1/object/public/post-images/171501...-example-image.png" 
+      }
+    ]
+  }
+  ```

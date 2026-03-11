@@ -368,6 +368,8 @@ export const frontmatterSchema = z.object({
   featured: z.boolean().default(false),
   categories: z.array(z.string()).optional().default([]),
   tags: z.array(z.string()).optional().default([]),
+  series: z.string().nullable().optional(),
+  seriesOrder: z.number().int().positive().nullable().optional(),
 });
 
 export type Frontmatter = z.infer<typeof frontmatterSchema>;
@@ -541,6 +543,13 @@ Flags: `--dry-run`, `--yes`, `--only <slug>`, `--concurrency <n>` (default 5).
 - `--yes` to skip.
 - Calls `DELETE /api/admin/posts/:slug`.
 - Removes slug from `state.json`.
+
+### `techz image upload <files...>`
+
+- Uploads multiple images locally to the Supabase Storage bucket.
+- Handles parsing complexities between Node.js `FormData` and Next.js App Router endpoints.
+- Returns MDX-compatible image URLs for immediate use in markdown content.
+- Generates descriptive UUID-based or timestamped filenames to prevent collisions.
 
 **Exit criteria:** `techz push --dry-run` shows correct plan; `techz push --yes` on a fixture workspace creates posts in the blog DB.
 
@@ -739,6 +748,7 @@ All calls go to the admin API defined in `docs/admin-api-implementation-plan.md`
 | `techz archive <slug>`   | `POST /api/admin/posts/:slug/archive`   |
 | `techz revalidate`       | `POST /api/revalidate`                  |
 | `techz doctor`           | `GET /api/admin/posts` (health probe)   |
+| `techz image upload`     | `POST /api/admin/upload`                |
 
 ---
 

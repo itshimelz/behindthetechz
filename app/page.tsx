@@ -100,12 +100,14 @@ export default async function HomePage() {
                   <h3 className="text-lg font-medium group-hover:text-primary transition-colors line-clamp-1 text-foreground">
                     {post.title}
                   </h3>
-                  <span className="text-sm text-muted-foreground shrink-0 tabular-nums">
+                  <span className="text-sm italic text-muted-foreground shrink-0 tabular-nums">
                     {new Date(post.date).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                       year: "numeric",
                     })}
+                    <span className="mx-1">·</span>
+                    {post.readingTime} min read
                   </span>
                 </div>
                 <p className="text-muted-foreground text-sm line-clamp-2">

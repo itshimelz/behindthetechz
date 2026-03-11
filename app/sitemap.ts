@@ -39,6 +39,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.3,
     },
+    {
+      url: `${SITE_URL}/tags`,
+      lastModified: new Date().toISOString(),
+      changeFrequency: "weekly",
+      priority: 0.6,
+    },
+    {
+      url: `${SITE_URL}/changelog`,
+      lastModified: new Date().toISOString(),
+      changeFrequency: "monthly",
+      priority: 0.3,
+    },
   ];
 
   return [...staticPages, ...postEntries];

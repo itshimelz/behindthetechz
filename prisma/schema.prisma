@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,38 +8,53 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-enum PostStatus {
-  DRAFT
-  PUBLISHED
-  ARCHIVED
-}
-
 model Post {
   id          String         @id @default(uuid()) @db.Uuid
   slug        String         @unique
   title       String
   excerpt     String
-  contentMdx  String         @map("content_mdx") @db.Text
+  contentMdx  String         @map("content_mdx")
   coverImage  String?        @map("cover_image")
   status      PostStatus     @default(DRAFT)
   isFeatured  Boolean        @default(false) @map("is_featured")
   publishedAt DateTime?      @map("published_at")
   updatedAt   DateTime       @updatedAt @map("updated_at")
   createdAt   DateTime       @default(now()) @map("created_at")
+  viewCount   Int            @default(0) @map("view_count")
+  clapCount   Int            @default(0) @map("clap_count")
+  seriesId    String?        @map("series_id") @db.Uuid
+  seriesOrder Int?           @map("series_order")
+  clapSessions PostClapSession[]
   categories  PostCategory[]
   tags        PostTag[]
+  series      Series?        @relation(fields: [seriesId], references: [id])
 
-  @@index([status, publishedAt], map: "posts_status_published_at_idx")
+  @@index([status, publishedAt])
+  @@index([seriesId])
   @@map("posts")
+}
+
+model PostClapSession {
+  id        String   @id @db.Uuid
+  sessionId String   @map("session_id")
+  slug      String
+  clapCount Int      @default(0) @map("clap_count")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  post      Post     @relation(fields: [slug], references: [slug], onDelete: Cascade)
+
+  @@unique([sessionId, slug])
+  @@index([slug])
+  @@map("post_clap_sessions")
 }
 
 model Category {
   id        String         @id @default(uuid()) @db.Uuid
   name      String
   slug      String         @unique
-  iconKey   String         @default("tag") @map("icon_key")
   createdAt DateTime       @default(now()) @map("created_at")
   updatedAt DateTime       @updatedAt @map("updated_at")
+  iconKey   String         @default("tag") @map("icon_key")
   posts     PostCategory[]
 
   @@map("categories")
@@ -66,11 +75,11 @@ model PostCategory {
   postId     String   @map("post_id") @db.Uuid
   categoryId String   @map("category_id") @db.Uuid
   assignedAt DateTime @default(now()) @map("assigned_at")
-  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  post       Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@id([postId, categoryId])
-  @@index([categoryId], map: "post_categories_category_id_idx")
+  @@index([categoryId])
   @@map("post_categories")
 }
 
@@ -82,6 +91,24 @@ model PostTag {
   tag        Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([postId, tagId])
-  @@index([tagId], map: "post_tags_tag_id_idx")
+  @@index([tagId])
   @@map("post_tags")
+}
+
+model Series {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String
+  slug        String   @unique
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  posts       Post[]
+
+  @@map("series")
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
 }

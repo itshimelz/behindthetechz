@@ -60,7 +60,7 @@ export async function POST(request: Request) {
               break;
             }
 
-            const { categories, tags, publishedAt, ...postFields } = op.data;
+            const { categories, tags, publishedAt, series, seriesOrder, ...postFields } = op.data;
             const created = await prisma.post.create({
               data: {
                 slug: op.slug,
@@ -71,6 +71,8 @@ export async function POST(request: Request) {
                 coverImage: postFields.coverImage ?? null,
                 isFeatured: postFields.isFeatured ?? false,
                 publishedAt: publishedAt ? new Date(publishedAt) : null,
+                series: series ? { connect: { slug: series } } : undefined,
+                seriesOrder: seriesOrder ?? undefined,
                 categories: {
                   create:
                     categories?.map((categorySlug) => ({
@@ -138,8 +140,16 @@ export async function POST(request: Request) {
               break;
             }
 
-            const { categories, tags, publishedAt, ...postFields } = op.data;
+            const { categories, tags, publishedAt, series, seriesOrder, ...postFields } = op.data;
             const updateData: Prisma.PostUpdateInput = { ...postFields };
+
+            if (series !== undefined) {
+              updateData.series = series ? { connect: { slug: series } } : { disconnect: true };
+            }
+
+            if (seriesOrder !== undefined) {
+              updateData.seriesOrder = seriesOrder === null ? null : seriesOrder;
+            }
 
             if (publishedAt !== undefined) {
               updateData.publishedAt = publishedAt ? new Date(publishedAt) : null;

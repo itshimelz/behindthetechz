@@ -36,6 +36,7 @@ import {
   ChartBubble02Icon,
   Bookmark02Icon,
   ArrowRight01Icon,
+  Notification03Icon,
 } from "@hugeicons/core-free-icons";
 import {
   Empty,
@@ -63,6 +64,11 @@ const navMain = [
     icon: <HugeiconsIcon icon={GridViewIcon} strokeWidth={2} />,
   },
   {
+    title: "Tags",
+    url: "/tags",
+    icon: <HugeiconsIcon icon={Tag01Icon} strokeWidth={2} />,
+  },
+  {
     title: "Graph View",
     url: "/graph",
     icon: <HugeiconsIcon icon={ChartBubble02Icon} strokeWidth={2} />,
@@ -70,6 +76,11 @@ const navMain = [
 ];
 
 const navSecondary = [
+  {
+    title: "What's New",
+    url: "/changelog",
+    icon: <HugeiconsIcon icon={Notification03Icon} strokeWidth={2} />,
+  },
   {
     title: "About",
     url: "/about",

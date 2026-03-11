@@ -11,14 +11,20 @@ import remarkMath from "remark-math";
 
 import { BacklinksSection } from "@/components/blog/backlinks-section";
 import { CodeBlock } from "@/components/blog/code-block";
+import { PostFooter } from "@/components/blog/post-footer";
 import { HeadingCopyLinkEnhancer } from "@/components/blog/heading-copy-link-enhancer";
 import { InlineCode } from "@/components/blog/inline-code";
 import { PostMeta } from "@/components/blog/post-meta";
 import { ReadingProgress } from "@/components/blog/reading-progress";
+import { RelatedPosts } from "@/components/blog/related-posts";
 import { ScrollToTop } from "@/components/blog/scroll-to-top";
+import { SeriesNav } from "@/components/blog/series-nav";
+import { TableOfContents } from "@/components/blog/table-of-contents";
 import { TagPill } from "@/components/blog/tag-pill";
 import { getBacklinksForSlug } from "@/lib/blog/get-backlinks";
 import { getPostBySlug, getAllSlugs } from "@/lib/blog/get-post-by-slug";
+import { getRelatedPosts } from "@/lib/blog/get-related-posts";
+import { getSeriesForPost } from "@/lib/blog/get-series";
 import remarkCallouts from "@/lib/blog/remark-callouts";
 import remarkWikiLink from "@/lib/blog/remark-wiki-link";
 
@@ -81,14 +87,25 @@ export default async function BlogPostPage({
   }
 
   const backlinks = await getBacklinksForSlug(decodedSlug);
+  const relatedPosts = await getRelatedPosts(
+    decodedSlug,
+    post.category,
+    post.tags,
+  );
+  const seriesData = post.seriesId
+    ? await getSeriesForPost(post.seriesId)
+    : null;
 
   return (
     <>
       <ReadingProgress />
       <ScrollToTop />
       <HeadingCopyLinkEnhancer />
-      <article className="flex flex-1 flex-col gap-6 px-4 py-10 md:px-8">
-        <div className="mx-auto w-full max-w-3xl space-y-4">
+      
+      {/* Container for Article & Sticky Sidebar */}
+      <div className="mx-auto flex w-full max-w-360 items-start justify-center gap-8 px-4 py-10 md:px-8">
+        <article className="flex w-full max-w-3xl min-w-0 flex-1 flex-col gap-6">
+          <div className="mx-auto w-full max-w-3xl space-y-4">
           <PostMeta post={post} />
           <TagPill tags={post.tags} />
         </div>
@@ -108,6 +125,16 @@ export default async function BlogPostPage({
             </div>
           </div>
         )}
+
+        {/* Series Navigation */}
+        {seriesData && (
+          <SeriesNav series={seriesData} currentSlug={decodedSlug} />
+        )}
+
+        {/* Table of Contents - Mobile/Tablet inline only */}
+        <div className="xl:hidden">
+          <TableOfContents />
+        </div>
 
         {/* MDX content */}
         <div className="prose prose-neutral dark:prose-invert mx-auto w-full max-w-3xl md:prose-p:leading-snug md:prose-li:leading-snug md:prose-headings:leading-tight lg:prose-p:leading-normal lg:prose-li:leading-normal">
@@ -169,7 +196,27 @@ export default async function BlogPostPage({
 
         {/* Backlinks */}
         <BacklinksSection backlinks={backlinks} />
+
+        {/* Related Posts */}
+        <RelatedPosts posts={relatedPosts} />
+
+        {/* Medium-style post footer */}
+        <PostFooter
+          slug={post.slug}
+          title={post.title}
+          tags={post.tags}
+          category={post.category}
+          date={post.date}
+          initialClapCount={post.clapCount}
+          initialViewCount={post.viewCount}
+        />
       </article>
-    </>
+
+      {/* Desktop Sticky Table of Contents */}
+      <div className="contents">
+        <TableOfContents isDesktop />
+      </div>
+    </div>
+  </>
   );
 }

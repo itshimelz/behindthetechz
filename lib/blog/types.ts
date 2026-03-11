@@ -9,6 +9,10 @@ export type PostFrontmatter = {
   tags: string[];
   featured: boolean;
   draft: boolean;
+  viewCount: number;
+  clapCount: number;
+  seriesId?: string;
+  seriesOrder?: number;
 };
 
 export type Post = PostFrontmatter & {

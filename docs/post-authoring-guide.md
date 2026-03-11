@@ -117,6 +117,54 @@ VALUES ('<post-uuid>', '<category-uuid>');
 
 ---
 
+## 📚 Post Series
+
+You can group multiple posts into an ordered series. When a post belongs to a series, readers will see a series navigation box inside the post, displaying all parts of the series with `Previous` and `Next` links.
+
+### Step 1: Create the Series
+
+Currently, series metadata (name and description) must be created directly in the database before you assign posts to it.
+
+```sql
+INSERT INTO series (id, name, slug, description)
+VALUES (
+  gen_random_uuid(), 
+  'Kotlin Multiplatform from Scratch', 
+  'kmp-from-scratch', 
+  'A complete guide to learning Kotlin Multiplatform.'
+);
+```
+
+### Step 2: Assign Posts to the Series
+
+**Option A: Using MDX Frontmatter (for the CLI)**
+
+Add the `series` (the series slug) and `seriesOrder` (the part number, 1-based) to your frontmatter:
+
+```yaml
+---
+title: "Introduction to KMP"
+slug: "intro-to-kmp"
+series: "kmp-from-scratch"
+seriesOrder: 1
+---
+```
+When you push this using the CLI, it automatically connects the post to the existing series in the database.
+
+**Option B: Using SQL or Prisma Studio**
+
+If you're managing posts directly in the database, update the post's `series_id` and `series_order`:
+
+```sql
+UPDATE posts
+SET 
+  series_id = (SELECT id FROM series WHERE slug = 'kmp-from-scratch'), 
+  series_order = 1
+WHERE slug = 'intro-to-kmp';
+```
+
+---
+
 ## 📝 Example: Complete Bengali Post
 
 ### Step 1: Insert the Post

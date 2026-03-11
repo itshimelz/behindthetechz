@@ -21,6 +21,8 @@ export const createPostSchema = z.object({
   publishedAt: z.string().datetime().nullable().optional(),
   categories: z.array(z.string()).optional(), // category slugs
   tags: z.array(z.string()).optional(), // tag slugs
+  series: z.string().nullable().optional(), // series slug
+  seriesOrder: z.number().int().positive().nullable().optional(),
 });
 
 export const updatePostSchema = createPostSchema.partial().omit({ slug: true });
