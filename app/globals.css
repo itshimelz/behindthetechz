@@ -433,18 +433,21 @@ html.dark .prose code span {
 }
 
 /* Wiki link styling */
-.wiki-link {
+.prose a.wiki-link {
   color: var(--wiki-link);
   text-decoration: none;
   text-decoration-style: none;
+  text-decoration-line: none;
   text-underline-offset: 3px;
   transition:
     color 0.15s ease,
     text-decoration-color 0.15s ease;
 }
-.wiki-link:hover {
+
+.prose a.wiki-link:hover {
   color: var(--wiki-link-hover);
-  text-decoration-style: solid;
+  text-decoration: none;
+  text-decoration-line: none;
 }
 
 /* Mobile prose overrides */

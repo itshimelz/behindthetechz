@@ -3,6 +3,7 @@ import { unstable_cache } from "next/cache";
 
 import { prisma } from "@/lib/prisma";
 import type { Post, PostFrontmatter } from "@/lib/blog/types";
+export type { Post };
 
 export function calculateReadingTime(content: string): number {
   const wordsPerMinute = 200;

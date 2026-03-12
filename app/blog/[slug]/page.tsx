@@ -21,9 +21,11 @@ import { ScrollToTop } from "@/components/blog/scroll-to-top";
 import { SeriesNav } from "@/components/blog/series-nav";
 import { TableOfContents } from "@/components/blog/table-of-contents";
 import { TagPill } from "@/components/blog/tag-pill";
+import { WikiLink } from "@/components/blog/wiki-link";
 import { getBacklinksForSlug } from "@/lib/blog/get-backlinks";
 import { extractTocHeadings } from "@/lib/blog/extract-toc-headings";
 import { getPostBySlug, getAllSlugs } from "@/lib/blog/get-post-by-slug";
+import { getAllPosts, type Post } from "@/lib/blog/get-all-posts";
 import { getRelatedPosts } from "@/lib/blog/get-related-posts";
 import { getSeriesForPost } from "@/lib/blog/get-series";
 import remarkCallouts from "@/lib/blog/remark-callouts";
@@ -98,6 +100,21 @@ export default async function BlogPostPage({
     : null;
   const tocHeadings = extractTocHeadings(post.content);
 
+  const allPosts = await getAllPosts();
+  const validSlugs = allPosts.map((p) => p.slug);
+  const postMetadata = allPosts.reduce(
+    (acc, p) => {
+      acc[p.slug] = {
+        title: p.title,
+        excerpt: p.excerpt,
+        date: p.date,
+        readingTime: p.readingTime,
+      };
+      return acc;
+    },
+    {} as Record<string, Partial<Post>>,
+  );
+
   return (
     <>
       <ReadingProgress />
@@ -148,6 +165,70 @@ export default async function BlogPostPage({
               ),
               code: (props: React.HTMLAttributes<HTMLElement>) => (
                 <InlineCode {...props} />
+              ),
+              a: ({ href, children, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
+                const isInternal = href?.startsWith("/blog/");
+                if (isInternal && href) {
+                  return (
+                    <WikiLink 
+                      href={href} 
+                      validSlugs={validSlugs} 
+                      postMetadata={postMetadata} 
+                      {...props}
+                    >
+                      {children}
+                    </WikiLink>
+                  );
+                }
+                return (
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-medium text-primary underline underline-offset-4 decoration-primary/30 hover:decoration-primary transition-colors"
+                    {...props}
+                  >
+                    {children}
+                  </a>
+                );
+              },
+              img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
+                <span className="my-8 block overflow-hidden rounded-xl border bg-muted/20">
+                  <img
+                    alt={props.alt || "Post image"}
+                    loading="lazy"
+                    className="w-full object-cover transition-colors"
+                    {...props}
+                  />
+                  {props.alt && (
+                    <span className="block border-t bg-muted/40 px-4 py-2.5 text-center text-sm text-muted-foreground">
+                      {props.alt}
+                    </span>
+                  )}
+                </span>
+              ),
+              iframe: (props: React.IframeHTMLAttributes<HTMLIFrameElement>) => (
+                <span className="my-8 block overflow-hidden rounded-xl border bg-muted/20 shadow-sm">
+                  <span className="relative block aspect-video w-full">
+                    <iframe
+                      className="absolute inset-0 h-full w-full"
+                      loading={props.loading ?? "lazy"}
+                      allowFullScreen={props.allowFullScreen ?? true}
+                      {...props}
+                    />
+                  </span>
+                </span>
+              ),
+              video: (props: React.VideoHTMLAttributes<HTMLVideoElement>) => (
+                <span className="my-8 block overflow-hidden rounded-xl border bg-muted/20 shadow-sm">
+                  <video
+                    className="w-full rounded-xl"
+                    controls={props.controls ?? true}
+                    playsInline={props.playsInline ?? true}
+                    preload={props.preload ?? "metadata"}
+                    {...props}
+                  />
+                </span>
               ),
             }}
             options={{
