@@ -180,15 +180,16 @@
 
 /* Blog prose content: Medium / Substack reading style */
 .prose {
-  text-align: justify;
   font-size: 1.0625rem;
-  line-height: 1.8;
+  line-height: 1.78;
+  letter-spacing: -0.003em;
   color: var(--foreground);
+  text-align: left;
 }
 
 .prose p {
   margin-top: 0;
-  margin-bottom: 1.6em;
+  margin-bottom: 1.4em;
 }
 
 .prose h1,
@@ -200,8 +201,8 @@
   font-weight: 700;
   text-align: left;
 
-  margin-top: 1.4em;
-  margin-bottom: 0.6em;
+  margin-top: 1.8em;
+  margin-bottom: 0.7em;
 }
 
 .prose h1 {
@@ -209,9 +210,11 @@
 }
 .prose h2 {
   font-size: 1.5rem;
+  letter-spacing: -0.02em;
 }
 .prose h3 {
   font-size: 1.25rem;
+  letter-spacing: -0.015em;
 }
 
 .prose :is(h1, h2, h3, h4, h5, h6) {
@@ -247,12 +250,12 @@
 .prose ul,
 .prose ol {
   padding-left: 1.6em;
-  margin-top: -0.8em;
-  margin-bottom: 1em;
+  margin-top: -0.2em;
+  margin-bottom: 1.2em;
 }
 
 .prose li {
-  margin-bottom: 0.4em;
+  margin-bottom: 0.45em;
 }
 
 .prose li > p {
@@ -349,31 +352,37 @@
 }
 
 .prose blockquote {
-  border-left: 3px solid var(--border);
-  padding-left: 1.2em;
+  border-left: 3px solid color-mix(in oklch, var(--primary) 45%, var(--border));
+  padding-left: 1.1em;
   margin: 2em 0;
   font-style: italic;
   color: var(--muted-foreground);
   text-align: left;
+  background: color-mix(in oklch, var(--muted) 18%, transparent);
+  border-radius: 0 0.8rem 0.8rem 0;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
 }
 
 .prose code {
-  background: var(--muted);
-  border-radius: 0.25rem;
-  padding: 0.15em 0.4em;
+  background: color-mix(in oklch, var(--muted) 55%, transparent);
+  border: 1px solid color-mix(in oklch, var(--border) 78%, transparent);
+  border-radius: 0.4rem;
+  padding: 0.15em 0.38em;
   font-size: 0.875em;
 }
 
 .prose pre {
   overflow-x: auto;
-  margin-bottom: 1.6em;
+  margin: 1.8em 0;
   font-size: 0.875em;
-  line-height: 1.65;
+  line-height: 1.7;
 }
 
 .prose pre code {
   background: transparent;
   padding: 0;
+  border: none !important; background: transparent !important; padding: 0 !important;
 }
 
 html:not(.dark) .prose pre {
@@ -400,12 +409,21 @@ html.dark .prose code span {
 
 .prose a {
   color: var(--primary);
-  text-decoration: none;
+  text-decoration: underline;
+  text-decoration-thickness: 0.08em;
+  text-decoration-color: color-mix(in oklch, var(--primary) 45%, transparent);
   text-underline-offset: 3px;
+  transition:
+    color 0.15s ease,
+    text-decoration-color 0.15s ease;
+}
+
+.prose a:hover {
+  text-decoration-color: currentColor;
 }
 
 .prose strong {
-  font-weight: 600;
+  font-weight: 650;
 }
 
 .prose img {
@@ -434,7 +452,7 @@ html.dark .prose code span {
   .prose {
     font-size: 1rem;
     text-align: left;
-    line-height: 1.6;
+    line-height: 1.7;
   }
   .prose h1,
   .prose h2,
@@ -457,6 +475,9 @@ html.dark .prose code span {
   .prose pre {
     max-width: calc(100vw - 2rem);
   }
+  .prose p {
+    margin-bottom: 1.25em;
+  }
   .prose table {
     display: block;
     overflow-x: auto;
@@ -470,3 +491,5 @@ html.dark .prose code span {
     padding: 0.8em 0.85em;
   }
 }
+
+.prose figure { margin: 0; padding: 0; border: none; background: transparent; }

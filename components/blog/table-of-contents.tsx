@@ -9,23 +9,22 @@ import {
 } from "@hugeicons/core-free-icons";
 import { cn } from "@/lib/utils";
 import { useTocPreference } from "@/hooks/use-toc";
-
-type HeadingItem = {
-  id: string;
-  text: string;
-  level: number;
-};
+import type { TocHeading } from "@/lib/blog/extract-toc-headings";
 
 export function TableOfContents({
+  headings,
   isDesktop = false,
 }: {
+  headings: TocHeading[];
   isDesktop?: boolean;
 }) {
-  const [headings, setHeadings] = useState<HeadingItem[]>([]);
   const [activeId, setActiveId] = useState<string>("");
   const [isExpanded, setIsExpanded] = useState(false);
   const { enabled: tocEnabled } = useTocPreference();
-  const headingIds = useMemo(() => headings.map((heading) => heading.id), [headings]);
+  const headingIds = useMemo(
+    () => headings.map((heading) => heading.id),
+    [headings],
+  );
   const scrollContainerRef = useRef<HTMLElement | Window | null>(null);
 
   const getScrollContainer = useCallback((): HTMLElement | Window => {
@@ -65,29 +64,6 @@ export function TableOfContents({
       el.getBoundingClientRect().top - containerRect.top + elementContainer.scrollTop
     );
   };
-
-  useEffect(() => {
-    // Wait a tick for MDX to render
-    const timer = setTimeout(() => {
-      const article = document.querySelector("article");
-      if (!article) return;
-
-      const elements = article.querySelectorAll("h2, h3");
-      const items: HeadingItem[] = [];
-      elements.forEach((el) => {
-        if (el.id) {
-          items.push({
-            id: el.id,
-            text: el.textContent || "",
-            level: el.tagName === "H2" ? 2 : 3,
-          });
-        }
-      });
-      setHeadings(items);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     if (headingIds.length === 0) return;
@@ -232,18 +208,20 @@ export function TableOfContents({
             const isPast = activeIndex >= 0 && index < activeIndex;
             const isH3 = heading.level === 3;
 
-            return (
-              <div
+              return (
+              <a
                 key={heading.id}
-                className="group/item relative flex h-3 cursor-pointer items-center justify-end"
+                href={`#${heading.id}`}
+                aria-current={isActive ? "location" : undefined}
+                className="group/item relative flex h-3 items-center justify-end rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 style={{ width: isH3 ? "1.75rem" : "2rem" }}
                 onClick={(e) => handleClick(heading.id, e)}
               >
                 {/* Tooltip bubble on the left */}
                 <div
                   className={cn(
-                    "absolute right-full mr-2.5 w-max max-w-[280px] rounded-2xl bg-zinc-800 px-4 py-2.5 text-sm font-medium leading-relaxed text-zinc-100 opacity-0 shadow-lg backdrop-blur-md transition-all duration-200 dark:bg-zinc-200 dark:text-zinc-900 pointer-events-none",
-                    "group-hover/item:-translate-x-1 group-hover/item:opacity-100",
+                    "pointer-events-none absolute right-full mr-2.5 w-max max-w-[280px] rounded-2xl bg-zinc-800 px-4 py-2.5 text-sm font-medium leading-relaxed text-zinc-100 opacity-0 shadow-lg backdrop-blur-md transition-all duration-200 dark:bg-zinc-200 dark:text-zinc-900",
+                    "group-hover/item:-translate-x-1 group-hover/item:opacity-100 group-focus-visible/item:-translate-x-1 group-focus-visible/item:opacity-100",
                     isH3 && "text-xs"
                   )}
                 >
@@ -260,14 +238,14 @@ export function TableOfContents({
                         : "h-[2.5px] w-7 bg-primary"
                       : isPast
                         ? isH3
-                          ? "h-px w-2 bg-muted-foreground/20 group-hover/item:w-3 group-hover/item:bg-foreground/50"
-                          : "h-px w-3 bg-muted-foreground/25 group-hover/item:w-4 group-hover/item:bg-foreground/50"
+                          ? "h-px w-2 bg-muted-foreground/20 group-hover/item:w-3 group-hover/item:bg-foreground/50 group-focus-visible/item:w-3 group-focus-visible/item:bg-foreground/50"
+                          : "h-px w-3 bg-muted-foreground/25 group-hover/item:w-4 group-hover/item:bg-foreground/50 group-focus-visible/item:w-4 group-focus-visible/item:bg-foreground/50"
                         : isH3
-                          ? "h-px w-2 bg-muted-foreground/30 group-hover/item:w-3 group-hover/item:bg-foreground/60"
-                          : "h-px w-3.5 bg-muted-foreground/30 group-hover/item:w-5 group-hover/item:bg-foreground/60"
+                          ? "h-px w-2 bg-muted-foreground/30 group-hover/item:w-3 group-hover/item:bg-foreground/60 group-focus-visible/item:w-3 group-focus-visible/item:bg-foreground/60"
+                          : "h-px w-3.5 bg-muted-foreground/30 group-hover/item:w-5 group-hover/item:bg-foreground/60 group-focus-visible/item:w-5 group-focus-visible/item:bg-foreground/60"
                   )}
                 />
-              </div>
+              </a>
             );
           })}
         </div>

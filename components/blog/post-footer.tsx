@@ -10,13 +10,10 @@ import {
   EyeIcon,
 } from "@hugeicons/core-free-icons";
 
-import { ShareButton } from "@/components/blog/share-button";
-import { FavoriteButton } from "@/components/blog/favorite-button";
 import { Badge } from "@/components/ui/badge";
 
 type Props = {
   slug: string;
-  title: string;
   tags: string[];
   category: string;
   date: string;
@@ -45,7 +42,6 @@ function formatCount(value: number): string {
 
 export function PostFooter({
   slug,
-  title,
   tags,
   category,
   date,
@@ -59,6 +55,9 @@ export function PostFooter({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPlusOne, setShowPlusOne] = useState(false);
   const [isLoadingClaps, setIsLoadingClaps] = useState(true);
+
+  // — View state (live-synced) —
+  const [liveViewCount, setLiveViewCount] = useState(initialViewCount);
 
   // Refs for safe optimistic rollback (avoids stale closure capture)
   const totalClapsRef = useRef(initialClapCount);
@@ -88,7 +87,7 @@ export function PostFooter({
       userClapsRef.current = 0;
     }
 
-    // Fetch latest clap count only (view count is already fetched by ViewCounter in PostMeta)
+    // Fetch latest clap count
     fetch(`/api/posts/${slug}/claps`, { cache: "no-store" })
       .then((response) => (response.ok ? response.json() : null))
       .then((data: { clapCount?: number } | null) => {
@@ -103,8 +102,22 @@ export function PostFooter({
         if (isActive) setIsLoadingClaps(false);
       });
 
+    // Fetch latest view count (delayed slightly so ViewCounter's POST has time to land)
+    const viewTimer = setTimeout(() => {
+      fetch(`/api/posts/${slug}/views`, { cache: "no-store" })
+        .then((response) => (response.ok ? response.json() : null))
+        .then((data: { viewCount?: number } | null) => {
+          if (!isActive) return;
+          if (typeof data?.viewCount === "number") {
+            setLiveViewCount(data.viewCount);
+          }
+        })
+        .catch(() => {});
+    }, 2500);
+
     return () => {
       isActive = false;
+      clearTimeout(viewTimer);
     };
   }, [slug]);
 
@@ -189,7 +202,7 @@ export function PostFooter({
       {/* Thin top divider */}
       <div className="border-t border-border/50" />
 
-      {/* Main actions row */}
+      {/* Main feedback row */}
       <div className="flex items-center justify-between">
         {/* Left: Claps + Views */}
         <div className="flex items-center gap-4">
@@ -260,7 +273,7 @@ export function PostFooter({
             ·
           </span>
 
-          {/* Views — uses server-rendered count (ViewCounter in PostMeta handles live updates) */}
+          {/* Views — live-synced from API */}
           <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
             <HugeiconsIcon
               icon={EyeIcon}
@@ -268,17 +281,13 @@ export function PostFooter({
               strokeWidth={1.8}
             />
             <span className="tabular-nums font-medium">
-              {formatCount(initialViewCount)}
+              {formatCount(liveViewCount)}
             </span>
             <span className="hidden sm:inline">views</span>
           </span>
         </div>
 
-        {/* Right: Share + Bookmark */}
-        <div className="flex items-center gap-0.5">
-          <ShareButton slug={slug} title={title} />
-          <FavoriteButton slug={slug} title={title} />
-        </div>
+        <span className="text-xs text-muted-foreground">Thanks for reading</span>
       </div>
 
       {/* Meta line: Category · Date */}

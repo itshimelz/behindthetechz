@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Search01Icon, Cancel01Icon } from "@hugeicons/core-free-icons";
 import { Input } from "@/components/ui/input";
@@ -33,10 +34,21 @@ type Props = {
   categories: Category[];
 };
 
+const tagPillTransition = {
+  duration: 0.2,
+  ease: "easeOut" as const,
+};
+
+const resultsTransition = {
+  duration: 0.22,
+  ease: "easeOut" as const,
+};
+
 export function BlogSearchWrapper({ posts, categories }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tagParam = searchParams.get("tag");
+  const prefersReducedMotion = useReducedMotion();
 
   const [searchQuery, setSearchQuery] = useState(tagParam || "");
   const [prevTagParam, setPrevTagParam] = useState(tagParam);
@@ -105,6 +117,8 @@ export function BlogSearchWrapper({ posts, categories }: Props) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const resultsKey = `${tagParam ?? "all"}-${searchQuery.trim()}-${currentPage}-${itemsPerPage}`;
+
   return (
     <div className="flex flex-col gap-6">
       {/* Search Input */}
@@ -134,35 +148,70 @@ export function BlogSearchWrapper({ posts, categories }: Props) {
       </div>
 
       {/* Active tag indicator */}
-      {tagParam && (
-        <div className="mx-auto w-full max-w-4xl flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">
-            Filtering by tag:
-          </span>
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 pl-3 pr-2 py-1 text-sm font-medium text-primary transition-colors">
-            {tagParam}
-            <button
-              onClick={clearTag}
-              className="rounded-full p-0.5 hover:bg-primary/20 hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50"
-              aria-label={`Clear ${tagParam} tag filter`}
+      <AnimatePresence initial={false} mode="wait">
+        {tagParam ? (
+          <motion.div
+            key={tagParam}
+            initial={
+              prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 6 }
+            }
+            animate={
+              prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }
+            }
+            exit={
+              prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -4 }
+            }
+            transition={tagPillTransition}
+            className="mx-auto flex w-full max-w-4xl items-center gap-2"
+          >
+            <span className="text-sm text-muted-foreground">
+              Filtering by tag:
+            </span>
+            <motion.div
+              layout
+              className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 py-1 pl-3 pr-2 text-sm font-medium text-primary shadow-sm shadow-primary/5 transition-colors"
             >
-              <HugeiconsIcon icon={Cancel01Icon} className="h-3.5 w-3.5" />
-            </button>
-          </div>
-        </div>
-      )}
+              {tagParam}
+              <button
+                onClick={clearTag}
+                className="rounded-full p-0.5 transition-colors hover:bg-primary/20 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary/50"
+                aria-label={`Clear ${tagParam} tag filter`}
+              >
+                <HugeiconsIcon icon={Cancel01Icon} className="h-3.5 w-3.5" />
+              </button>
+            </motion.div>
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
 
       {/* Post list */}
       <div className="mx-auto w-full max-w-4xl">
-        <PostList
-          posts={currentPosts}
-          searchQuery={searchQuery}
-          emptyMessage={
-            searchQuery
-              ? "No posts found matching your search."
-              : "No posts published yet."
-          }
-        />
+        <AnimatePresence initial={false} mode="wait">
+          <motion.div
+            key={resultsKey}
+            initial={
+              prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 10 }
+            }
+            animate={
+              prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }
+            }
+            exit={
+              prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -8 }
+            }
+            transition={resultsTransition}
+            className="rounded-3xl"
+          >
+            <PostList
+              posts={currentPosts}
+              searchQuery={searchQuery}
+              emptyMessage={
+                searchQuery
+                  ? "No posts found matching your search."
+                  : "No posts published yet."
+              }
+            />
+          </motion.div>
+        </AnimatePresence>
       </div>
 
       {/* Pagination */}

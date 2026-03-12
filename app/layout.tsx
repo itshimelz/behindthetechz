@@ -116,6 +116,12 @@ export default async function RootLayout({
         />
       </head>
       <body className="antialiased">
+        <a
+          href="#main-content"
+          className="sr-only z-50 rounded-md bg-background px-3 py-2 text-sm text-foreground shadow-sm focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+        >
+          Skip to content
+        </a>
         <TooltipProvider>
           <SidebarProvider>
             <AppSidebar
@@ -130,7 +136,9 @@ export default async function RootLayout({
                   <SiteBreadcrumb />
                 </div>
               </header>
-              {children}
+              <main id="main-content" className="flex flex-1 flex-col">
+                {children}
+              </main>
               <SiteFooter />
             </SidebarInset>
             <Toaster position="top-center" />

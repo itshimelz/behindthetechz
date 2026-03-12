@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/lib/generated/prisma/client";
 import { NextResponse } from "next/server";
 
 import { validateAdminRequest } from "@/lib/admin-auth";

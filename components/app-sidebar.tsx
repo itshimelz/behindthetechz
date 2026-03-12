@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, type ComponentProps } from "react";
+import { useMemo, useState, type ComponentProps } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { HugeiconsIcon } from "@hugeicons/react";
@@ -20,6 +21,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import {
   Collapsible,
@@ -110,6 +112,40 @@ function getCategoryIconByKey(iconKey?: string) {
   return CATEGORY_ICON_BY_KEY[iconKey] ?? Tag01Icon;
 }
 
+const sidebarListVariants = {
+  open: {
+    transition: {
+      staggerChildren: 0.035,
+      delayChildren: 0.02,
+    },
+  },
+  closed: {
+    transition: {
+      staggerChildren: 0.02,
+      staggerDirection: -1,
+    },
+  },
+};
+
+const sidebarItemVariants = {
+  open: {
+    opacity: 1,
+    x: 0,
+    transition: {
+      duration: 0.18,
+      ease: "easeOut" as const,
+    },
+  },
+  closed: {
+    opacity: 0,
+    x: -6,
+    transition: {
+      duration: 0.12,
+      ease: "easeInOut" as const,
+    },
+  },
+};
+
 export function AppSidebar({
   categories = [],
   recentPosts = [],
@@ -126,8 +162,18 @@ export function AppSidebar({
   publishedPostsCount?: number;
 }) {
   const pathname = usePathname();
+  const { state } = useSidebar();
   const { favorites, isMounted } = useFavorites();
+  const prefersReducedMotion = useReducedMotion();
   const topCategories = useMemo(() => categories.slice(0, 5), [categories]);
+  const [categoriesOpen, setCategoriesOpen] = useState(true);
+  const [favoritesOpen, setFavoritesOpen] = useState(true);
+  const [recentOpen, setRecentOpen] = useState(true);
+  const shouldAnimateSidebarLists = !prefersReducedMotion && state === "expanded";
+  const getSidebarAnimationState = (isOpen: boolean) => {
+    if (!shouldAnimateSidebarLists) return undefined;
+    return isOpen ? "open" : "closed";
+  };
 
   return (
     <Sidebar collapsible="icon" className="border-r-0" {...props}>
@@ -167,7 +213,11 @@ export function AppSidebar({
 
         {/* Categories */}
         {categories.length > 0 && (
-          <Collapsible defaultOpen className="group/collapsible">
+          <Collapsible
+            defaultOpen
+            className="group/collapsible"
+            onOpenChange={setCategoriesOpen}
+          >
             <SidebarGroup>
               <SidebarGroupLabel render={<CollapsibleTrigger />}>
                 Categories
@@ -181,25 +231,37 @@ export function AppSidebar({
               </SidebarGroupLabel>
               <CollapsibleContent>
                 <SidebarGroupContent>
-                  <SidebarMenu>
+                  <motion.div
+                    variants={sidebarListVariants}
+                    initial={false}
+                    animate={getSidebarAnimationState(categoriesOpen)}
+                  >
+                    <SidebarMenu>
                     {topCategories.map((cat) => (
                       <SidebarMenuItem key={cat.slug}>
-                        <SidebarMenuButton
-                          tooltip={cat.name}
-                          render={<Link href={`/categories/${cat.slug}`} />}
+                        <motion.div
+                          variants={sidebarItemVariants}
+                          initial={false}
+                          animate={getSidebarAnimationState(categoriesOpen)}
                         >
-                          <HugeiconsIcon
-                            icon={getCategoryIconByKey(cat.iconKey)}
-                            strokeWidth={2}
-                          />
-                          <span>{cat.name}</span>
-                          <span className="text-muted-foreground ml-auto text-xs">
-                            {cat.count}
-                          </span>
-                        </SidebarMenuButton>
+                          <SidebarMenuButton
+                            tooltip={cat.name}
+                            render={<Link href={`/categories/${cat.slug}`} />}
+                          >
+                            <HugeiconsIcon
+                              icon={getCategoryIconByKey(cat.iconKey)}
+                              strokeWidth={2}
+                            />
+                            <span>{cat.name}</span>
+                            <span className="text-muted-foreground ml-auto text-xs">
+                              {cat.count}
+                            </span>
+                          </SidebarMenuButton>
+                        </motion.div>
                       </SidebarMenuItem>
                     ))}
-                  </SidebarMenu>
+                    </SidebarMenu>
+                  </motion.div>
                 </SidebarGroupContent>
               </CollapsibleContent>
             </SidebarGroup>
@@ -207,7 +269,11 @@ export function AppSidebar({
         )}
 
         {/* Saved / Favorites */}
-        <Collapsible defaultOpen className="group/collapsible">
+        <Collapsible
+          defaultOpen
+          className="group/collapsible"
+          onOpenChange={setFavoritesOpen}
+        >
           <SidebarGroup>
             <SidebarGroupLabel render={<CollapsibleTrigger />}>
               Favorites
@@ -218,47 +284,75 @@ export function AppSidebar({
             </SidebarGroupLabel>
             <CollapsibleContent>
               <SidebarGroupContent>
-                <SidebarMenu>
+                <motion.div
+                  variants={sidebarListVariants}
+                  initial={false}
+                  animate={getSidebarAnimationState(favoritesOpen)}
+                >
+                  <SidebarMenu>
                   {!isMounted ? (
                     <SidebarMenuItem>
-                      <SidebarMenuButton disabled>
-                        <span className="text-muted-foreground text-xs">
-                          Loading...
-                        </span>
-                      </SidebarMenuButton>
+                      <motion.div
+                        variants={sidebarItemVariants}
+                        initial={false}
+                        animate={getSidebarAnimationState(favoritesOpen)}
+                      >
+                        <SidebarMenuButton disabled>
+                          <span className="text-muted-foreground text-xs">
+                            Loading...
+                          </span>
+                        </SidebarMenuButton>
+                      </motion.div>
                     </SidebarMenuItem>
                   ) : favorites.length === 0 ? (
                     <SidebarMenuItem>
-                      <SidebarMenuButton disabled>
-                        <span className="text-muted-foreground text-xs">
-                          No favorites yet
-                        </span>
-                      </SidebarMenuButton>
+                      <motion.div
+                        variants={sidebarItemVariants}
+                        initial={false}
+                        animate={getSidebarAnimationState(favoritesOpen)}
+                      >
+                        <SidebarMenuButton disabled>
+                          <span className="text-muted-foreground text-xs">
+                            No favorites yet
+                          </span>
+                        </SidebarMenuButton>
+                      </motion.div>
                     </SidebarMenuItem>
                   ) : (
                     favorites.map((fav) => (
                       <SidebarMenuItem key={fav.slug}>
-                        <SidebarMenuButton
-                          tooltip={fav.title}
-                          render={<Link href={`/blog/${fav.slug}`} />}
+                        <motion.div
+                          variants={sidebarItemVariants}
+                          initial={false}
+                          animate={getSidebarAnimationState(favoritesOpen)}
                         >
-                          <HugeiconsIcon
-                            icon={Bookmark02Icon}
-                            strokeWidth={2}
-                          />
-                          <span className="truncate">{fav.title}</span>
-                        </SidebarMenuButton>
+                          <SidebarMenuButton
+                            tooltip={fav.title}
+                            render={<Link href={`/blog/${fav.slug}`} />}
+                          >
+                            <HugeiconsIcon
+                              icon={Bookmark02Icon}
+                              strokeWidth={2}
+                            />
+                            <span className="truncate">{fav.title}</span>
+                          </SidebarMenuButton>
+                        </motion.div>
                       </SidebarMenuItem>
                     ))
                   )}
-                </SidebarMenu>
+                  </SidebarMenu>
+                </motion.div>
               </SidebarGroupContent>
             </CollapsibleContent>
           </SidebarGroup>
         </Collapsible>
 
         {/* Recent Posts */}
-        <Collapsible defaultOpen className="group/collapsible">
+        <Collapsible
+          defaultOpen
+          className="group/collapsible"
+          onOpenChange={setRecentOpen}
+        >
           <SidebarGroup>
             <SidebarGroupLabel render={<CollapsibleTrigger />}>
               Recent Posts
@@ -287,22 +381,34 @@ export function AppSidebar({
                     </EmptyHeader>
                   </Empty>
                 ) : (
-                  <SidebarMenu>
+                  <motion.div
+                    variants={sidebarListVariants}
+                    initial={false}
+                    animate={getSidebarAnimationState(recentOpen)}
+                  >
+                    <SidebarMenu>
                     {recentPosts.map((post) => (
                       <SidebarMenuItem key={post.slug}>
-                        <SidebarMenuButton
-                          tooltip={post.title}
-                          render={<Link href={`/blog/${post.slug}`} />}
+                        <motion.div
+                          variants={sidebarItemVariants}
+                          initial={false}
+                          animate={getSidebarAnimationState(recentOpen)}
                         >
-                          <HugeiconsIcon
-                            icon={Notebook01Icon}
-                            strokeWidth={2}
-                          />
-                          <span className="truncate">{post.title}</span>
-                        </SidebarMenuButton>
+                          <SidebarMenuButton
+                            tooltip={post.title}
+                            render={<Link href={`/blog/${post.slug}`} />}
+                          >
+                            <HugeiconsIcon
+                              icon={Notebook01Icon}
+                              strokeWidth={2}
+                            />
+                            <span className="truncate">{post.title}</span>
+                          </SidebarMenuButton>
+                        </motion.div>
                       </SidebarMenuItem>
                     ))}
-                  </SidebarMenu>
+                    </SidebarMenu>
+                  </motion.div>
                 )}
               </SidebarGroupContent>
             </CollapsibleContent>

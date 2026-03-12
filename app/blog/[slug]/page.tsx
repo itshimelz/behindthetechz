@@ -22,6 +22,7 @@ import { SeriesNav } from "@/components/blog/series-nav";
 import { TableOfContents } from "@/components/blog/table-of-contents";
 import { TagPill } from "@/components/blog/tag-pill";
 import { getBacklinksForSlug } from "@/lib/blog/get-backlinks";
+import { extractTocHeadings } from "@/lib/blog/extract-toc-headings";
 import { getPostBySlug, getAllSlugs } from "@/lib/blog/get-post-by-slug";
 import { getRelatedPosts } from "@/lib/blog/get-related-posts";
 import { getSeriesForPost } from "@/lib/blog/get-series";
@@ -95,6 +96,7 @@ export default async function BlogPostPage({
   const seriesData = post.seriesId
     ? await getSeriesForPost(post.seriesId)
     : null;
+  const tocHeadings = extractTocHeadings(post.content);
 
   return (
     <>
@@ -133,11 +135,11 @@ export default async function BlogPostPage({
 
         {/* Table of Contents - Mobile/Tablet inline only */}
         <div className="xl:hidden">
-          <TableOfContents />
+          <TableOfContents headings={tocHeadings} />
         </div>
 
         {/* MDX content */}
-        <div className="prose prose-neutral dark:prose-invert mx-auto w-full max-w-3xl md:prose-p:leading-snug md:prose-li:leading-snug md:prose-headings:leading-tight lg:prose-p:leading-normal lg:prose-li:leading-normal">
+        <div className="prose prose-neutral dark:prose-invert mx-auto w-full max-w-3xl">
           <MDXRemote
             source={post.content}
             components={{
@@ -203,7 +205,6 @@ export default async function BlogPostPage({
         {/* Medium-style post footer */}
         <PostFooter
           slug={post.slug}
-          title={post.title}
           tags={post.tags}
           category={post.category}
           date={post.date}
@@ -214,7 +215,7 @@ export default async function BlogPostPage({
 
       {/* Desktop Sticky Table of Contents */}
       <div className="contents">
-        <TableOfContents isDesktop />
+        <TableOfContents headings={tocHeadings} isDesktop />
       </div>
     </div>
   </>

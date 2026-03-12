@@ -1,4 +1,4 @@
-import { Prisma, PostStatus } from "@prisma/client";
+import { Prisma, PostStatus } from "@/lib/generated/prisma/client";
 import { unstable_cache } from "next/cache";
 
 import { prisma } from "@/lib/prisma";
@@ -10,15 +10,15 @@ export function calculateReadingTime(content: string): number {
   return Math.max(1, Math.ceil(words / wordsPerMinute));
 }
 
-export const postWithRelationsInclude = Prisma.validator<Prisma.PostInclude>()({
+export const postWithRelationsInclude = {
   categories: {
-    orderBy: { assignedAt: "asc" },
+    orderBy: { assignedAt: "asc" as const },
     include: { category: true },
   },
   tags: {
     include: { tag: true },
   },
-});
+} satisfies Prisma.PostInclude;
 
 export type DbPostWithRelations = Prisma.PostGetPayload<{
   include: typeof postWithRelationsInclude;

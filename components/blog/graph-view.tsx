@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { forceCollide } from "d3-force-3d";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ArrowRight01Icon,
@@ -52,6 +53,7 @@ type Props = {
 export function GraphView({ data }: Props) {
   const router = useRouter();
   const { theme } = useTheme();
+  const prefersReducedMotion = useReducedMotion();
   const isDark = theme === "dark";
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -65,12 +67,12 @@ export function GraphView({ data }: Props) {
     if (!instance) return;
 
     // Register collision force immediately
-    instance.d3Force("collide", forceCollide(24) as never);
+    instance.d3Force("collide", forceCollide(34) as never);
 
     // Strengthen charge repulsion
     const chargeForce = instance.d3Force("charge");
     if (chargeForce) {
-      chargeForce.strength(-300);
+      chargeForce.strength(-420);
     }
   }, []);
 
@@ -441,6 +443,44 @@ export function GraphView({ data }: Props) {
   // and completely disappearing when zooming out.
   const visualScale = Math.max(0.3, Math.pow(zoomLevel, 0.6));
 
+  const panelMotion = prefersReducedMotion
+    ? {
+        initial: { opacity: 1 },
+        animate: { opacity: 1 },
+        exit: { opacity: 0 },
+      }
+    : {
+        initial: { opacity: 0, y: 16, scale: 0.98 },
+        animate: { opacity: 1, y: 0, scale: 1 },
+        exit: { opacity: 0, y: 10, scale: 0.98 },
+      };
+
+  const listVariants = prefersReducedMotion
+    ? { hidden: {}, show: {} }
+    : {
+        hidden: {},
+        show: {
+          transition: {
+            staggerChildren: 0.04,
+            delayChildren: 0.02,
+          },
+        },
+      };
+
+  const itemVariants = prefersReducedMotion
+    ? {
+        hidden: { opacity: 1 },
+        show: { opacity: 1 },
+      }
+    : {
+        hidden: { opacity: 0, y: 6 },
+        show: {
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.18 },
+        },
+      };
+
   return (
     <div ref={containerRef} className="relative h-full w-full">
       {data.nodes.length === 0 ? (
@@ -460,48 +500,64 @@ export function GraphView({ data }: Props) {
         </div>
       ) : (
         <>
-          <ForceGraph2D
-            ref={
-              setFgRef as unknown as React.MutableRefObject<ForceGraphMethods>
-            }
-            graphData={data}
-            width={dimensions.width}
-            height={dimensions.height}
-            backgroundColor={graphColors.background}
-            nodeCanvasObject={nodeCanvasObject}
-            linkColor={(link) => {
-              const ref = link as GraphLinkRef;
-              if (!activeNodeId) return graphColors.link;
-              return isLinkEmphasized(ref)
-                ? graphColors.linkActive
-                : graphColors.linkDim;
-            }}
-            linkWidth={(link) => {
-              const ref = link as GraphLinkRef;
-              const base = !activeNodeId ? 2 : isLinkEmphasized(ref) ? 3 : 0.8;
-              return base / visualScale;
-            }}
-            linkDirectionalArrowLength={(link) => {
-              if (!showArrows) return 0;
-              const ref = link as GraphLinkRef;
-              const base = !activeNodeId ? 5 : isLinkEmphasized(ref) ? 7 : 0;
-              return base / visualScale;
-            }}
-            linkDirectionalArrowRelPos={1}
-            onZoom={handleZoom}
-            onNodeClick={handleNodeClick}
-            onNodeHover={(node) => {
-              const graphNode = node as GraphNode | null;
-              setHoveredNodeId(graphNode?.id || null);
-            }}
-            onBackgroundClick={() => setSelectedNodeId(null)}
-            enableNodeDrag
-            d3AlphaDecay={0.045}
-            d3VelocityDecay={0.35}
-          />
+          <motion.div
+            initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.985 }}
+            animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, scale: 1 }}
+            transition={{ duration: 0.35, ease: "easeOut" }}
+            className="h-full w-full"
+          >
+            <ForceGraph2D
+              ref={
+                setFgRef as unknown as React.MutableRefObject<ForceGraphMethods>
+              }
+              graphData={data}
+              width={dimensions.width}
+              height={dimensions.height}
+              backgroundColor={graphColors.background}
+              nodeCanvasObject={nodeCanvasObject}
+              linkColor={(link) => {
+                const ref = link as GraphLinkRef;
+                if (!activeNodeId) return graphColors.link;
+                return isLinkEmphasized(ref)
+                  ? graphColors.linkActive
+                  : graphColors.linkDim;
+              }}
+              linkWidth={(link) => {
+                const ref = link as GraphLinkRef;
+                const base = !activeNodeId ? 2 : isLinkEmphasized(ref) ? 3 : 0.8;
+                return base / visualScale;
+              }}
+              linkDirectionalArrowLength={(link) => {
+                if (!showArrows) return 0;
+                const ref = link as GraphLinkRef;
+                const base = !activeNodeId ? 5 : isLinkEmphasized(ref) ? 7 : 0;
+                return base / visualScale;
+              }}
+              linkDirectionalArrowRelPos={1}
+              onZoom={handleZoom}
+              onNodeClick={handleNodeClick}
+              onNodeHover={(node) => {
+                const graphNode = node as GraphNode | null;
+                setHoveredNodeId(graphNode?.id || null);
+              }}
+              onBackgroundClick={() => setSelectedNodeId(null)}
+              enableNodeDrag
+              d3AlphaDecay={0.045}
+              d3VelocityDecay={0.35}
+            />
+          </motion.div>
 
-          <div className="absolute top-4 left-4 w-[min(24rem,calc(100%-2rem))] space-y-3">
-            <div className="rounded-xl border bg-background/90 p-3 shadow-sm backdrop-blur-sm">
+          <motion.div
+            initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: -12 }}
+            animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+            transition={{ duration: 0.28, ease: "easeOut", delay: 0.08 }}
+            className="absolute top-4 left-4 w-[min(24rem,calc(100%-2rem))] space-y-3"
+          >
+            <motion.div
+              layout
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="rounded-xl border bg-background/90 p-3 shadow-sm backdrop-blur-sm"
+            >
               <div className="relative">
                 <HugeiconsIcon
                   icon={Search01Icon}
@@ -516,12 +572,25 @@ export function GraphView({ data }: Props) {
                 />
               </div>
 
-              {searchQuery.trim() ? (
-                <div className="mt-2 max-h-52 overflow-y-auto scrollbar-minimal rounded-lg border bg-card">
-                  {searchResults.length > 0 ? (
-                    <ul className="divide-y divide-border">
-                      {searchResults.map((node) => (
-                        <li key={node.id}>
+              <AnimatePresence initial={false} mode="wait">
+                {searchQuery.trim() ? (
+                  <motion.div
+                    key="search-results"
+                    initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 8 }}
+                    animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                    exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 4 }}
+                    transition={{ duration: 0.18, ease: "easeOut" }}
+                    className="mt-2 max-h-52 overflow-y-auto scrollbar-minimal rounded-lg border bg-card"
+                  >
+                    {searchResults.length > 0 ? (
+                      <motion.ul
+                        variants={listVariants}
+                        initial="hidden"
+                        animate="show"
+                        className="divide-y divide-border"
+                      >
+                        {searchResults.map((node) => (
+                          <motion.li key={node.id} variants={itemVariants}>
                           <button
                             type="button"
                             onClick={() => handleSearchPick(node)}
@@ -539,21 +608,35 @@ export function GraphView({ data }: Props) {
                               {node.outgoingCount + node.incomingCount}
                             </span>
                           </button>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <div className="px-3 py-4 text-xs text-muted-foreground">
-                      No matching nodes found.
-                    </div>
-                  )}
-                </div>
-              ) : null}
-            </div>
-          </div>
+                          </motion.li>
+                        ))}
+                      </motion.ul>
+                    ) : (
+                      <motion.div
+                        initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0 }}
+                        animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1 }}
+                        className="px-3 py-4 text-xs text-muted-foreground"
+                      >
+                        No matching nodes found.
+                      </motion.div>
+                    )}
+                  </motion.div>
+                ) : null}
+              </AnimatePresence>
+            </motion.div>
+          </motion.div>
 
-          <div className="absolute top-4 right-4 flex w-40 flex-col gap-3">
-            <div className="rounded-xl border bg-background/90 p-3 shadow-sm backdrop-blur-sm">
+          <motion.div
+            initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: -12 }}
+            animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+            transition={{ duration: 0.28, ease: "easeOut", delay: 0.14 }}
+            className="absolute top-4 right-4 flex w-40 flex-col gap-3"
+          >
+            <motion.div
+              layout
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="rounded-xl border bg-background/90 p-3 shadow-sm backdrop-blur-sm"
+            >
               <label
                 htmlFor="link-distance"
                 className="mb-2 block text-xs font-semibold uppercase tracking-wide text-muted-foreground"
@@ -575,9 +658,13 @@ export function GraphView({ data }: Props) {
               <p className="mt-1 text-[10px] text-muted-foreground">
                 {linkDistance}px
               </p>
-            </div>
+            </motion.div>
 
-            <div className="rounded-xl border bg-background/90 p-2 shadow-sm backdrop-blur-sm">
+            <motion.div
+              layout
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="rounded-xl border bg-background/90 p-2 shadow-sm backdrop-blur-sm"
+            >
               <div className="grid grid-cols-3 gap-1">
                 <Button size="xs" variant="outline" onClick={handleZoomIn}>
                   +
@@ -605,11 +692,20 @@ export function GraphView({ data }: Props) {
                   Arrows
                 </Button>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
-          {selectedNode ? (
-            <div className="absolute bottom-4 right-4 w-[min(24rem,calc(100%-2rem))] rounded-xl border bg-background/95 p-4 shadow-sm backdrop-blur-sm">
+          <AnimatePresence initial={false} mode="wait">
+            {selectedNode ? (
+              <motion.div
+                key={selectedNode.id}
+                layout
+                initial={panelMotion.initial}
+                animate={panelMotion.animate}
+                exit={panelMotion.exit}
+                transition={{ duration: 0.22, ease: "easeOut", delay: 0.08 }}
+                className="absolute bottom-4 right-4 w-[min(24rem,calc(100%-2rem))] rounded-xl border bg-background/95 p-4 shadow-sm backdrop-blur-sm"
+              >
               <div className="mb-3 flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="text-xs uppercase tracking-wide text-muted-foreground">
@@ -653,7 +749,12 @@ export function GraphView({ data }: Props) {
                   <p className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
                     Nearby nodes
                   </p>
-                  <ul className="divide-y divide-border/50 max-h-40 overflow-y-auto scrollbar-minimal pr-1">
+                  <motion.ul
+                    variants={listVariants}
+                    initial="hidden"
+                    animate="show"
+                    className="divide-y divide-border/50 max-h-40 overflow-y-auto scrollbar-minimal pr-1"
+                  >
                     {selectedNeighbors.map((node, index) => {
                       // Determine direction relative to selectedNode
                       // An outgoing link means selectedNode -> node
@@ -670,7 +771,11 @@ export function GraphView({ data }: Props) {
                       );
 
                       return (
-                        <li key={node.id} className="py-1.5">
+                        <motion.li
+                          key={node.id}
+                          variants={itemVariants}
+                          className="py-1.5"
+                        >
                           <button
                             type="button"
                             onClick={() => handleSearchPick(node)}
@@ -699,10 +804,10 @@ export function GraphView({ data }: Props) {
                               )}
                             </div>
                           </button>
-                        </li>
+                        </motion.li>
                       );
                     })}
-                  </ul>
+                  </motion.ul>
                 </div>
               ) : null}
 
@@ -723,8 +828,9 @@ export function GraphView({ data }: Props) {
                   Go now
                 </Button>
               </div>
-            </div>
-          ) : null}
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
         </>
       )}
     </div>

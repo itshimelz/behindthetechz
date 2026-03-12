@@ -25,7 +25,7 @@ export function SiteFooter() {
             href="/graph"
             className="transition-colors hover:text-foreground"
           >
-            Graph
+            Graph View
           </Link>
         </nav>
       </div>
