@@ -382,7 +382,7 @@ export function GraphView({ data }: Props) {
 
       if (shouldShowLabel) {
         const fontSize = Math.min(10, Math.max(8, 5 + graphNode.val / 5));
-        ctx.font = `500 ${fontSize}px Inter, Tiro Bangla, sans-serif`;
+        ctx.font = `500 ${fontSize}px "Google Sans", "Tiro Bangla", sans-serif`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillStyle = emphasized ? graphColors.text : graphColors.textMuted;

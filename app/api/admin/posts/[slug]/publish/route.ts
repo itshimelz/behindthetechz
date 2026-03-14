@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { validateAdminRequest } from "@/lib/admin-auth";
 import { BLOG_DEFAULT_REVALIDATE_TAGS, revalidateCacheTags } from "@/lib/blog/cache-tags";
+import { notifySubscribers } from "@/lib/blog/notify-subscribers";
 
 const ADMIN_HEADERS = { "Cache-Control": "no-store" };
 
@@ -55,6 +56,9 @@ export async function POST(request: Request, context: RouteContext) {
     );
 
     revalidateCacheTags(BLOG_DEFAULT_REVALIDATE_TAGS);
+
+    // Notify subscribers (non-blocking — don't await)
+    notifySubscribers(slug, updated.title).catch(() => {});
 
     return NextResponse.json(
       {

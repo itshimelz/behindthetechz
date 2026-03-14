@@ -95,6 +95,7 @@ const getRecentPostLinksCached = unstable_cache(
       select: {
         slug: true,
         title: true,
+        publishedAt: true,
       },
     });
   },
@@ -131,6 +132,7 @@ export async function getFeaturedPosts(): Promise<Post[]> {
 export type RecentPostLink = {
   slug: string;
   title: string;
+  publishedAt: Date | null;
 };
 
 export async function getRecentPostLinks(limit = 5): Promise<RecentPostLink[]> {

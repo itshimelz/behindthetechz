@@ -1,22 +1,28 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Clapping02Icon,
   Loading03Icon,
   EyeIcon,
+  Bookmark02Icon,
+  Copy01Icon,
+  Tick02Icon,
 } from "@hugeicons/core-free-icons";
+import { useFavorites } from "@/hooks/use-favorites";
 
-import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { ShareButton } from "@/components/blog/share-button";
 
 type Props = {
   slug: string;
-  tags: string[];
-  category: string;
-  date: string;
+  title: string;
   initialClapCount?: number;
   initialViewCount?: number;
 };
@@ -42,9 +48,7 @@ function formatCount(value: number): string {
 
 export function PostFooter({
   slug,
-  tags,
-  category,
-  date,
+  title,
   initialClapCount = 0,
   initialViewCount = 0,
 }: Props) {
@@ -55,9 +59,14 @@ export function PostFooter({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPlusOne, setShowPlusOne] = useState(false);
   const [isLoadingClaps, setIsLoadingClaps] = useState(true);
+  const [copied, setCopied] = useState(false);
 
   // — View state (live-synced) —
   const [liveViewCount, setLiveViewCount] = useState(initialViewCount);
+
+  // — Favorites —
+  const { isFavorite, toggleFavorite, isMounted: favMounted } = useFavorites();
+  const isBookmarked = favMounted && isFavorite(slug);
 
   // Refs for safe optimistic rollback (avoids stale closure capture)
   const totalClapsRef = useRef(initialClapCount);
@@ -124,7 +133,6 @@ export function PostFooter({
   const handleClap = async () => {
     if (!isMounted || remainingClaps < 1 || isSubmitting) return;
 
-    // Snapshot from refs (always current, never stale)
     const previousTotalClaps = totalClapsRef.current;
     const previousUserClaps = userClapsRef.current;
 
@@ -191,132 +199,186 @@ export function PostFooter({
     }
   };
 
-  const formattedDate = new Date(date).toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+  const handleCopyLink = async () => {
+    try {
+      const url = `${window.location.origin}/blog/${slug}`;
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      const textArea = document.createElement("textarea");
+      textArea.value = `${window.location.origin}/blog/${slug}`;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   return (
-    <footer className="mx-auto w-full max-w-3xl space-y-5">
-      {/* Thin top divider */}
+    <footer className="mx-auto w-full max-w-3xl">
+      {/* Top divider */}
       <div className="border-t border-border/50" />
 
-      {/* Main feedback row */}
-      <div className="flex items-center justify-between">
-        {/* Left: Claps + Views */}
-        <div className="flex items-center gap-4">
-          {/* Clap */}
-          <button
-            type="button"
-            onClick={handleClap}
-            disabled={!isMounted || remainingClaps < 1}
-            className="group relative flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50"
-            title={
-              remainingClaps > 0
-                ? `Clap for this post (${remainingClaps} left)`
-                : "Clap limit reached"
-            }
-          >
-            <motion.span
-              whileTap={{ scale: 0.85 }}
-              transition={{ duration: 0.1 }}
-              className="inline-flex"
+      {/* Engagement bar */}
+      <div className="flex items-center justify-between py-3">
+        {/* Left group: Claps + Views */}
+        <div className="flex items-center gap-0.5">
+          {/* Clap button */}
+          <Tooltip>
+            <TooltipTrigger
+              onClick={handleClap}
+              disabled={!isMounted || remainingClaps < 1}
+              className="group relative flex items-center gap-1.5 rounded-full px-3 py-1.5 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-50"
             >
-              <HugeiconsIcon
-                icon={Clapping02Icon}
-                className="size-[22px] transition-colors group-hover:text-foreground"
-                strokeWidth={1.8}
-              />
-            </motion.span>
+              <motion.span
+                whileTap={{ scale: 0.85 }}
+                transition={{ duration: 0.1 }}
+                className="inline-flex"
+              >
+                <HugeiconsIcon
+                  icon={Clapping02Icon}
+                  className="size-[20px] transition-colors group-hover:text-foreground"
+                  strokeWidth={1.8}
+                />
+              </motion.span>
 
-            {/* +1 ping */}
-            {showPlusOne && (
-              <>
-                <span className="pointer-events-none absolute -top-3 left-1 text-[10px] font-semibold text-primary animate-bounce">
+              {showPlusOne && (
+                <span className="pointer-events-none absolute -top-2.5 left-3 text-[10px] font-semibold text-primary animate-bounce">
                   +1
                 </span>
-              </>
-            )}
-
-            <span className="inline-flex min-w-5 overflow-hidden tabular-nums text-sm font-medium">
-              {isLoadingClaps ? (
-                <HugeiconsIcon
-                  icon={Loading03Icon}
-                  className="size-3.5 animate-spin"
-                  strokeWidth={2}
-                />
-              ) : (
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.span
-                    key={totalClaps}
-                    initial={{ y: 10, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    exit={{ y: -10, opacity: 0 }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 420,
-                      damping: 28,
-                      mass: 0.6,
-                    }}
-                    className="inline-block"
-                  >
-                    {formatCount(totalClaps)}
-                  </motion.span>
-                </AnimatePresence>
               )}
-            </span>
-          </button>
 
-          {/* Separator dot */}
-          <span className="text-border" aria-hidden="true">
-            ·
-          </span>
+              <span className="inline-flex min-w-4 overflow-hidden tabular-nums text-sm font-medium">
+                {isLoadingClaps ? (
+                  <HugeiconsIcon
+                    icon={Loading03Icon}
+                    className="size-3.5 animate-spin"
+                    strokeWidth={2}
+                  />
+                ) : (
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.span
+                      key={totalClaps}
+                      initial={{ y: 10, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      exit={{ y: -10, opacity: 0 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 420,
+                        damping: 28,
+                        mass: 0.6,
+                      }}
+                      className="inline-block"
+                    >
+                      {formatCount(totalClaps)}
+                    </motion.span>
+                  </AnimatePresence>
+                )}
+              </span>
+            </TooltipTrigger>
+            <TooltipContent>
+              {remainingClaps > 0
+                ? `Clap (${remainingClaps} left)`
+                : "Clap limit reached"}
+            </TooltipContent>
+          </Tooltip>
 
-          {/* Views — live-synced from API */}
-          <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+          {/* Vertical divider */}
+          <div className="mx-1 h-5 w-px bg-border/60" aria-hidden="true" />
+
+          {/* Views */}
+          <span className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm text-muted-foreground">
             <HugeiconsIcon
               icon={EyeIcon}
               className="size-4"
               strokeWidth={1.8}
             />
-            <span className="tabular-nums font-medium">
-              {formatCount(liveViewCount)}
-            </span>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.span
+                key={liveViewCount}
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.2 }}
+                className="tabular-nums font-medium"
+              >
+                {formatCount(liveViewCount)}
+              </motion.span>
+            </AnimatePresence>
             <span className="hidden sm:inline">views</span>
           </span>
         </div>
 
-        <span className="text-xs text-muted-foreground">Thanks for reading</span>
-      </div>
+        {/* Right group: Copy link, Share, Bookmark */}
+        <div className="flex items-center gap-0.5">
+          {/* Copy link */}
+          <Tooltip>
+            <TooltipTrigger
+              onClick={handleCopyLink}
+              className="flex items-center justify-center rounded-full p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span
+                  key={copied ? "tick" : "copy"}
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.5, opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="inline-flex"
+                >
+                  <HugeiconsIcon
+                    icon={copied ? Tick02Icon : Copy01Icon}
+                    className={`size-[18px] ${copied ? "text-primary" : ""}`}
+                    strokeWidth={2}
+                  />
+                </motion.span>
+              </AnimatePresence>
+            </TooltipTrigger>
+            <TooltipContent>{copied ? "Copied!" : "Copy link"}</TooltipContent>
+          </Tooltip>
 
-      {/* Meta line: Category · Date */}
-      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted-foreground">
-        <Link
-          href={`/categories/${category.toLowerCase().replace(/\s+/g, "-")}`}
-          className="font-medium text-foreground/80 hover:text-foreground transition-colors"
-        >
-          {category}
-        </Link>
-        <span aria-hidden="true">·</span>
-        <span>{formattedDate}</span>
-      </div>
+          {/* Share */}
+          <motion.div whileTap={{ scale: 0.9 }} transition={{ duration: 0.1 }}>
+            <ShareButton slug={slug} title={title} />
+          </motion.div>
 
-      {/* Tags */}
-      {tags.length > 0 && (
-        <div className="flex flex-wrap gap-1.5">
-          {tags.map((tag) => (
-            <Link key={tag} href={`/blog?tag=${tag}`}>
-              <Badge
-                variant="outline"
-                className="cursor-pointer text-xs transition-colors hover:bg-primary hover:text-primary-foreground"
+          {/* Bookmark / Favorite */}
+          <Tooltip>
+            <TooltipTrigger
+              onClick={() => toggleFavorite({ slug, title })}
+              className={`flex items-center justify-center rounded-full p-2 transition-colors hover:bg-muted ${
+                isBookmarked
+                  ? "text-primary hover:text-primary/80"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <motion.span
+                key={isBookmarked ? "saved" : "unsaved"}
+                initial={{ scale: 0.6 }}
+                animate={{ scale: 1 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 500,
+                  damping: 15,
+                }}
+                className="inline-flex"
               >
-                {tag}
-              </Badge>
-            </Link>
-          ))}
+                <HugeiconsIcon
+                  icon={Bookmark02Icon}
+                  className={`size-[18px] ${isBookmarked ? "fill-current" : ""}`}
+                  strokeWidth={2}
+                />
+              </motion.span>
+            </TooltipTrigger>
+            <TooltipContent>
+              {isBookmarked ? "Remove from Favorites" : "Save to Favorites"}
+            </TooltipContent>
+          </Tooltip>
         </div>
-      )}
+      </div>
     </footer>
   );
 }

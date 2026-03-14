@@ -749,6 +749,10 @@ All calls go to the admin API defined in `docs/admin-api-implementation-plan.md`
 | `techz revalidate`       | `POST /api/revalidate`                  |
 | `techz doctor`           | `GET /api/admin/posts` (health probe)   |
 | `techz image upload`     | `POST /api/admin/upload`                |
+| `techz subscribers`      | `GET /api/admin/newsletter`             |
+| `techz subscribers list` | `GET /api/admin/newsletter`             |
+| `techz subscribers export` | `GET /api/admin/newsletter` → local CSV |
+| `techz subscribers remove <email>` | `DELETE /api/admin/newsletter` |
 
 ---
 

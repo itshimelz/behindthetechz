@@ -29,7 +29,7 @@ import { SidebarLeftIcon } from "@hugeicons/core-free-icons";
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 const SIDEBAR_WIDTH = "16rem";
-const SIDEBAR_WIDTH_MOBILE = "18rem";
+const SIDEBAR_WIDTH_MOBILE = "17rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
 
@@ -188,10 +188,11 @@ function Sidebar({
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          className="bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
+          className="bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 pb-[env(safe-area-inset-bottom)] [&>button]:hidden"
           style={
             {
               "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
+              overscrollBehavior: "contain",
             } as React.CSSProperties
           }
           side={side}
@@ -200,7 +201,9 @@ function Sidebar({
             <SheetTitle>Sidebar</SheetTitle>
             <SheetDescription>Displays the mobile sidebar.</SheetDescription>
           </SheetHeader>
-          <div className="flex h-full w-full flex-col">{children}</div>
+          <div className="flex h-full w-full flex-col pt-[env(safe-area-inset-top)]">
+            {children}
+          </div>
         </SheetContent>
       </Sheet>
     );
@@ -265,14 +268,19 @@ function SidebarTrigger({
       data-slot="sidebar-trigger"
       variant="ghost"
       size="icon-sm"
-      className={cn(className)}
+      className={className}
       onClick={(event) => {
         onClick?.(event);
         toggleSidebar();
       }}
       {...props}
     >
-      <HugeiconsIcon icon={SidebarLeftIcon} strokeWidth={2} />
+      <HugeiconsIcon
+        icon={SidebarLeftIcon}
+        strokeWidth={2}
+        className="transition-transform duration-200 ease-linear group-data-[state=collapsed]:rotate-180"
+        aria-hidden="true"
+      />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );
@@ -331,11 +339,17 @@ function SidebarInput({
 }
 
 function SidebarHeader({ className, ...props }: React.ComponentProps<"div">) {
+  const { isMobile } = useSidebar();
+
   return (
     <div
       data-slot="sidebar-header"
       data-sidebar="header"
-      className={cn("flex flex-col gap-2 p-2", className)}
+      className={cn(
+        "flex flex-col gap-2 p-2",
+        isMobile && "gap-1 p-2 pb-1",
+        className,
+      )}
       {...props}
     />
   );
@@ -381,11 +395,17 @@ function SidebarContent({ className, ...props }: React.ComponentProps<"div">) {
 }
 
 function SidebarGroup({ className, ...props }: React.ComponentProps<"div">) {
+  const { isMobile } = useSidebar();
+
   return (
     <div
       data-slot="sidebar-group"
       data-sidebar="group"
-      className={cn("relative flex w-full min-w-0 flex-col p-2", className)}
+      className={cn(
+        "relative flex w-full min-w-0 flex-col p-2",
+        isMobile && "px-2 py-1.5",
+        className,
+      )}
       {...props}
     />
   );
@@ -538,7 +558,14 @@ function SidebarMenuButton({
 
   if (typeof tooltip === "string") {
     tooltip = {
-      children: tooltip,
+      children: isActive ? (
+        <span className="flex items-center gap-1.5">
+          <span className="bg-sidebar-primary size-1.5 rounded-full" />
+          {tooltip}
+        </span>
+      ) : (
+        tooltip
+      ),
     };
   }
 

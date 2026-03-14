@@ -170,3 +170,85 @@ These endpoints are public and do not require admin authentication. They manage 
     ]
   }
   ```
+
+---
+
+## 7. Newsletter
+
+### Public Endpoints
+
+These endpoints are public and do not require admin authentication.
+
+#### `POST /api/newsletter/subscribe`
+
+- **Description:** Subscribe an email address to the newsletter. Includes multiple anti-spam layers: IP rate limiting (3 attempts/hour), honeypot field detection, httpOnly cookie repeat protection, and email validation.
+- **Payload:**
+  ```json
+  { "email": "user@example.com", "website": "" }
+  ```
+  The `website` field is a honeypot — if filled, the request is silently accepted without action.
+- **Anti-Spam Behavior:** Rate-limited requests and duplicate submissions return `{ "ok": true }` to avoid leaking information.
+- **Returns:**
+  ```json
+  { "ok": true }
+  ```
+- **Cookies Set:** `btz_newsletter_sub` (httpOnly, 24h TTL) to prevent repeated submissions.
+
+#### `GET /api/newsletter/unsubscribe?token=xxx`
+
+- **Description:** Unsubscribe a user via their unique token (for email footer links). Returns a self-contained HTML confirmation page (not JSON).
+- **Query Parameters:** `token` (Required) — the subscriber's unique unsubscribe token.
+- **Returns:** HTML page with a confirmation or error message. Sets `confirmed: false` and `unsubscribedAt` timestamp on the subscriber record.
+
+#### `POST /api/newsletter/unsubscribe`
+
+- **Description:** Unsubscribe by email address (for the website unsubscribe form at `/unsubscribe`). Always returns success to avoid leaking whether the email exists.
+- **Payload:**
+  ```json
+  { "email": "user@example.com" }
+  ```
+- **Returns:**
+  ```json
+  { "ok": true }
+  ```
+
+### Admin Endpoints
+
+_(Requires standard admin authentication via the `validateAdminRequest` utility)_
+
+#### `GET /api/admin/newsletter`
+
+- **Description:** List newsletter subscribers with count.
+- **Query Parameters:** `?active=false` (Optional) — include unsubscribed users. Defaults to active only.
+- **Returns:**
+  ```json
+  {
+    "ok": true,
+    "total": 42,
+    "subscribers": [
+      {
+        "id": "uuid",
+        "email": "user@example.com",
+        "confirmed": true,
+        "subscribedAt": "2026-03-15T00:00:00.000Z",
+        "unsubscribedAt": null
+      }
+    ]
+  }
+  ```
+
+#### `DELETE /api/admin/newsletter`
+
+- **Description:** Permanently remove a subscriber by email or id.
+- **Payload:**
+  ```json
+  { "email": "user@example.com" }
+  ```
+  Or:
+  ```json
+  { "id": "uuid" }
+  ```
+- **Returns:**
+  ```json
+  { "ok": true, "deleted": "user@example.com" }
+  ```

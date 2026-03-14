@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
@@ -5,15 +6,18 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { RefreshIcon } from "@hugeicons/core-free-icons";
+import { RefreshIcon, TimeQuarter02Icon } from "@hugeicons/core-free-icons";
 import type { Post } from "@/lib/blog/types";
-import { FavoriteButton } from "@/components/blog/favorite-button";
-import { ShareButton } from "@/components/blog/share-button";
 import { ViewCounter } from "@/components/blog/view-counter";
 import { getCategoryColorClass, cn } from "@/lib/utils";
 
 type Props = {
   post: Post;
+};
+
+const AUTHOR = {
+  name: "Rahat Hossain Himel",
+  avatar: process.env.NEXT_PUBLIC_AUTHOR_AVATAR || "/himel-avatar.jpg",
 };
 
 function getRelativeTimeString(date: Date): string {
@@ -50,6 +54,7 @@ export function PostMeta({ post }: Props) {
 
   return (
     <header className="space-y-4">
+      {/* Category + updated badge */}
       <div className="flex flex-wrap items-center gap-2">
         <Badge
           variant="secondary"
@@ -83,67 +88,82 @@ export function PostMeta({ post }: Props) {
         )}
       </div>
 
-      <div className="space-y-3">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <h1 className="max-w-3xl font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-[2.6rem] lg:leading-tight">
-            {post.title}
-          </h1>
-          <div className="flex items-center gap-1 self-start rounded-full border border-border/60 bg-background/80 p-1 sm:mt-1">
-            <ShareButton slug={post.slug} title={post.title} />
-            <FavoriteButton slug={post.slug} title={post.title} />
+      {/* Title — full width */}
+      <h1
+        className="font-heading text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-[2.6rem] lg:leading-tight"
+        style={{ fontFamily: '"Blog Title", "Google Sans", sans-serif' }}
+      >
+        {post.title}
+      </h1>
+
+      {/* Excerpt */}
+      {post.excerpt && (
+        <p className="max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
+          {post.excerpt}
+        </p>
+      )}
+
+      {/* Author byline */}
+      <div className="flex items-center gap-3 border-y border-border/50 py-3">
+        <Image
+          src={AUTHOR.avatar}
+          alt={AUTHOR.name}
+          width={36}
+          height={36}
+          className="aspect-square size-9 rounded-full object-cover"
+          unoptimized={AUTHOR.avatar.startsWith("http")}
+        />
+        <div className="flex flex-col gap-0.5 sm:flex-row sm:items-center sm:gap-0">
+          <span className="text-sm font-medium text-foreground">
+            {AUTHOR.name}
+          </span>
+          <span
+            aria-hidden="true"
+            className="mx-2 hidden text-border sm:inline"
+          >
+            ·
+          </span>
+          <div className="flex items-center gap-x-2 text-sm text-muted-foreground">
+            <Tooltip>
+              <TooltipTrigger>
+                <span className="cursor-help">
+                  {publishedDate.toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>
+                  Published around{" "}
+                  {publishedDate.toLocaleTimeString("en-US", {
+                    hour: "numeric",
+                    minute: "2-digit",
+                  })}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+            <span aria-hidden="true" className="text-border">
+              ·
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <HugeiconsIcon
+                icon={TimeQuarter02Icon}
+                className="size-3.5"
+                strokeWidth={2}
+              />
+              {post.readingTime} min read
+            </span>
+            <span aria-hidden="true" className="hidden text-border sm:inline">
+              ·
+            </span>
+            <span className="hidden sm:inline">
+              <ViewCounter slug={post.slug} initialCount={post.viewCount} />
+            </span>
           </div>
         </div>
-
-        {post.excerpt && (
-          <p className="max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-            {post.excerpt}
-          </p>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-3 border-y border-border/50 py-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted-foreground">
-          <Tooltip>
-            <TooltipTrigger>
-              <span className="cursor-help">
-                {publishedDate.toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </span>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>
-                Published around{" "}
-                {publishedDate.toLocaleTimeString("en-US", {
-                  hour: "numeric",
-                  minute: "2-digit",
-                })}
-              </p>
-            </TooltipContent>
-          </Tooltip>
-          <span aria-hidden="true" className="hidden text-border sm:inline">
-            ·
-          </span>
-          <span>{post.readingTime} min read</span>
-          <span aria-hidden="true" className="hidden text-border sm:inline">
-            ·
-          </span>
-          <span>{post.wordCount} words</span>
-          <span aria-hidden="true" className="hidden text-border sm:inline">
-            ·
-          </span>
-          <span className="inline-flex items-center gap-1 whitespace-nowrap">
-            <ViewCounter slug={post.slug} initialCount={post.viewCount} />
-          </span>
-        </div>
-
-        <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">
-          Take your time with it
-        </p>
       </div>
     </header>
   );
 }
-

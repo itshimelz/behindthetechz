@@ -11,10 +11,12 @@ import remarkMath from "remark-math";
 
 import { BacklinksSection } from "@/components/blog/backlinks-section";
 import { CodeBlock } from "@/components/blog/code-block";
-import { PostFooter } from "@/components/blog/post-footer";
 import { HeadingCopyLinkEnhancer } from "@/components/blog/heading-copy-link-enhancer";
 import { InlineCode } from "@/components/blog/inline-code";
+import { NewsletterCTA } from "@/components/blog/newsletter-cta";
+import { PostFooter } from "@/components/blog/post-footer";
 import { PostMeta } from "@/components/blog/post-meta";
+import { PostTags } from "@/components/blog/post-tags";
 import { ReadingProgress } from "@/components/blog/reading-progress";
 import { RelatedPosts } from "@/components/blog/related-posts";
 import { ScrollToTop } from "@/components/blog/scroll-to-top";
@@ -280,18 +282,26 @@ export default async function BlogPostPage({
         {/* Backlinks */}
         <BacklinksSection backlinks={backlinks} />
 
-        {/* Related Posts */}
-        <RelatedPosts posts={relatedPosts} />
-
-        {/* Medium-style post footer */}
+        {/* Engagement bar: claps, views, share, bookmark, copy link */}
         <PostFooter
           slug={post.slug}
-          tags={post.tags}
-          category={post.category}
-          date={post.date}
+          title={post.title}
           initialClapCount={post.clapCount}
           initialViewCount={post.viewCount}
         />
+
+        {/* Tags + meta */}
+        <PostTags
+          tags={post.tags}
+          category={post.category}
+          date={post.date}
+        />
+
+        {/* Newsletter subscribe CTA */}
+        <NewsletterCTA category={post.category} />
+
+        {/* Related Posts */}
+        <RelatedPosts posts={relatedPosts} />
       </article>
 
       {/* Desktop Sticky Table of Contents */}
