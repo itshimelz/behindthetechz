@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function BlogPostLoading() {
   return (
-    <article className="flex flex-1 flex-col gap-6 px-4 py-10 md:px-8">
+    <article className="flex flex-1 flex-col gap-6 px-4 pb-10 pt-4 md:px-8 md:pt-6">
       <div className="mx-auto w-full max-w-3xl space-y-4">
         <div className="flex items-center gap-3">
           <Skeleton className="h-6 w-24" />

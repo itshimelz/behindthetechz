@@ -7,55 +7,51 @@ export default async function CategoriesPage() {
   const categories = await getCategories();
 
   return (
-    <div className="flex flex-1 flex-col gap-6 px-4 py-10 md:px-8">
-      {/* Section Header matching the "All Posts" design */}
-      <div className="mx-auto w-full max-w-4xl space-y-2 mb-8">
-        <h1 className="font-heading text-3xl font-bold tracking-tight">
+    <div className="flex flex-1 flex-col gap-5 px-4 pb-10 pt-4 md:px-8 md:pt-6">
+      <section className="mx-auto w-full max-w-4xl space-y-1.5">
+        <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
           All Categories
         </h1>
-        <p className="text-muted-foreground">
-          Browse topics covered in this blog.
+        <p className="text-sm text-muted-foreground sm:text-base">
+          Pick a category to open related posts.
         </p>
-      </div>
+      </section>
 
       {categories.length === 0 ? (
-        <div className="col-span-full py-12 text-center">
+        <section className="mx-auto w-full max-w-4xl py-10 text-center">
           <HugeiconsIcon
             icon={GridViewIcon}
-            className="mx-auto mb-4 h-12 w-12 text-muted-foreground/50"
+            className="mx-auto mb-3 size-10 text-muted-foreground/50"
           />
-          <h3 className="mb-2 font-heading text-xl font-medium">
+          <h3 className="mb-1 font-heading text-lg font-medium">
             No categories found
           </h3>
-          <p className="text-muted-foreground">
+          <p className="text-sm text-muted-foreground">
             Categories will appear here once you publish some posts.
           </p>
-        </div>
+        </section>
       ) : (
-        <div className="mx-auto w-full max-w-4xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {categories.map((category) => (
-            <Link
-              key={category.slug}
-              href={`/categories/${category.slug}`}
-              className="group flex items-center justify-between p-4 rounded-xl border bg-card hover:bg-muted/50 transition-all duration-200"
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted/50 group-hover:bg-primary/10 transition-colors">
-                  <HugeiconsIcon
-                    icon={GridViewIcon}
-                    className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors"
-                  />
-                </div>
-                <h3 className="text-lg font-medium group-hover:text-primary transition-colors text-foreground">
-                  {category.name}
-                </h3>
-              </div>
-              <span className="text-xs font-medium text-muted-foreground bg-muted hover:bg-muted/80 px-2 py-1 rounded-md shrink-0 transition-colors">
-                {category.count} posts
-              </span>
-            </Link>
-          ))}
-        </div>
+        <section className="mx-auto w-full max-w-4xl">
+          <div className="flex flex-wrap gap-2.5">
+            {categories.map((category) => (
+              <Link
+                key={category.slug}
+                href={`/categories/${category.slug}`}
+                className="group inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/80 px-3 py-1.5 text-sm text-foreground transition-colors hover:border-border hover:bg-muted"
+              >
+                <HugeiconsIcon
+                  icon={GridViewIcon}
+                  className="size-3.5 text-muted-foreground transition-colors group-hover:text-foreground"
+                  strokeWidth={2}
+                />
+                <span>{category.name}</span>
+                <span className="rounded-full bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground">
+                  {category.count}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
       )}
     </div>
   );

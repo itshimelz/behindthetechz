@@ -98,23 +98,25 @@ export default async function HomePage() {
                     className="size-4"
                   />
                 </Button>
-                <Button
-                  render={<Link href="/blog" />}
-                  size="lg"
-                  variant="outline"
-                  className="h-10 w-full rounded-full px-4 text-sm sm:h-11 sm:w-auto sm:px-5"
-                >
-                  Browse Archive
-                  <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
-                </Button>
-                <Button
-                  render={<Link href="/about" />}
-                  size="lg"
-                  variant="ghost"
-                  className="h-9 w-full rounded-full px-3 text-sm sm:h-11 sm:w-auto sm:px-4"
-                >
-                  About the author
-                </Button>
+                <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
+                  <Button
+                    render={<Link href="/blog" />}
+                    size="lg"
+                    variant="outline"
+                    className="h-10 w-full rounded-full px-4 text-sm sm:h-11 sm:w-auto sm:px-5"
+                  >
+                    Browse Archive
+                    <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
+                  </Button>
+                  <Button
+                    render={<Link href="/about" />}
+                    size="lg"
+                    variant="ghost"
+                    className="h-10 w-full rounded-full px-3 text-sm sm:h-11 sm:w-auto sm:px-4"
+                  >
+                    About
+                  </Button>
+                </div>
               </div>
             </div>
 

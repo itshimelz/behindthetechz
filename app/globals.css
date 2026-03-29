@@ -179,7 +179,7 @@
 
 /* Blog prose content: Medium / Substack reading style */
 .prose {
-  font-size: 1.0625rem;
+  font-size: 1rem;
   line-height: 1.68;
   letter-spacing: -0.003em;
   color: var(--foreground);
@@ -189,6 +189,15 @@
 .prose p {
   margin-top: 0;
   margin-bottom: 1.1em;
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+}
+
+.prose :where(p):not(:where([class~="not-prose"] *)) {
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
 }
 
 .prose h1,
@@ -452,7 +461,7 @@ html.dark .prose code span {
 /* Mobile prose overrides */
 @media (max-width: 767px) {
   .prose {
-    font-size: 1rem;
+    font-size: 0.95rem;
     text-align: left;
     line-height: 1.65;
   }
@@ -472,7 +481,7 @@ html.dark .prose code span {
     font-size: 1.125rem;
   }
   .prose .heading-anchor {
-    opacity: 1;
+    display: none;
   }
   .prose pre {
     max-width: calc(100vw - 2rem);

@@ -124,7 +124,7 @@ export default async function BlogPostPage({
       <HeadingCopyLinkEnhancer />
       
       {/* Container for Article & Sticky Sidebar */}
-      <div className="mx-auto flex w-full max-w-360 items-start justify-center gap-8 px-4 py-10 md:px-8">
+      <div className="mx-auto flex w-full max-w-360 items-start justify-center gap-8 px-4 pb-10 pt-4 md:px-8 md:pt-6">
         <article className="flex w-full max-w-3xl min-w-0 flex-1 flex-col gap-6">
           <div className="mx-auto w-full max-w-3xl space-y-4">
           <PostMeta post={post} />
