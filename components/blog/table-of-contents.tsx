@@ -139,22 +139,18 @@ export function TableOfContents({
     const scrollOffset = 80;
 
     if (container === window) {
-      let top = 0;
-      let current: HTMLElement | null = el;
-      while (current) {
-        top += current.offsetTop;
-        current = current.offsetParent as HTMLElement | null;
-      }
-      window.scrollTo({ top: Math.max(0, top - scrollOffset), behavior: "smooth" });
+      const top = getElementTopInContainer(el, window);
+      window.scrollTo({
+        top: Math.max(0, top - scrollOffset),
+        behavior: "smooth",
+      });
     } else {
       const htmlContainer = container as HTMLElement;
-      let top = 0;
-      let current: HTMLElement | null = el;
-      while (current && current !== htmlContainer) {
-        top += current.offsetTop;
-        current = current.offsetParent as HTMLElement | null;
-      }
-      htmlContainer.scrollTo({ top: Math.max(0, top - scrollOffset), behavior: "smooth" });
+      const top = getElementTopInContainer(el, htmlContainer);
+      htmlContainer.scrollTo({
+        top: Math.max(0, top - scrollOffset),
+        behavior: "smooth",
+      });
     }
 
     setActiveId(id);
@@ -189,7 +185,7 @@ export function TableOfContents({
     return (
       <nav
         aria-label="Table of contents"
-        className="group fixed right-6 top-1/2 z-50 hidden -translate-y-1/2 flex-col items-end justify-center space-y-4 xl:flex"
+        className="group pointer-events-auto fixed right-6 top-1/2 z-50 hidden -translate-y-1/2 flex-col items-end justify-center space-y-4 xl:flex"
       >
         <button
           type="button"

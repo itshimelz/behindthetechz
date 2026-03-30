@@ -10,8 +10,8 @@ export function RelatedPosts({ posts }: Props) {
   if (posts.length === 0) return null;
 
   return (
-    <section className="mx-auto mt-8 w-full max-w-3xl rounded-xl bg-[#faf7f1] p-4 sm:p-5">
-      <h2 className="text-xl font-semibold tracking-tight mb-4 text-foreground">
+    <section className="mx-auto mt-8 w-full max-w-3xl rounded-xl border border-border/60 bg-card p-4 sm:p-5">
+      <h2 className="mb-4 text-xl font-semibold tracking-tight text-foreground">
         Related Posts
       </h2>
 

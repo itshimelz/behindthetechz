@@ -12,6 +12,9 @@ type Props = {
 export function PostTags({ tags, category, date }: Props) {
   if (tags.length === 0) return null;
 
+  const toTagSlug = (tag: string) =>
+    tag.trim().toLowerCase().replace(/\s+/g, "-");
+
   const formattedDate = new Date(date).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
@@ -36,7 +39,7 @@ export function PostTags({ tags, category, date }: Props) {
       {/* Tag pills */}
       <div className="flex flex-wrap gap-2">
         {tags.map((tag) => (
-          <Link key={tag} href={`/blog?tag=${tag}`}>
+          <Link key={tag} href={`/tags/${encodeURIComponent(toTagSlug(tag))}`}>
             <Badge
               variant="outline"
               className="cursor-pointer px-3 py-1 text-xs transition-colors hover:border-primary/30 hover:bg-primary/10 hover:text-primary"

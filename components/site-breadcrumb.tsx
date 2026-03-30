@@ -16,6 +16,7 @@ const ROUTE_LABELS: Record<string, string> = {
   about: "About",
   graph: "Graph View",
   categories: "Categories",
+  tags: "Tags",
 };
 
 export function SiteBreadcrumb() {
@@ -42,7 +43,7 @@ export function SiteBreadcrumb() {
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 {isLast ? (
-                  <BreadcrumbPage className="line-clamp-1 max-w-[200px]">
+                  <BreadcrumbPage className="line-clamp-1 max-w-50">
                     {label}
                   </BreadcrumbPage>
                 ) : (

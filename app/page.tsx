@@ -10,6 +10,7 @@ import {
   Notebook01Icon,
 } from "@hugeicons/core-free-icons";
 
+import { PostList } from "@/components/blog/post-list";
 import { SectionIntro } from "@/components/shared/section-intro";
 import { SectionReveal } from "@/components/shared/section-reveal";
 import { Badge } from "@/components/ui/badge";
@@ -30,7 +31,9 @@ export default async function HomePage() {
   const recentPosts = allPosts
     .filter(
       (post) =>
-        !selectedFeaturedPosts.some((featuredPost) => featuredPost.slug === post.slug),
+        !selectedFeaturedPosts.some(
+          (featuredPost) => featuredPost.slug === post.slug,
+        ),
     )
     .slice(0, 5);
   const topicPaths = categories.slice(0, 3).map((category) => ({
@@ -54,7 +57,7 @@ export default async function HomePage() {
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-5 md:gap-16 md:px-6 md:py-12 lg:gap-24">
       <SectionReveal>
-        <section className="relative overflow-hidden rounded-[1.5rem] border border-border/70 bg-[radial-gradient(circle_at_top_left,rgba(95,107,123,0.18),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(163,230,53,0.16),transparent_34%),linear-gradient(135deg,color-mix(in_oklch,var(--card)_88%,transparent),color-mix(in_oklch,var(--muted)_42%,transparent))] p-3 sm:p-4 md:rounded-[2rem] md:p-7 lg:p-10">
+        <section className="relative overflow-hidden rounded-[1.5rem] bg-[radial-gradient(circle_at_top_left,rgba(95,107,123,0.18),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(163,230,53,0.16),transparent_34%),linear-gradient(135deg,color-mix(in_oklch,var(--card)_88%,transparent),color-mix(in_oklch,var(--muted)_42%,transparent))] p-3 sm:p-4 md:rounded-[2rem] md:p-7 lg:p-10">
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/12 to-transparent" />
           <div className="absolute -top-16 -left-10 h-40 w-40 rounded-full bg-[radial-gradient(circle,rgba(148,163,184,0.22),transparent_70%)]" />
           <div className="absolute right-[-4rem] bottom-[-5rem] h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(190,242,100,0.24),transparent_70%)]" />
@@ -93,10 +96,7 @@ export default async function HomePage() {
                   className="h-10 w-full rounded-full px-4 text-sm sm:h-11 sm:w-auto sm:px-5"
                 >
                   Explore Graph View
-                  <HugeiconsIcon
-                    icon={ChartBubble02Icon}
-                    className="size-4"
-                  />
+                  <HugeiconsIcon icon={ChartBubble02Icon} className="size-4" />
                 </Button>
                 <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
                   <Button
@@ -124,7 +124,7 @@ export default async function HomePage() {
               {stats.map((item) => (
                 <div
                   key={item.label}
-                  className="rounded-[1rem] border border-border/60 bg-background/78 p-3 backdrop-blur-sm md:rounded-[1.35rem] md:p-4"
+                  className="rounded-[1rem] bg-background/78 p-3 backdrop-blur-sm md:rounded-[1.35rem] md:p-4"
                 >
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <HugeiconsIcon icon={item.icon} className="size-4" />
@@ -144,7 +144,7 @@ export default async function HomePage() {
 
       <SectionReveal delay={0.04}>
         <section className="grid gap-5 md:gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,0.85fr)]">
-          <div className="rounded-[1.5rem] border border-border/70 bg-card p-4 md:rounded-3xl md:p-7">
+          <div className="rounded-[1.5rem] bg-card p-4 md:rounded-3xl md:p-7">
             <SectionIntro
               eyebrow="Featured"
               title="A strong entry point for new readers"
@@ -210,7 +210,7 @@ export default async function HomePage() {
             )}
           </div>
 
-          <div className="rounded-[1.5rem] border border-border/70 bg-card p-4 md:rounded-3xl md:p-7">
+          <div className="rounded-[1.5rem] bg-card p-4 md:rounded-3xl md:p-7">
             <SectionIntro
               eyebrow="Graph view preview"
               title="Find ideas through relationships"
@@ -237,7 +237,7 @@ export default async function HomePage() {
               ].map((item, index) => (
                 <div
                   key={item.title}
-                  className="rounded-[1.25rem] border border-border/60 bg-muted/20 p-3 md:rounded-2xl md:p-4"
+                  className="rounded-[1.25rem] bg-muted/20 p-3 md:rounded-2xl md:p-4"
                 >
                   <div className="flex items-center justify-between gap-3">
                     <p className="text-sm font-semibold text-foreground">
@@ -275,63 +275,18 @@ export default async function HomePage() {
           />
 
           {recentPosts.length > 0 ? (
-            <div className="grid gap-3 md:gap-4 lg:grid-cols-2">
-              {recentPosts.map((post) => (
-                <Link
-                  key={post.slug}
-                  href={`/blog/${post.slug}`}
-                  className="group rounded-[1.4rem] border border-border/70 bg-card p-4 transition-colors hover:border-foreground/20 hover:bg-muted/20 md:rounded-3xl md:p-5"
-                >
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge
-                      variant="secondary"
-                      className={cn(
-                        "rounded-full border px-3 py-1 font-medium",
-                        getCategoryColorClass(post.category),
-                      )}
-                    >
-                      {post.category}
-                    </Badge>
-                    <span className="text-xs text-muted-foreground md:text-sm">
-                      {post.readingTime} min read
-                    </span>
-                  </div>
-                  <h3 className="mt-3 text-lg font-semibold tracking-tight text-foreground transition-colors group-hover:text-primary md:mt-4 md:text-xl">
-                    {post.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground line-clamp-3 md:mt-3 md:line-clamp-none">
-                    {post.excerpt}
-                  </p>
-                  <div className="mt-4 flex items-center justify-between gap-3 text-xs text-muted-foreground md:mt-5 md:gap-4 md:text-sm">
-                    <span>
-                      {new Date(post.date).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </span>
-                    <span className="inline-flex items-center gap-1 text-foreground">
-                      Read post
-                      <HugeiconsIcon
-                        icon={ArrowRight01Icon}
-                        className="size-4 transition-transform group-hover:translate-x-0.5"
-                      />
-                    </span>
-                  </div>
-                </Link>
-              ))}
+            <div className="w-full">
+              <PostList posts={recentPosts} compact />
             </div>
           ) : (
-            <div className="rounded-3xl border border-dashed border-border/70 bg-card p-8 text-sm text-muted-foreground">
-              No posts published yet.
-            </div>
+            <p className="text-sm text-muted-foreground">No posts published yet.</p>
           )}
         </section>
       </SectionReveal>
 
       <SectionReveal delay={0.12}>
         <section className="grid gap-5 md:gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.9fr)]">
-          <div className="rounded-[1.5rem] border border-border/70 bg-card p-4 md:rounded-3xl md:p-7">
+          <div className="rounded-[1.5rem] bg-card p-4 md:rounded-3xl md:p-7">
             <SectionIntro
               eyebrow="Reading paths"
               title="Explore by topic cluster"
@@ -383,7 +338,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="rounded-[1.5rem] border border-border/70 bg-[linear-gradient(180deg,color-mix(in_oklch,var(--card)_82%,transparent),color-mix(in_oklch,var(--muted)_34%,transparent))] p-4 md:rounded-3xl md:p-7">
+          <div className="rounded-[1.5rem] bg-[linear-gradient(180deg,color-mix(in_oklch,var(--card)_82%,transparent),color-mix(in_oklch,var(--muted)_34%,transparent))] p-4 md:rounded-3xl md:p-7">
             <SectionIntro
               eyebrow="Follow"
               title="Stay close to the work"
@@ -417,7 +372,7 @@ export default async function HomePage() {
               </Button>
             </div>
 
-            <div className="mt-5 rounded-[1.25rem] border border-border/60 bg-background/80 p-3.5 md:mt-6 md:rounded-2xl md:p-4">
+            <div className="mt-5 rounded-[1.25rem] bg-background/80 p-3.5 md:mt-6 md:rounded-2xl md:p-4">
               <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
                 Reading rhythm
               </p>

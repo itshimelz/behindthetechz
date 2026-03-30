@@ -36,6 +36,13 @@ import {
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -45,6 +52,10 @@ import { useTheme } from "@/hooks/use-theme";
 import { useFavorites } from "@/hooks/use-favorites";
 import { useReadingProgressPreference } from "@/hooks/use-reading-progress";
 import { useTocPreference } from "@/hooks/use-toc";
+import {
+  BLOG_BG_TONE_OPTIONS,
+  useBlogReadingPreferences,
+} from "@/hooks/use-blog-reading-preferences";
 
 // ---------------------------------------------------------------------------
 // Static data
@@ -57,6 +68,13 @@ const user = {
   role: "Author & Developer",
   joinedDate: "February 2026",
   website: "behindthetechz.me",
+} as const;
+
+const BLOG_BG_TONE_LABELS = {
+  default: "Default",
+  paper: "Paper",
+  mist: "Mist",
+  sepia: "Sepia",
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -128,6 +146,12 @@ export function NavUser({
   const { enabled: readingProgressEnabled, setEnabled: setReadingProgress } =
     useReadingProgressPreference();
   const { enabled: tocEnabled, setEnabled: setTocEnabled } = useTocPreference();
+  const {
+    tone: blogBgTone,
+    setTone: setBlogBgTone,
+    dotsEnabled: blogDotsEnabled,
+    setDotsEnabled: setBlogDotsEnabled,
+  } = useBlogReadingPreferences();
   const { favorites, toggleFavorite, isMounted } = useFavorites();
   const [favoritesOpen, setFavoritesOpen] = useState(false);
   const [authorOpen, setAuthorOpen] = useState(false);
@@ -263,6 +287,41 @@ export function NavUser({
               description="Show in-page table of contents"
             >
               <Switch checked={tocEnabled} onCheckedChange={setTocEnabled} />
+            </SettingRow>
+            <SettingRow
+              icon={Settings01Icon}
+              label="Blog Background"
+              description="Choose a softer page surface for long reads"
+            >
+              <Select
+                value={blogBgTone}
+                onValueChange={(value) => {
+                  if (BLOG_BG_TONE_OPTIONS.includes(value as (typeof BLOG_BG_TONE_OPTIONS)[number])) {
+                    setBlogBgTone(value as (typeof BLOG_BG_TONE_OPTIONS)[number]);
+                  }
+                }}
+              >
+                <SelectTrigger className="h-8 w-28">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {BLOG_BG_TONE_OPTIONS.map((tone) => (
+                    <SelectItem key={tone} value={tone}>
+                      {BLOG_BG_TONE_LABELS[tone]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </SettingRow>
+            <SettingRow
+              icon={EyeIcon}
+              label="Dotted Background"
+              description="Show or hide the dotted blog reading texture"
+            >
+              <Switch
+                checked={blogDotsEnabled}
+                onCheckedChange={setBlogDotsEnabled}
+              />
             </SettingRow>
           </div>
         </DialogContent>

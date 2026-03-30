@@ -19,6 +19,7 @@ import { PostMeta } from "@/components/blog/post-meta";
 import { PostTags } from "@/components/blog/post-tags";
 import { ReadingProgress } from "@/components/blog/reading-progress";
 import { RelatedPosts } from "@/components/blog/related-posts";
+import { BlogReadingSurface } from "@/components/blog/blog-reading-surface";
 import { ScrollToTop } from "@/components/blog/scroll-to-top";
 import { SeriesNav } from "@/components/blog/series-nav";
 import { TableOfContents } from "@/components/blog/table-of-contents";
@@ -122,193 +123,193 @@ export default async function BlogPostPage({
       <ReadingProgress />
       <ScrollToTop />
       <HeadingCopyLinkEnhancer />
-      
-      {/* Container for Article & Sticky Sidebar */}
-      <div className="mx-auto flex w-full max-w-360 items-start justify-center gap-8 px-4 pb-10 pt-4 md:px-8 md:pt-6">
-        <article className="flex w-full max-w-3xl min-w-0 flex-1 flex-col gap-6">
-          <div className="mx-auto w-full max-w-3xl space-y-4">
-          <PostMeta post={post} />
-          <TagPill tags={post.tags} />
-        </div>
-
-        {/* Cover image */}
-        {post.coverImage && (
-          <div className="mx-auto w-full max-w-3xl">
-            <div className="relative aspect-video w-full overflow-hidden rounded-xl border">
-              <Image
-                src={post.coverImage}
-                alt={post.title}
-                fill
-                priority
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 768px"
-              />
+      <BlogReadingSurface>
+        {/* Container for Article & Sticky Sidebar */}
+        <div className="mx-auto flex w-full max-w-360 items-start justify-center gap-8 px-4 pb-10 pt-4 md:px-8 md:pt-6">
+          <article className="flex w-full max-w-3xl min-w-0 flex-1 flex-col gap-6">
+            <div className="mx-auto w-full max-w-3xl space-y-4">
+              <PostMeta post={post} />
+              <TagPill tags={post.tags} />
             </div>
-          </div>
-        )}
 
-        {/* Series Navigation */}
-        {seriesData && (
-          <SeriesNav series={seriesData} currentSlug={decodedSlug} />
-        )}
-
-        {/* Table of Contents - Mobile/Tablet inline only */}
-        <div className="xl:hidden">
-          <TableOfContents headings={tocHeadings} />
-        </div>
-
-        {/* MDX content */}
-        <div className="prose prose-neutral dark:prose-invert mx-auto w-full max-w-3xl">
-          <MDXRemote
-            source={post.content}
-            components={{
-              pre: (props: React.HTMLAttributes<HTMLPreElement>) => (
-                <CodeBlock {...props} />
-              ),
-              code: (props: React.HTMLAttributes<HTMLElement>) => (
-                <InlineCode {...props} />
-              ),
-              a: ({ href, children, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
-                const isInternal = href?.startsWith("/blog/");
-                if (isInternal && href) {
-                  return (
-                    <WikiLink 
-                      href={href} 
-                      validSlugs={validSlugs} 
-                      postMetadata={postMetadata} 
-                      {...props}
-                    >
-                      {children}
-                    </WikiLink>
-                  );
-                }
-                return (
-                  <a
-                    href={href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-medium text-primary underline underline-offset-4 decoration-primary/30 hover:decoration-primary transition-colors"
-                    {...props}
-                  >
-                    {children}
-                  </a>
-                );
-              },
-              img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
-                <span className="my-8 block overflow-hidden rounded-xl border bg-muted/20">
-                  <img
-                    alt={props.alt || "Post image"}
-                    loading="lazy"
-                    className="w-full object-cover transition-colors"
-                    {...props}
+            {/* Cover image */}
+            {post.coverImage && (
+              <div className="mx-auto w-full max-w-3xl">
+                <div className="relative aspect-video w-full overflow-hidden rounded-xl border">
+                  <Image
+                    src={post.coverImage}
+                    alt={post.title}
+                    fill
+                    priority
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 768px"
                   />
-                  {props.alt && (
-                    <span className="block border-t bg-muted/40 px-4 py-2.5 text-center text-sm text-muted-foreground">
-                      {props.alt}
+                </div>
+              </div>
+            )}
+
+            {/* Series Navigation */}
+            {seriesData && (
+              <SeriesNav series={seriesData} currentSlug={decodedSlug} />
+            )}
+
+            {/* Table of Contents - Mobile/Tablet inline only */}
+            <div className="xl:hidden">
+              <TableOfContents headings={tocHeadings} />
+            </div>
+            {/* MDX content */}
+            <div className="prose prose-neutral dark:prose-invert mx-auto w-full max-w-3xl">
+              <MDXRemote
+                source={post.content}
+                components={{
+                  pre: (props: React.HTMLAttributes<HTMLPreElement>) => (
+                    <CodeBlock {...props} />
+                  ),
+                  code: (props: React.HTMLAttributes<HTMLElement>) => (
+                    <InlineCode {...props} />
+                  ),
+                  a: ({ href, children, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
+                    const isInternal = href?.startsWith("/blog/");
+                    if (isInternal && href) {
+                      return (
+                        <WikiLink
+                          href={href}
+                          validSlugs={validSlugs}
+                          postMetadata={postMetadata}
+                          {...props}
+                        >
+                          {children}
+                        </WikiLink>
+                      );
+                    }
+                    return (
+                      <a
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-primary underline underline-offset-4 decoration-primary/30 hover:decoration-primary transition-colors"
+                        {...props}
+                      >
+                        {children}
+                      </a>
+                    );
+                  },
+                  img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
+                    <span className="my-8 block overflow-hidden rounded-xl border bg-muted/20">
+                      <img
+                        alt={props.alt || "Post image"}
+                        loading="lazy"
+                        className="w-full object-cover transition-colors"
+                        {...props}
+                      />
+                      {props.alt && (
+                        <span className="block border-t bg-muted/40 px-4 py-2.5 text-center text-sm text-muted-foreground">
+                          {props.alt}
+                        </span>
+                      )}
                     </span>
-                  )}
-                </span>
-              ),
-              iframe: (props: React.IframeHTMLAttributes<HTMLIFrameElement>) => (
-                <span className="my-8 block overflow-hidden rounded-xl border bg-muted/20 shadow-sm">
-                  <span className="relative block aspect-video w-full">
-                    <iframe
-                      className="absolute inset-0 h-full w-full"
-                      loading={props.loading ?? "lazy"}
-                      allowFullScreen={props.allowFullScreen ?? true}
-                      {...props}
-                    />
-                  </span>
-                </span>
-              ),
-              video: (props: React.VideoHTMLAttributes<HTMLVideoElement>) => (
-                <span className="my-8 block overflow-hidden rounded-xl border bg-muted/20 shadow-sm">
-                  <video
-                    className="w-full rounded-xl"
-                    controls={props.controls ?? true}
-                    playsInline={props.playsInline ?? true}
-                    preload={props.preload ?? "metadata"}
-                    {...props}
-                  />
-                </span>
-              ),
-            }}
-            options={{
-              mdxOptions: {
-                remarkPlugins: [
-                  remarkWikiLink,
-                  remarkCallouts,
-                  remarkGfm,
-                  remarkMath,
-                ],
-                rehypePlugins: [
-                  rehypeKatex,
-                  rehypeSlug,
-                  [
-                    rehypeAutolinkHeadings,
-                    {
-                      behavior: "append",
-                      properties: {
-                        className: ["heading-anchor"],
-                        "aria-label": "Copy section link",
-                        "data-heading-anchor": "true",
-                        title: "Copy link to this section",
-                      },
-                      content: [
+                  ),
+                  iframe: (props: React.IframeHTMLAttributes<HTMLIFrameElement>) => (
+                    <span className="my-8 block overflow-hidden rounded-xl border bg-muted/20 shadow-sm">
+                      <span className="relative block aspect-video w-full">
+                        <iframe
+                          className="absolute inset-0 h-full w-full"
+                          loading={props.loading ?? "lazy"}
+                          allowFullScreen={props.allowFullScreen ?? true}
+                          {...props}
+                        />
+                      </span>
+                    </span>
+                  ),
+                  video: (props: React.VideoHTMLAttributes<HTMLVideoElement>) => (
+                    <span className="my-8 block overflow-hidden rounded-xl border bg-muted/20 shadow-sm">
+                      <video
+                        className="w-full rounded-xl"
+                        controls={props.controls ?? true}
+                        playsInline={props.playsInline ?? true}
+                        preload={props.preload ?? "metadata"}
+                        {...props}
+                      />
+                    </span>
+                  ),
+                }}
+                options={{
+                  mdxOptions: {
+                    remarkPlugins: [
+                      remarkWikiLink,
+                      remarkCallouts,
+                      remarkGfm,
+                      remarkMath,
+                    ],
+                    rehypePlugins: [
+                      rehypeKatex,
+                      rehypeSlug,
+                      [
+                        rehypeAutolinkHeadings,
                         {
-                          type: "element",
-                          tagName: "span",
-                          properties: { "aria-hidden": "true" },
-                          children: [{ type: "text", value: "#" }],
+                          behavior: "append",
+                          properties: {
+                            className: ["heading-anchor"],
+                            "aria-label": "Copy section link",
+                            "data-heading-anchor": "true",
+                            title: "Copy link to this section",
+                          },
+                          content: [
+                            {
+                              type: "element",
+                              tagName: "span",
+                              properties: { "aria-hidden": "true" },
+                              children: [{ type: "text", value: "#" }],
+                            },
+                          ],
                         },
                       ],
-                    },
-                  ],
-                  [
-                    rehypePrettyCode,
-                    {
-                      theme: {
-                        light: "github-light",
-                        dark: "github-dark",
-                      },
-                    },
-                  ],
-                ],
-              },
-            }}
-          />
+                      [
+                        rehypePrettyCode,
+                        {
+                          theme: {
+                            light: "github-light",
+                            dark: "github-dark",
+                          },
+                        },
+                      ],
+                    ],
+                  },
+                }}
+              />
+            </div>
+
+            {/* Backlinks */}
+            <BacklinksSection backlinks={backlinks} />
+
+            {/* Engagement bar: claps, views, share, bookmark, copy link */}
+            <PostFooter
+              slug={post.slug}
+              title={post.title}
+              initialClapCount={post.clapCount}
+              initialViewCount={post.viewCount}
+            />
+
+            {/* Tags + meta */}
+            <PostTags
+              tags={post.tags}
+              category={post.category}
+              date={post.date}
+            />
+
+            {/* Newsletter subscribe CTA */}
+            <NewsletterCTA category={post.category} />
+
+            {/* Related Posts */}
+            <RelatedPosts posts={relatedPosts} />
+          </article>
+
+          {/* Desktop Sticky Table of Contents */}
+          <div className="contents">
+            <TableOfContents headings={tocHeadings} isDesktop />
+          </div>
         </div>
-
-        {/* Backlinks */}
-        <BacklinksSection backlinks={backlinks} />
-
-        {/* Engagement bar: claps, views, share, bookmark, copy link */}
-        <PostFooter
-          slug={post.slug}
-          title={post.title}
-          initialClapCount={post.clapCount}
-          initialViewCount={post.viewCount}
-        />
-
-        {/* Tags + meta */}
-        <PostTags
-          tags={post.tags}
-          category={post.category}
-          date={post.date}
-        />
-
-        {/* Newsletter subscribe CTA */}
-        <NewsletterCTA category={post.category} />
-
-        {/* Related Posts */}
-        <RelatedPosts posts={relatedPosts} />
-      </article>
-
-      {/* Desktop Sticky Table of Contents */}
-      <div className="contents">
-        <TableOfContents headings={tocHeadings} isDesktop />
-      </div>
-    </div>
-  </>
+      </BlogReadingSurface>
+    </>
   );
 }

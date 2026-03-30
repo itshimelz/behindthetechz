@@ -104,7 +104,7 @@ export function PostMeta({ post }: Props) {
       )}
 
       {/* Author byline */}
-      <div className="flex items-center gap-3 border-y border-border/50 py-3">
+      <div className="flex items-center gap-3 border-y-2 border-border/60 py-3">
         <Image
           src={AUTHOR.avatar}
           alt={AUTHOR.name}

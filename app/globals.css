@@ -153,6 +153,75 @@
   }
 }
 
+.blog-reading-surface {
+  --blog-reader-bg: transparent;
+
+  background-color: var(--blog-reader-bg);
+  background-image: none;
+  background-size: 20px 20px;
+  background-position: center center;
+  background-attachment: fixed;
+  transition: background-color 180ms ease;
+}
+
+.blog-reading-surface.blog-reading-dots-enabled {
+  background-image: radial-gradient(
+    circle,
+    color-mix(in oklch, var(--foreground) 14%, transparent) 1px,
+    transparent 1px
+  );
+}
+
+.dark .blog-reading-surface.blog-reading-dots-enabled {
+  background-image: radial-gradient(
+    circle,
+    color-mix(in oklch, var(--muted-foreground) 12%, transparent) 1px,
+    transparent 1px
+  );
+}
+
+.blog-reading-surface.blog-reading-dots-disabled {
+  background-image: none !important;
+}
+
+@media (max-width: 768px) {
+  .blog-reading-surface {
+    background-attachment: scroll;
+  }
+}
+
+.blog-reading-tone-default {
+  --blog-reader-bg: color-mix(in oklch, var(--background) 93%, var(--muted));
+}
+
+.blog-reading-tone-paper {
+  --blog-reader-bg: #f7efd9;
+}
+
+.blog-reading-tone-mist {
+  --blog-reader-bg: #e9f1f9;
+}
+
+.blog-reading-tone-sepia {
+  --blog-reader-bg: #f3e5cf;
+}
+
+.dark .blog-reading-tone-default {
+  --blog-reader-bg: var(--background);
+}
+
+.dark .blog-reading-tone-paper {
+  --blog-reader-bg: color-mix(in oklch, var(--background) 90%, #2a241d);
+}
+
+.dark .blog-reading-tone-mist {
+  --blog-reader-bg: color-mix(in oklch, var(--background) 90%, #1d2a38);
+}
+
+.dark .blog-reading-tone-sepia {
+  --blog-reader-bg: color-mix(in oklch, var(--background) 88%, #33271a);
+}
+
 @utility font-heading {
   font-family: "Google Sans", "Tiro Bangla", sans-serif;
 }
@@ -180,7 +249,7 @@
 /* Blog prose content: Medium / Substack reading style */
 .prose {
   font-size: 1rem;
-  line-height: 1.68;
+  line-height: 1.6;
   letter-spacing: -0.003em;
   color: var(--foreground);
   text-align: left;
