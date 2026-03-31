@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/collapsible";
 import {
   Home02Icon,
+  Search01Icon,
   Notebook01Icon,
   GridViewIcon,
   UserIcon,
@@ -59,6 +60,11 @@ const navMain = [
     title: "Home",
     url: "/",
     icon: Home02Icon,
+  },
+  {
+    title: "Search",
+    url: "/search",
+    icon: Search01Icon,
   },
   {
     title: "All Posts",

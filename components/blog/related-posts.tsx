@@ -11,7 +11,7 @@ export function RelatedPosts({ posts }: Props) {
 
   return (
     <section className="mx-auto mt-8 w-full max-w-3xl rounded-xl border border-border/60 bg-card p-4 sm:p-5">
-      <h2 className="mb-4 text-xl font-semibold tracking-tight text-foreground">
+      <h2 className="mb-4 text-lg font-semibold tracking-tight text-foreground sm:text-xl">
         Related Posts
       </h2>
 
@@ -21,18 +21,18 @@ export function RelatedPosts({ posts }: Props) {
           <Link
             key={post.slug}
             href={`/blog/${post.slug}`}
-            className={`group flex items-start gap-3 py-4 ${
+            className={`group flex items-start gap-3 py-3.5 ${
               index < posts.length - 1 ? "border-b border-border/60" : ""
             }`}
           >
             <div className="min-w-0 flex-1 space-y-1.5">
-              <h3 className="line-clamp-2 text-base leading-snug font-semibold text-foreground transition-colors group-hover:text-primary md:text-lg">
+              <h3 className="line-clamp-2 text-[15px] leading-snug font-medium text-foreground transition-colors group-hover:text-primary sm:text-base">
                 {post.title}
               </h3>
-              <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground md:text-base">
+              <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
                 {post.excerpt}
               </p>
-              <p className="pt-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground/85 md:text-xs">
+              <p className="pt-0.5 text-[11px] font-medium uppercase tracking-wide text-muted-foreground/80 sm:text-xs">
                 {new Date(post.date).toLocaleDateString("en-US", {
                   month: "short",
                   day: "numeric",
@@ -44,13 +44,13 @@ export function RelatedPosts({ posts }: Props) {
             </div>
 
             {post.coverImage ? (
-              <div className="relative h-22 w-22 shrink-0 overflow-hidden rounded-md border border-border/50 bg-muted/20 md:h-24 md:w-24">
+              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-md border border-border/50 bg-muted/20 sm:h-22 sm:w-22">
                 <Image
                   src={post.coverImage}
                   alt={post.title}
                   fill
                   className="object-cover"
-                  sizes="(max-width: 768px) 88px, 96px"
+                  sizes="(max-width: 640px) 80px, 88px"
                 />
               </div>
             ) : null}

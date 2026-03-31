@@ -37,7 +37,7 @@ export function InlineCode({
   return (
     <code
       className={cn(
-        "cursor-copy transition-colors hover:opacity-80 active:opacity-60",
+        "font-mono cursor-copy transition-colors hover:opacity-80 active:opacity-60",
         className,
       )}
       onClick={handleCopy}

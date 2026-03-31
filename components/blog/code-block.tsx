@@ -117,7 +117,7 @@ export function CodeBlock({ children, className, ...props }: CodeBlockProps) {
         <pre
           ref={preRef}
           className={cn(
-            "p-4 text-sm font-mono overflow-x-auto m-0 bg-transparent!",
+            "p-4 text-[15px] font-mono overflow-x-auto m-0 bg-transparent!",
             className,
           )}
           {...props}

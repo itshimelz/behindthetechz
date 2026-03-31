@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { forceCollide } from "d3-force-3d";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, animate, motion, useReducedMotion } from "framer-motion";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   ArrowRight01Icon,
@@ -44,6 +44,10 @@ type ForceGraphNode = GraphNode & { x?: number; y?: number };
 type GraphLinkRef = {
   source: string | { id?: string };
   target: string | { id?: string };
+};
+type ForceGraphLink = {
+  source: string | ForceGraphNode;
+  target: string | ForceGraphNode;
 };
 
 type Props = {
@@ -84,9 +88,32 @@ export function GraphView({ data }: Props) {
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showLabels, setShowLabels] = useState(true);
-  const [showArrows, setShowArrows] = useState(false);
+  const [showArrows, setShowArrows] = useState(true);
+  const hoverTransitionRef = useRef(0);
+  const hoverAnimationRef = useRef<ReturnType<typeof animate> | null>(null);
 
   const activeNodeId = hoveredNodeId ?? selectedNodeId;
+
+  useEffect(() => {
+    const target = activeNodeId ? 1 : 0;
+
+    hoverAnimationRef.current?.stop();
+    hoverAnimationRef.current = animate(hoverTransitionRef.current, target, {
+      duration: prefersReducedMotion ? 0 : 0.22,
+      ease: "easeOut",
+      onUpdate: (latest) => {
+        hoverTransitionRef.current = latest;
+        const graphApi = fgRef.current as ForceGraphMethods & {
+          refresh?: () => void;
+        };
+        graphApi.refresh?.();
+      },
+    });
+
+    return () => {
+      hoverAnimationRef.current?.stop();
+    };
+  }, [activeNodeId, prefersReducedMotion]);
 
   const graphColors = useMemo(() => {
     const fallback = {
@@ -334,6 +361,7 @@ export function GraphView({ data }: Props) {
       const isSelected = graphNode.id === selectedNodeId;
       const isHovered = graphNode.id === hoveredNodeId;
       const emphasized = isNodeEmphasized(graphNode.id);
+      const hoverMix = hoverTransitionRef.current;
       const radius = 3 + Math.cbrt(graphNode.val) * 1.4;
 
       const fillColor =
@@ -344,7 +372,7 @@ export function GraphView({ data }: Props) {
             : graphColors.nodeDim;
 
       ctx.save();
-      ctx.globalAlpha = emphasized ? 1 : 0.45;
+      ctx.globalAlpha = emphasized ? 1 : 1 - 0.55 * hoverMix;
       ctx.beginPath();
       ctx.arc(
         graphNode.x || 0,
@@ -408,6 +436,65 @@ export function GraphView({ data }: Props) {
       selectedNodeId,
       showLabels,
     ],
+  );
+
+  const linkCanvasObject = useCallback(
+    (link: object, ctx: CanvasRenderingContext2D, globalScale: number) => {
+      if (!showArrows) return;
+
+      const graphLink = link as ForceGraphLink;
+      const source =
+        typeof graphLink.source === "object" ? graphLink.source : null;
+      const target =
+        typeof graphLink.target === "object" ? graphLink.target : null;
+
+      if (
+        !source ||
+        !target ||
+        typeof source.x !== "number" ||
+        typeof source.y !== "number" ||
+        typeof target.x !== "number" ||
+        typeof target.y !== "number"
+      ) {
+        return;
+      }
+
+      const sourceId = source.id;
+      const targetId = target.id;
+      const emphasized =
+        !activeNodeId ||
+        sourceId === activeNodeId ||
+        targetId === activeNodeId;
+      const hoverMix = hoverTransitionRef.current;
+
+      const dx = target.x - source.x;
+      const dy = target.y - source.y;
+      const distance = Math.hypot(dx, dy);
+      if (!distance) return;
+
+      const ux = dx / distance;
+      const uy = dy / distance;
+
+      const targetRadius = 3 + Math.cbrt(target.val) * 1.4;
+      const tipX = target.x - ux * (targetRadius + 0.35);
+      const tipY = target.y - uy * (targetRadius + 0.35);
+
+      const arrowScale = (emphasized ? 0.98 : 0.86) / Math.max(1, globalScale);
+      const arrowAngle = Math.atan2(dy, dx);
+      const arrowSvgPath = new Path2D("M0 0 L-6.8 3.4 L-4.8 0 L-6.8 -3.4 Z");
+
+      const color = emphasized ? graphColors.linkActive : graphColors.linkDim;
+
+      ctx.save();
+      ctx.globalAlpha = emphasized ? 0.95 : 0.85 - 0.3 * hoverMix;
+      ctx.fillStyle = color;
+      ctx.translate(tipX, tipY);
+      ctx.rotate(arrowAngle);
+      ctx.scale(arrowScale, arrowScale);
+      ctx.fill(arrowSvgPath);
+      ctx.restore();
+    },
+    [activeNodeId, graphColors.linkActive, graphColors.linkDim, showArrows],
   );
 
   const handleZoomIn = useCallback(() => {
@@ -524,16 +611,21 @@ export function GraphView({ data }: Props) {
               }}
               linkWidth={(link) => {
                 const ref = link as GraphLinkRef;
-                const base = !activeNodeId ? 2 : isLinkEmphasized(ref) ? 3 : 0.8;
+                const hoverMix = hoverTransitionRef.current;
+                const emphasized = isLinkEmphasized(ref);
+                const baseWhenIdle = 2.1;
+                const baseWhenEmphasized = 2.9;
+                const baseWhenDimmed = 1;
+                const base = !activeNodeId
+                  ? baseWhenIdle
+                  : emphasized
+                    ? baseWhenIdle + (baseWhenEmphasized - baseWhenIdle) * hoverMix
+                    : baseWhenIdle + (baseWhenDimmed - baseWhenIdle) * hoverMix;
                 return base / visualScale;
               }}
-              linkDirectionalArrowLength={(link) => {
-                if (!showArrows) return 0;
-                const ref = link as GraphLinkRef;
-                const base = !activeNodeId ? 5 : isLinkEmphasized(ref) ? 7 : 0;
-                return base / visualScale;
-              }}
-              linkDirectionalArrowRelPos={1}
+              linkDirectionalArrowLength={0}
+              linkCanvasObjectMode={() => "after"}
+              linkCanvasObject={linkCanvasObject}
               onZoom={handleZoom}
               onNodeClick={handleNodeClick}
               onNodeHover={(node) => {
