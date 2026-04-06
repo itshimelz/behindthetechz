@@ -29,7 +29,9 @@ export function SiteBreadcrumb() {
     <Breadcrumb>
       <BreadcrumbList>
         <BreadcrumbItem>
-          <BreadcrumbLink render={<Link href="/" />}>Home</BreadcrumbLink>
+          <BreadcrumbLink render={<Link href="/" title="Home" />}>
+            Home
+          </BreadcrumbLink>
         </BreadcrumbItem>
         {segments.map((segment, index) => {
           const href = "/" + segments.slice(0, index + 1).join("/");
@@ -43,11 +45,11 @@ export function SiteBreadcrumb() {
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 {isLast ? (
-                  <BreadcrumbPage className="line-clamp-1 max-w-50">
+                  <BreadcrumbPage className="line-clamp-1 max-w-50" title={label}>
                     {label}
                   </BreadcrumbPage>
                 ) : (
-                  <BreadcrumbLink render={<Link href={href} />}>
+                  <BreadcrumbLink render={<Link href={href} title={label} />}>
                     {label}
                   </BreadcrumbLink>
                 )}

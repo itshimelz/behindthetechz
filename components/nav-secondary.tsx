@@ -38,7 +38,7 @@ export function NavSecondary({
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton
                   tooltip={item.title}
-                  render={<Link href={item.url} />}
+                  render={<Link href={item.url} title={item.title} />}
                   isActive={isActive}
                   onClick={() => {
                     if (isMobile) setOpenMobile(false);

@@ -25,13 +25,11 @@ export function WikiLink({
   postMetadata,
   ...props
 }: WikiLinkProps) {
-  // Extract slug from href. Example: /blog/my-post#heading -> my-post
-  const urlParams = href.toString().split("/");
-  const slugWithHash = urlParams[urlParams.length - 1] || "";
-  const slug = slugWithHash.split("#")[0] as string;
+  const hrefValue = href.toString();
+  const slug = extractSlugFromHref(hrefValue);
 
-  const isMissing = slug && !validSlugs.includes(slug);
-  const metadata = postMetadata?.[slug];
+  const isMissing = !!slug && !validSlugs.includes(slug);
+  const metadata = slug ? postMetadata?.[slug] : undefined;
 
   const linkContent = (
     <Link
@@ -47,7 +45,7 @@ export function WikiLink({
         "wiki-link group relative inline-flex items-center gap-1 font-medium no-underline transition-colors hover:no-underline",
         isMissing
           ? "text-muted-foreground hover:text-foreground"
-          : "text-foreground hover:text-[var(--wiki-link-hover)]",
+          : "text-foreground hover:text-(--wiki-link-hover)",
         className,
       )}
       {...props}
@@ -100,4 +98,20 @@ export function WikiLink({
       </HoverCardContent>
     </HoverCard>
   );
+}
+
+function extractSlugFromHref(href: string): string {
+  if (!href || href.startsWith("#")) return "";
+
+  const [pathname] = href.split("#");
+  if (!pathname.startsWith("/blog/")) return "";
+
+  const segments = pathname.split("/").filter(Boolean);
+  const slug = segments[segments.length - 1] || "";
+
+  try {
+    return decodeURIComponent(slug);
+  } catch {
+    return slug;
+  }
 }

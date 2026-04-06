@@ -14,6 +14,7 @@ import { CodeBlock } from "@/components/blog/code-block";
 import { HeadingCopyLinkEnhancer } from "@/components/blog/heading-copy-link-enhancer";
 import { InlineCode } from "@/components/blog/inline-code";
 import { NewsletterCTA } from "@/components/blog/newsletter-cta";
+import { PretextArticleEnhancer } from "@/components/blog/pretext-article-enhancer";
 import { PostFooter } from "@/components/blog/post-footer";
 import { PostMeta } from "@/components/blog/post-meta";
 import { PostTags } from "@/components/blog/post-tags";
@@ -31,6 +32,7 @@ import { getPostBySlug, getAllSlugs } from "@/lib/blog/get-post-by-slug";
 import { getAllPosts, type Post } from "@/lib/blog/get-all-posts";
 import { getRelatedPosts } from "@/lib/blog/get-related-posts";
 import { getSeriesForPost } from "@/lib/blog/get-series";
+import remarkObsidianBlockId from "@/lib/blog/remark-obsidian-block-id";
 import remarkCallouts from "@/lib/blog/remark-callouts";
 import remarkWikiLink from "@/lib/blog/remark-wiki-link";
 
@@ -123,6 +125,7 @@ export default async function BlogPostPage({
       <ReadingProgress />
       <ScrollToTop />
       <HeadingCopyLinkEnhancer />
+      <PretextArticleEnhancer />
       <BlogReadingSurface>
         {/* Container for Article & Sticky Sidebar */}
         <div className="mx-auto flex w-full max-w-360 items-start justify-center gap-8 px-4 pb-10 pt-4 md:px-8 md:pt-6">
@@ -169,8 +172,15 @@ export default async function BlogPostPage({
                     <InlineCode {...props} />
                   ),
                   a: ({ href, children, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
-                    const isInternal = href?.startsWith("/blog/");
-                    if (isInternal && href) {
+                    const hrefValue = href ?? "";
+                    const className =
+                      typeof props.className === "string" ? props.className : "";
+                    const isWikiLink = className.split(/\s+/).includes("wiki-link");
+                    const isInternalBlogLink = hrefValue.startsWith("/blog/");
+                    const isHashLink = hrefValue.startsWith("#");
+                    const isInternalLink = isInternalBlogLink || isHashLink || hrefValue.startsWith("/");
+
+                    if ((isWikiLink || isInternalBlogLink) && href) {
                       return (
                         <WikiLink
                           href={href}
@@ -182,6 +192,20 @@ export default async function BlogPostPage({
                         </WikiLink>
                       );
                     }
+
+                    if (isInternalLink) {
+                      return (
+                        <a
+                          href={href}
+                          title={props.title ?? href}
+                          className="font-medium text-primary underline underline-offset-4 decoration-primary/30 hover:decoration-primary transition-colors"
+                          {...props}
+                        >
+                          {children}
+                        </a>
+                      );
+                    }
+
                     const hoverTitle = props.title ?? href;
                     return (
                       <a
@@ -238,6 +262,7 @@ export default async function BlogPostPage({
                 options={{
                   mdxOptions: {
                     remarkPlugins: [
+                      remarkObsidianBlockId,
                       remarkWikiLink,
                       remarkCallouts,
                       remarkGfm,

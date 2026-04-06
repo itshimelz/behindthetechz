@@ -7,6 +7,14 @@ import type {
 } from "mdast";
 import type { Plugin } from "unified";
 
+const WIKI_LINK_REGEX = /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g;
+const BLOCK_ANCHOR_PREFIX = "block-";
+
+type ParsedWikiTarget = {
+  slug: string | null;
+  fragment: string | null;
+};
+
 /**
  * Remark plugin that transforms Obsidian-style wiki links into markdown links.
  *
@@ -41,12 +49,12 @@ function visitTextNodes(node: Parent) {
 }
 
 function parseWikiLinks(text: string): PhrasingContent[] {
-  const regex = /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g;
+  WIKI_LINK_REGEX.lastIndex = 0;
   const parts: PhrasingContent[] = [];
   let lastIndex = 0;
   let match: RegExpExecArray | null;
 
-  while ((match = regex.exec(text)) !== null) {
+  while ((match = WIKI_LINK_REGEX.exec(text)) !== null) {
     // Text before the wiki link
     if (match.index > lastIndex) {
       parts.push({
@@ -55,13 +63,14 @@ function parseWikiLinks(text: string): PhrasingContent[] {
       } as Text);
     }
 
-    const slug = match[1].trim();
-    const displayText = match[2]?.trim() || slug;
+    const target = match[1].trim();
+    const displayText = match[2]?.trim() || target;
+    const url = buildWikiHref(target);
 
     // Create a link node with wiki-link class
     parts.push({
       type: "link",
-      url: `/blog/${slug}`,
+      url,
       data: {
         hProperties: { className: "wiki-link" },
       },
@@ -89,17 +98,85 @@ function parseWikiLinks(text: string): PhrasingContent[] {
 
 export default remarkWikiLink;
 
+function buildWikiHref(target: string): string {
+  const { slug, fragment } = parseWikiTarget(target);
+
+  if (!slug && !fragment) return "#";
+
+  const fragmentPart = fragment ? `#${fragment}` : "";
+  if (!slug) return fragmentPart || "#";
+
+  return `/blog/${slug}${fragmentPart}`;
+}
+
+function parseWikiTarget(target: string): ParsedWikiTarget {
+  const trimmed = target.trim();
+  if (!trimmed) {
+    return { slug: null, fragment: null };
+  }
+
+  const hashIndex = trimmed.indexOf("#");
+  if (hashIndex === -1) {
+    return { slug: trimmed, fragment: null };
+  }
+
+  const slugPart = trimmed.slice(0, hashIndex).trim();
+  const rawFragment = trimmed.slice(hashIndex + 1).trim();
+
+  return {
+    slug: slugPart || null,
+    fragment: normalizeFragment(rawFragment),
+  };
+}
+
+function normalizeFragment(fragment: string): string | null {
+  if (!fragment) return null;
+
+  if (fragment.startsWith("^")) {
+    return toBlockAnchorId(fragment.slice(1));
+  }
+
+  return slugifyHeadingFragment(fragment);
+}
+
+function slugifyHeadingFragment(fragment: string): string {
+  return fragment
+    .trim()
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/["'`]/g, "")
+    .replace(/[^\p{Letter}\p{Number}\s-]/gu, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+export function toBlockAnchorId(rawBlockId: string): string {
+  const normalized = rawBlockId
+    .trim()
+    .toLowerCase()
+    .replace(/[^\p{Letter}\p{Number}_-]/gu, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  return `${BLOCK_ANCHOR_PREFIX}${normalized}`;
+}
+
 /**
  * Extract all wiki link slugs from raw MDX content string.
  * Used by backlinks and graph data utilities.
  */
 export function extractWikiLinkSlugs(content: string): string[] {
-  const regex = /\[\[([^\]|]+)(?:\|[^\]]+)?\]\]/g;
+  WIKI_LINK_REGEX.lastIndex = 0;
   const slugs: string[] = [];
   let match: RegExpExecArray | null;
 
-  while ((match = regex.exec(content)) !== null) {
-    slugs.push(match[1].trim());
+  while ((match = WIKI_LINK_REGEX.exec(content)) !== null) {
+    const target = match[1].trim();
+    const { slug } = parseWikiTarget(target);
+    if (slug) {
+      slugs.push(slug);
+    }
   }
 
   return [...new Set(slugs)];

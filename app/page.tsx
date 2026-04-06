@@ -11,6 +11,7 @@ import {
 } from "@hugeicons/core-free-icons";
 
 import { PostList } from "@/components/blog/post-list";
+import { PretextArticleEnhancer } from "@/components/blog/pretext-article-enhancer";
 import { SectionIntro } from "@/components/shared/section-intro";
 import { SectionReveal } from "@/components/shared/section-reveal";
 import { Badge } from "@/components/ui/badge";
@@ -55,7 +56,15 @@ export default async function HomePage() {
   ];
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-5 md:gap-16 md:px-6 md:py-12 lg:gap-24">
+    <div
+      data-pretext-root="home"
+      className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-5 md:gap-16 md:px-6 md:py-12 lg:gap-24"
+    >
+      <PretextArticleEnhancer
+        targetSelector='[data-pretext-root="home"]'
+        headingSelector="h1, h2, h3"
+        measureSelector="p"
+      />
       <SectionReveal>
         <section className="relative overflow-hidden rounded-[1.5rem] bg-[radial-gradient(circle_at_top_left,rgba(95,107,123,0.18),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(163,230,53,0.16),transparent_34%),linear-gradient(135deg,color-mix(in_oklch,var(--card)_88%,transparent),color-mix(in_oklch,var(--muted)_42%,transparent))] p-3 sm:p-4 md:rounded-[2rem] md:p-7 lg:p-10">
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-foreground/12 to-transparent" />

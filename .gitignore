@@ -21,6 +21,7 @@
 /build
 # /docs
 /.agents
+/.opencode
 /lib/generated
 
 # misc

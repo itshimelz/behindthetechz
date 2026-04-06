@@ -327,7 +327,7 @@ export function AppSidebar({
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       tooltip={item.title}
-                      render={<Link href={item.url} />}
+                      render={<Link href={item.url} title={item.title} />}
                       isActive={isActive}
                       onClick={closeMobileDrawer}
                     >
@@ -379,7 +379,7 @@ export function AppSidebar({
                   <AnimatedItem animate={getAnimState(favoritesOpen)}>
                     <SidebarMenuButton
                       tooltip={fav.title}
-                      render={<Link href={`/blog/${fav.slug}`} />}
+                      render={<Link href={`/blog/${fav.slug}`} title={fav.title} />}
                       onClick={closeMobileDrawer}
                       isActive={activeBlogSlug === fav.slug}
                     >
@@ -399,7 +399,7 @@ export function AppSidebar({
                     <SidebarMenuButton
                       className="text-muted-foreground text-xs"
                       tooltip="View all favorites"
-                      render={<Link href="#" />}
+                      render={<Link href="#" title="View all favorites" />}
                       onClick={(e: React.MouseEvent) => {
                         e.preventDefault();
                         closeMobileDrawer();
@@ -461,7 +461,7 @@ export function AppSidebar({
                           <AnimatedItem animate={getAnimState(recentOpen)}>
                             <SidebarMenuButton
                               tooltip={post.title}
-                              render={<Link href={`/blog/${post.slug}`} />}
+                              render={<Link href={`/blog/${post.slug}`} title={post.title} />}
                               onClick={closeMobileDrawer}
                               isActive={activeBlogSlug === post.slug}
                             >
@@ -484,7 +484,7 @@ export function AppSidebar({
                         <AnimatedItem animate={getAnimState(recentOpen)}>
                           <SidebarMenuButton
                             tooltip="View all posts"
-                            render={<Link href="/blog" />}
+                            render={<Link href="/blog" title="View all posts" />}
                             onClick={closeMobileDrawer}
                             className="text-muted-foreground"
                           >
@@ -527,7 +527,7 @@ export function AppSidebar({
                   <AnimatedItem animate={getAnimState(categoriesOpen)}>
                     <SidebarMenuButton
                       tooltip={cat.name}
-                      render={<Link href={`/categories/${cat.slug}`} />}
+                      render={<Link href={`/categories/${cat.slug}`} title={cat.name} />}
                       onClick={closeMobileDrawer}
                       isActive={isActive}
                     >
@@ -549,7 +549,7 @@ export function AppSidebar({
               <AnimatedItem animate={getAnimState(categoriesOpen)}>
                 <SidebarMenuButton
                   tooltip="View all categories"
-                  render={<Link href="/categories" />}
+                  render={<Link href="/categories" title="View all categories" />}
                   onClick={closeMobileDrawer}
                   className="text-muted-foreground"
                 >
