@@ -7,6 +7,55 @@ const VIEWED_POSTS_COOKIE = "btz_viewed_posts";
 const VIEW_COOKIE_TTL_SECONDS = 60 * 60 * 6;
 const MAX_TRACKED_SLUGS = 120;
 
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000; // 1 hour
+const viewRateLimitStore = new Map<string, number>();
+
+let lastRateLimitCleanup = Date.now();
+const RATE_LIMIT_CLEANUP_INTERVAL_MS = 10 * 60 * 1000;
+
+function cleanupRateLimitStore(): void {
+  const now = Date.now();
+  if (now - lastRateLimitCleanup < RATE_LIMIT_CLEANUP_INTERVAL_MS) return;
+  lastRateLimitCleanup = now;
+
+  for (const [key, timestamp] of viewRateLimitStore) {
+    if (now - timestamp > RATE_LIMIT_WINDOW_MS) {
+      viewRateLimitStore.delete(key);
+    }
+  }
+}
+
+function getClientIp(request: NextRequest): string {
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  if (forwardedFor) {
+    const firstIp = forwardedFor.split(",")[0]?.trim();
+    if (firstIp) return firstIp;
+  }
+  return request.headers.get("x-real-ip") ?? "unknown";
+}
+
+function isRateLimited(request: NextRequest, slug: string): boolean {
+  cleanupRateLimitStore();
+
+  const ip = getClientIp(request);
+  
+  // Safety bound to prevent OOM
+  if (viewRateLimitStore.size > 10000) {
+    viewRateLimitStore.clear();
+  }
+
+  const key = `${ip}:${slug}`;
+  const now = Date.now();
+  const lastView = viewRateLimitStore.get(key);
+
+  if (lastView && now - lastView < RATE_LIMIT_WINDOW_MS) {
+    return true;
+  }
+
+  viewRateLimitStore.set(key, now);
+  return false;
+}
+
 function parseViewedSlugs(cookieValue?: string): string[] {
   if (!cookieValue) {
     return [];
@@ -32,8 +81,10 @@ export async function POST(
   );
   const alreadyCounted = viewedSlugs.includes(slug);
 
+  const rateLimited = isRateLimited(request, slug);
+
   try {
-    if (alreadyCounted) {
+    if (alreadyCounted || rateLimited) {
       const post = await prisma.post.findUnique({
         where: { slug },
         select: { viewCount: true },

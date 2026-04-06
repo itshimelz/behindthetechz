@@ -7,6 +7,15 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 // GET /api/newsletter/unsubscribe?token=xxx  (for email footer links)
 // ---------------------------------------------------------------------------
 export async function GET(request: NextRequest) {
+  // Feature temporarily disabled
+  return new NextResponse(
+    unsubscribePage("Unsubscribe feature is currently unavailable."),
+    {
+      status: 404,
+      headers: { "Content-Type": "text/html; charset=utf-8" },
+    }
+  );
+  /*
   const token = request.nextUrl.searchParams.get("token");
 
   if (!token || token.length < 10) {
@@ -66,6 +75,7 @@ export async function GET(request: NextRequest) {
       },
     );
   }
+  */
 }
 
 // ---------------------------------------------------------------------------
@@ -73,6 +83,9 @@ export async function GET(request: NextRequest) {
 // Body: { email: "user@example.com" }
 // ---------------------------------------------------------------------------
 export async function POST(request: NextRequest) {
+  // Feature temporarily disabled
+  return NextResponse.json({ ok: false, error: "Not available" }, { status: 404 });
+  /*
   let body: Record<string, unknown>;
   try {
     body = await request.json();
@@ -117,6 +130,7 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     );
   }
+  */
 }
 
 // ---------------------------------------------------------------------------

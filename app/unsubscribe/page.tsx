@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { UnsubscribeForm } from "./unsubscribe-form";
 
 export const metadata: Metadata = {
@@ -7,6 +8,8 @@ export const metadata: Metadata = {
 };
 
 export default function UnsubscribePage() {
+  notFound();
+
   return (
     <div className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center px-4 py-16">
       <div className="w-full space-y-6 text-center">

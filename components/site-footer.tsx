@@ -27,12 +27,14 @@ export function SiteFooter() {
           >
             Graph View
           </Link>
+          {/*
           <Link
             href="/unsubscribe"
             className="transition-colors hover:text-foreground"
           >
             Unsubscribe
           </Link>
+          */}
         </nav>
       </div>
     </footer>

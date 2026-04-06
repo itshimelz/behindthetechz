@@ -13,20 +13,23 @@ behindTheTechz is a modern, high-performance blog platform designed for interlin
 - **🎨 Stunning Aesthetics**: Modern design with glassmorphism, smooth animations, and a focus on readability.
 - **🔢 Math & Code**: First-class support for KaTeX math blocks and Shiki-powered syntax highlighting.
 - **🇧🇩 Bengali Support**: Optimized typography and interlinking specifically for Bengali language content.
-- **⭐ Post Favorites**: Save and easily access your favorite articles locally.
+- **⭐ Post Favorites & Interactions**: Save favorite articles locally, clap for posts, and track post views seamlessly.
+- **📚 Post Series**: Read and manage posts as a curated series or collection.
 - **📱 Fully Responsive**: Thoughtfully adjusted layouts to ensure a seamless experience across mobile and desktop.
 - **☁️ Scalable Media**: Integrated Supabase storage for fast and reliable image/file hosting.
 - **🚀 Analytics & Monitoring**: Deployed on Vercel with integrated Speed Insights and Analytics.
+- **💻 CLI Content Management**: A standalone `techz` CLI tool to create, manage, sync markdown files, and upload images directly to the blog.
 
 ## 🛠️ Tech Stack
 
-- **Framework**: [Next.js 15+](https://nextjs.org/) (App Router)
-- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
-- **Visuals**: [React Force Graph](https://github.com/vasturiano/react-force-graph)
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router) & React 19
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/) & [Base UI](https://base-ui.com/) (shadcn)
+- **Visuals**: [React Force Graph](https://github.com/vasturiano/react-force-graph) & [Framer Motion](https://www.framer.com/motion/)
 - **Icons**: [Hugeicons](https://hugeicons.com/)
-- **Content Rendering**: [next-mdx-remote](https://github.com/hashicorp/next-mdx-remote)
+- **Content Rendering**: [next-mdx-remote](https://github.com/hashicorp/next-mdx-remote) & Shiki
 - **Database & Storage**: [Supabase](https://supabase.com/) (Postgres + Storage buckets)
-- **ORM**: [Prisma](https://www.prisma.io/)
+- **ORM**: [Prisma 7](https://www.prisma.io/)
+- **Validation**: [Zod](https://zod.dev/)
 - **Typography**: Geist Sans & Geist Mono
 
 ## 🚀 Getting Started
