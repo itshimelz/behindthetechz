@@ -5,6 +5,7 @@ import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Search01Icon } from "@hugeicons/core-free-icons";
 
+import { BlogBreadcrumbTitleProvider } from "@/components/blog/blog-breadcrumb-title-context";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SiteBreadcrumb } from "@/components/site-breadcrumb";
 import { SiteFooter } from "@/components/site-footer";
@@ -163,6 +164,7 @@ export default async function RootLayout({
           Skip to content
         </a>
         <TooltipProvider>
+          <BlogBreadcrumbTitleProvider>
           <SidebarProvider>
             <AppSidebar
               categories={categories}
@@ -195,6 +197,7 @@ export default async function RootLayout({
             </SidebarInset>
             <Toaster position="top-center" />
           </SidebarProvider>
+          </BlogBreadcrumbTitleProvider>
         </TooltipProvider>
         <Analytics />
         <SpeedInsights />

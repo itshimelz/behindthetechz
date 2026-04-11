@@ -27,8 +27,12 @@ export const createPostSchema = z.object({
 
 export const updatePostSchema = createPostSchema.partial().omit({ slug: true });
 
+/** Body for `POST .../publish` when the post does not exist yet (slug comes from the URL). */
+export const publishCreatePostSchema = createPostSchema.omit({ slug: true });
+
 export type CreatePostInput = z.infer<typeof createPostSchema>;
 export type UpdatePostInput = z.infer<typeof updatePostSchema>;
+export type PublishCreatePostInput = z.infer<typeof publishCreatePostSchema>;
 
 // ---------------------------------------------------------------------------
 // Sync Schemas

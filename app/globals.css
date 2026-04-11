@@ -164,26 +164,6 @@
   transition: background-color 180ms ease;
 }
 
-.blog-reading-surface.blog-reading-dots-enabled {
-  background-image: radial-gradient(
-    circle,
-    color-mix(in oklch, var(--foreground) 14%, transparent) 1px,
-    transparent 1px
-  );
-}
-
-.dark .blog-reading-surface.blog-reading-dots-enabled {
-  background-image: radial-gradient(
-    circle,
-    color-mix(in oklch, var(--muted-foreground) 12%, transparent) 1px,
-    transparent 1px
-  );
-}
-
-.blog-reading-surface.blog-reading-dots-disabled {
-  background-image: none !important;
-}
-
 @media (max-width: 768px) {
   .blog-reading-surface {
     background-attachment: scroll;

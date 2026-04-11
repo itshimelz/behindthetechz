@@ -10,14 +10,13 @@ export function BlogReadingSurface({
   children: React.ReactNode;
   className?: string;
 }) {
-  const { tone, dotsEnabled } = useBlogReadingPreferences();
+  const { tone } = useBlogReadingPreferences();
 
   return (
     <div
       className={cn(
         "blog-reading-surface blog-reading-tone-default",
         `blog-reading-tone-${tone}`,
-        dotsEnabled ? "blog-reading-dots-enabled" : "blog-reading-dots-disabled",
         className,
       )}
     >

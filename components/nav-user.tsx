@@ -149,8 +149,6 @@ export function NavUser({
   const {
     tone: blogBgTone,
     setTone: setBlogBgTone,
-    dotsEnabled: blogDotsEnabled,
-    setDotsEnabled: setBlogDotsEnabled,
   } = useBlogReadingPreferences();
   const { favorites, toggleFavorite, isMounted } = useFavorites();
   const [favoritesOpen, setFavoritesOpen] = useState(false);
@@ -312,16 +310,6 @@ export function NavUser({
                   ))}
                 </SelectContent>
               </Select>
-            </SettingRow>
-            <SettingRow
-              icon={EyeIcon}
-              label="Dotted Background"
-              description="Show or hide the dotted blog reading texture"
-            >
-              <Switch
-                checked={blogDotsEnabled}
-                onCheckedChange={setBlogDotsEnabled}
-              />
             </SettingRow>
           </div>
         </DialogContent>

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { formatZodErrors, publishCreatePostSchema } from "@/lib/admin/validation";
 import { prisma } from "@/lib/prisma";
 import { validateAdminRequest } from "@/lib/admin-auth";
 import { BLOG_DEFAULT_REVALIDATE_TAGS, revalidateCacheTags } from "@/lib/blog/cache-tags";
@@ -21,9 +22,132 @@ export async function POST(request: Request, context: RouteContext) {
     const post = await prisma.post.findUnique({ where: { slug } });
 
     if (!post) {
+      let body: unknown;
+      try {
+        body = await request.json();
+      } catch {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: "MISSING_POST_BODY_REQUIRED",
+            message: `Post "${slug}" does not exist. Send JSON with title, excerpt, and contentMdx to create and publish.`,
+          },
+          { status: 400, headers: ADMIN_HEADERS },
+        );
+      }
+
+      const parsed = publishCreatePostSchema.safeParse(body);
+      if (!parsed.success) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: "INVALID_PAYLOAD",
+            details: formatZodErrors(parsed.error),
+          },
+          { status: 400, headers: ADMIN_HEADERS },
+        );
+      }
+
+      const {
+        title,
+        excerpt,
+        contentMdx,
+        coverImage,
+        isFeatured,
+        publishedAt,
+        categories,
+        tags,
+      } = parsed.data;
+
+      if (!contentMdx.trim()) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: "PUBLISH_VALIDATION_FAILED",
+            message: "Cannot publish a post with empty content",
+          },
+          { status: 422, headers: ADMIN_HEADERS },
+        );
+      }
+
+      const created = await prisma.$transaction(async (tx) => {
+        const categoryIds: string[] = [];
+        if (categories?.length) {
+          for (const catSlug of categories) {
+            const cat = await tx.category.upsert({
+              where: { slug: catSlug },
+              update: {},
+              create: {
+                name: catSlug
+                  .replace(/-/g, " ")
+                  .replace(/\b\w/g, (c) => c.toUpperCase()),
+                slug: catSlug,
+              },
+            });
+            categoryIds.push(cat.id);
+          }
+        }
+
+        const tagIds: string[] = [];
+        if (tags?.length) {
+          for (const tagSlug of tags) {
+            const tag = await tx.tag.upsert({
+              where: { slug: tagSlug },
+              update: {},
+              create: {
+                name: tagSlug
+                  .replace(/-/g, " ")
+                  .replace(/\b\w/g, (c) => c.toUpperCase()),
+                slug: tagSlug,
+              },
+            });
+            tagIds.push(tag.id);
+          }
+        }
+
+        return tx.post.create({
+          data: {
+            slug,
+            title,
+            excerpt,
+            contentMdx,
+            status: "PUBLISHED",
+            coverImage: coverImage ?? null,
+            isFeatured,
+            publishedAt: publishedAt ? new Date(publishedAt) : new Date(),
+            categories: {
+              create: categoryIds.map((id) => ({ categoryId: id })),
+            },
+            tags: {
+              create: tagIds.map((id) => ({ tagId: id })),
+            },
+          },
+        });
+      });
+
+      console.log(
+        JSON.stringify({
+          event: "admin.post.created_and_published",
+          slug,
+          timestamp: new Date().toISOString(),
+        }),
+      );
+
+      revalidateCacheTags(BLOG_DEFAULT_REVALIDATE_TAGS);
+      notifySubscribers(slug, created.title).catch(() => {});
+
       return NextResponse.json(
-        { ok: false, error: "NOT_FOUND", message: `Post "${slug}" not found` },
-        { status: 404, headers: ADMIN_HEADERS },
+        {
+          ok: true,
+          created: true,
+          post: {
+            slug: created.slug,
+            status: created.status,
+            publishedAt: created.publishedAt?.toISOString() ?? null,
+            revisionId: created.updatedAt.toISOString(),
+          },
+        },
+        { status: 201, headers: ADMIN_HEADERS },
       );
     }
 

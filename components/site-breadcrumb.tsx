@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { useOptionalBlogBreadcrumbTitle } from "@/components/blog/blog-breadcrumb-title-context";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -19,9 +20,29 @@ const ROUTE_LABELS: Record<string, string> = {
   tags: "Tags",
 };
 
+function segmentLabel(
+  segment: string,
+  segments: string[],
+  index: number,
+  postTitle: string | null,
+): string {
+  const fromRoute = ROUTE_LABELS[segment];
+  if (fromRoute) return fromRoute;
+
+  const isBlogPostLeaf =
+    segments[0] === "blog" &&
+    segments.length === 2 &&
+    index === 1;
+
+  if (isBlogPostLeaf && postTitle) return postTitle;
+
+  return decodeURIComponent(segment).replace(/-/g, " ");
+}
+
 export function SiteBreadcrumb() {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
+  const { postTitle } = useOptionalBlogBreadcrumbTitle() ?? { postTitle: null };
 
   if (segments.length === 0) return null;
 
@@ -36,9 +57,7 @@ export function SiteBreadcrumb() {
         {segments.map((segment, index) => {
           const href = "/" + segments.slice(0, index + 1).join("/");
           const isLast = index === segments.length - 1;
-          const label =
-            ROUTE_LABELS[segment] ||
-            decodeURIComponent(segment).replace(/-/g, " ");
+          const label = segmentLabel(segment, segments, index, postTitle);
 
           return (
             <span key={href} className="contents">

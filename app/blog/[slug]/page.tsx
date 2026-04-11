@@ -9,6 +9,7 @@ import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 
+import { BlogPostBreadcrumbTitle } from "@/components/blog/blog-post-breadcrumb-title";
 import { BacklinksSection } from "@/components/blog/backlinks-section";
 import { CodeBlock } from "@/components/blog/code-block";
 import { HeadingCopyLinkEnhancer } from "@/components/blog/heading-copy-link-enhancer";
@@ -122,6 +123,7 @@ export default async function BlogPostPage({
 
   return (
     <>
+      <BlogPostBreadcrumbTitle title={post.title} />
       <ReadingProgress />
       <ScrollToTop />
       <HeadingCopyLinkEnhancer />

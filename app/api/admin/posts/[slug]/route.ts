@@ -13,6 +13,14 @@ const ADMIN_HEADERS = { "Cache-Control": "no-store" };
 
 type RouteContext = { params: Promise<{ slug: string }> };
 
+function requestIdFromHeaders(request: Request) {
+  return (
+    request.headers.get("x-request-id") ??
+    request.headers.get("x-vercel-id") ??
+    crypto.randomUUID()
+  );
+}
+
 // ---------------------------------------------------------------------------
 // GET /api/admin/posts/[slug] — Get a single post with full content
 // ---------------------------------------------------------------------------
@@ -76,16 +84,43 @@ export async function PATCH(request: Request, context: RouteContext) {
   if (authError) return authError;
 
   try {
+    const rid = requestIdFromHeaders(request);
     const { slug } = await context.params;
-    const body = await request.json();
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch (jsonError) {
+      console.warn(
+        JSON.stringify({
+          event: "admin.post.patch.invalid_json",
+          rid,
+          slug,
+          contentType: request.headers.get("content-type"),
+        }),
+        jsonError,
+      );
+      return NextResponse.json(
+        { ok: false, error: "INVALID_JSON" },
+        { status: 400, headers: ADMIN_HEADERS },
+      );
+    }
     const parsed = updatePostSchema.safeParse(body);
 
     if (!parsed.success) {
+      const details = formatZodErrors(parsed.error);
+      console.warn(
+        JSON.stringify({
+          event: "admin.post.patch.invalid_payload",
+          rid,
+          slug,
+          details,
+        }),
+      );
       return NextResponse.json(
         {
           ok: false,
           error: "INVALID_PAYLOAD",
-          details: formatZodErrors(parsed.error),
+          details,
         },
         { status: 400, headers: ADMIN_HEADERS },
       );

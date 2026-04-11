@@ -7,6 +7,8 @@ import type {
 } from "mdast";
 import type { Plugin } from "unified";
 
+import { titleToFilename } from "@/lib/blog/title-to-filename";
+
 const WIKI_LINK_REGEX = /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g;
 const BLOCK_ANCHOR_PREFIX = "block-";
 
@@ -18,9 +20,12 @@ type ParsedWikiTarget = {
 /**
  * Remark plugin that transforms Obsidian-style wiki links into markdown links.
  *
+ * The link target (left of `|`, or whole `[[…]]` when no pipe) may be a human title.
+ * It is normalized with {@link titleToFilename} so it matches DB slugs from your Obsidian plugin.
+ *
  * Syntax:
- *   [[slug]]         → <a href="/blog/slug" class="wiki-link">slug</a>
- *   [[slug|display]] → <a href="/blog/slug" class="wiki-link">display</a>
+ *   [[Title]]              → href `/blog/<slugified-title>`
+ *   [[Title|display text]] → same href, display text as link label
  */
 const remarkWikiLink: Plugin<[], Root> = () => {
   return (tree) => {
@@ -99,11 +104,13 @@ function parseWikiLinks(text: string): PhrasingContent[] {
 export default remarkWikiLink;
 
 function buildWikiHref(target: string): string {
-  const { slug, fragment } = parseWikiTarget(target);
+  const { slug: rawSlug, fragment } = parseWikiTarget(target);
 
-  if (!slug && !fragment) return "#";
+  if (!rawSlug && !fragment) return "#";
 
   const fragmentPart = fragment ? `#${fragment}` : "";
+  const slug = rawSlug ? titleToFilename(rawSlug) : "";
+  if (!slug && !fragment) return "#";
   if (!slug) return fragmentPart || "#";
 
   return `/blog/${slug}${fragmentPart}`;
@@ -173,9 +180,10 @@ export function extractWikiLinkSlugs(content: string): string[] {
 
   while ((match = WIKI_LINK_REGEX.exec(content)) !== null) {
     const target = match[1].trim();
-    const { slug } = parseWikiTarget(target);
-    if (slug) {
-      slugs.push(slug);
+    const { slug: rawSlug } = parseWikiTarget(target);
+    if (rawSlug) {
+      const slug = titleToFilename(rawSlug);
+      if (slug) slugs.push(slug);
     }
   }
 

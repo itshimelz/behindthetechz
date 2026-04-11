@@ -14,8 +14,8 @@ const BlogSearchWrapper = dynamic(
   {
     loading: () => (
       <div className="mx-auto w-full max-w-4xl space-y-4">
-        <Skeleton className="h-14 w-full rounded-2xl" />
         <Skeleton className="h-10 w-full" />
+        <Skeleton className="h-20 w-full" />
         <Skeleton className="h-20 w-full" />
       </div>
     ),

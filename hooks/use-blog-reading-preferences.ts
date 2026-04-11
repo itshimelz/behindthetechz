@@ -6,7 +6,6 @@ export const BLOG_BG_TONE_OPTIONS = ["default", "paper", "mist", "sepia"] as con
 export type BlogBgTone = (typeof BLOG_BG_TONE_OPTIONS)[number];
 
 const BLOG_BG_TONE_KEY = "behindthetechz-blog-bg-tone";
-const BLOG_DOTS_ENABLED_KEY = "behindthetechz-blog-dots-enabled";
 const BLOG_READING_PREFS_EVENT = "blog-reading-prefs-updated";
 
 function isValidTone(value: string | null): value is BlogBgTone {
@@ -21,26 +20,18 @@ function readTone(): BlogBgTone {
   return value;
 }
 
-function readDotsEnabled(): boolean {
-  if (typeof window === "undefined") return true;
 
-  const value = localStorage.getItem(BLOG_DOTS_ENABLED_KEY);
-  if (value === null) return true;
-  return value !== "false";
-}
 
 export function useBlogReadingPreferences() {
   const [tone, setToneState] = useState<BlogBgTone>("default");
-  const [dotsEnabled, setDotsEnabledState] = useState(true);
 
   useEffect(() => {
     const syncFromStorage = () => {
       setToneState(readTone());
-      setDotsEnabledState(readDotsEnabled());
     };
 
     const handleStorage = (event: StorageEvent) => {
-      if (event.key === BLOG_BG_TONE_KEY || event.key === BLOG_DOTS_ENABLED_KEY) {
+      if (event.key === BLOG_BG_TONE_KEY) {
         syncFromStorage();
       }
     };
@@ -61,16 +52,10 @@ export function useBlogReadingPreferences() {
     window.dispatchEvent(new Event(BLOG_READING_PREFS_EVENT));
   }, []);
 
-  const setDotsEnabled = useCallback((enabled: boolean) => {
-    localStorage.setItem(BLOG_DOTS_ENABLED_KEY, String(enabled));
-    setDotsEnabledState(enabled);
-    window.dispatchEvent(new Event(BLOG_READING_PREFS_EVENT));
-  }, []);
+
 
   return {
     tone,
     setTone,
-    dotsEnabled,
-    setDotsEnabled,
   };
 }
