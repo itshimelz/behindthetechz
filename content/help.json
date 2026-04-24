@@ -1,0 +1,110 @@
+{
+  "header": {
+    "title": "Help",
+    "description": "Quick guidance for using search, favorites, graph view, and interlinked reading. If you are new here, start with the archive, then follow links between posts to explore the wider knowledge map."
+  },
+  "quickLinks": [
+    { "label": "Browse archive", "href": "/blog", "icon": "BookOpen01Icon" },
+    { "label": "Open Graph View", "href": "/graph", "icon": "ChartBubble02Icon" }
+  ],
+  "sections": [
+    {
+      "id": "features",
+      "eyebrow": "Core features",
+      "title": "Main ways to navigate the site",
+      "description": "The fastest entry points when you want to locate a topic, save something, or jump across related ideas.",
+      "type": "features",
+      "items": [
+        {
+          "title": "Search posts",
+          "description": "Use the search bar on the blog archive to filter by title, excerpt, category, and tags.",
+          "icon": "Search01Icon",
+          "href": "/blog",
+          "cta": "Open Blog"
+        },
+        {
+          "title": "Save favorites",
+          "description": "Click the bookmark icon on any post to save it. Favorites appear in the sidebar and the account menu.",
+          "icon": "Bookmark02Icon",
+          "href": "/blog",
+          "cta": "Browse Posts"
+        },
+        {
+          "title": "Use graph view",
+          "description": "Open the graph map to explore relationships between posts based on wiki-style links.",
+          "icon": "ChartBubble02Icon",
+          "href": "/graph",
+          "cta": "Open Graph View"
+        },
+        {
+          "title": "Navigate backlinks",
+          "description": "At the end of each post, check Linked from to discover related posts referencing the current topic.",
+          "icon": "LinkSquare02Icon",
+          "href": "/blog",
+          "cta": "Read Articles"
+        }
+      ]
+    },
+    {
+      "id": "workflow",
+      "eyebrow": "Reading workflow",
+      "title": "A better way to move through connected posts",
+      "description": "The site works best when you read in small connected loops instead of isolated single articles.",
+      "type": "workflow",
+      "items": [
+        {
+          "title": "Start with the archive",
+          "description": "Browse the main blog page, search a topic, and narrow the list by category or tag.",
+          "icon": "Search01Icon"
+        },
+        {
+          "title": "Open connected posts",
+          "description": "Use wiki links, related posts, and backlinks to move through connected ideas without losing context.",
+          "icon": "LinkSquare02Icon"
+        },
+        {
+          "title": "Save what matters",
+          "description": "Bookmark posts you want to revisit later. Your saved list stays available from the sidebar.",
+          "icon": "Bookmark02Icon"
+        }
+      ]
+    },
+    {
+      "id": "tips",
+      "eyebrow": "Tips",
+      "title": "Quick tips for better navigation",
+      "type": "tips",
+      "items": [
+        "Use short keywords first, then refine with tags or categories.",
+        "Open a post from Graph View when you want context around a topic cluster.",
+        "Check the footer of a post for backlinks and adjacent reading paths.",
+        "Bookmark long reads you want to continue later from the sidebar."
+      ]
+    },
+    {
+      "id": "faq",
+      "eyebrow": "FAQ",
+      "title": "Common questions from first-time readers",
+      "description": "Short answers for the most common ways people discover, save, and revisit content here.",
+      "type": "faq",
+      "items": [
+        {
+          "question": "How do I find posts on a specific topic quickly?",
+          "answer": "Use the search field on the archive page. It matches post titles, excerpts, categories, and tags, so even partial keywords usually work well."
+        },
+        {
+          "question": "Where can I see related articles?",
+          "answer": "Open any post and scroll through the interlinks, related posts, series navigation, and backlink section near the end of the article."
+        },
+        {
+          "question": "Are favorites tied to an account?",
+          "answer": "No. Favorites are stored in your browser, which keeps the experience fast and private but means they are device-specific."
+        },
+        {
+          "question": "When should I use Graph View?",
+          "answer": "Use it when you want to explore the knowledge map visually, discover clusters, or jump between closely connected posts."
+        }
+      ]
+    }
+  ]
+}
