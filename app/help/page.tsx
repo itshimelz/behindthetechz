@@ -35,7 +35,7 @@ const data = helpData as HelpData;
 
 function FeaturesAccordion({ section }: { section: FeaturesSection }) {
   return (
-    <Accordion openMultiple>
+    <Accordion multiple>
       {section.items.map((item) => (
         <AccordionItem key={item.title} value={item.title}>
           <AccordionTrigger>
@@ -70,7 +70,7 @@ function FeaturesAccordion({ section }: { section: FeaturesSection }) {
 
 function WorkflowAccordion({ section }: { section: WorkflowSection }) {
   return (
-    <Accordion openMultiple>
+    <Accordion multiple>
       {section.items.map((step, index) => (
         <AccordionItem key={step.title} value={step.title}>
           <AccordionTrigger>
@@ -114,7 +114,7 @@ function TipsList({ section }: { section: TipsSection }) {
 
 function FaqAccordion({ section }: { section: FaqSection }) {
   return (
-    <Accordion openMultiple>
+    <Accordion multiple>
       {section.items.map((item) => (
         <AccordionItem key={item.question} value={item.question}>
           <AccordionTrigger>
