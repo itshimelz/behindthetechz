@@ -11,6 +11,12 @@ import { cn } from "@/lib/utils";
 import { useTocPreference } from "@/hooks/use-toc";
 import type { TocHeading } from "@/lib/blog/extract-toc-headings";
 
+const HEADING_SELECTOR = "h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]";
+
+function getDepthOffset(level: TocHeading["level"]) {
+  return Math.max(0, level - 1);
+}
+
 export function TableOfContents({
   headings,
   isDesktop = false,
@@ -26,11 +32,12 @@ export function TableOfContents({
     [headings],
   );
   const scrollContainerRef = useRef<HTMLElement | Window | null>(null);
+  const highlightTimeoutRef = useRef<number | null>(null);
 
   const getScrollContainer = useCallback((): HTMLElement | Window => {
     const article = document.querySelector("article");
     const firstHeading =
-      article?.querySelector<HTMLElement>("h2[id], h3[id]") ?? null;
+      article?.querySelector<HTMLElement>(HEADING_SELECTOR) ?? null;
 
     let current = firstHeading?.parentElement ?? null;
     while (current && current !== document.body) {
@@ -45,6 +52,14 @@ export function TableOfContents({
     }
 
     return window;
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (highlightTimeoutRef.current !== null) {
+        window.clearTimeout(highlightTimeoutRef.current);
+      }
+    };
   }, []);
 
   const getContainerScrollTop = (container: HTMLElement | Window) =>
@@ -64,6 +79,27 @@ export function TableOfContents({
       el.getBoundingClientRect().top - containerRect.top + elementContainer.scrollTop
     );
   };
+
+  const highlightSection = useCallback((el: HTMLElement) => {
+    if (highlightTimeoutRef.current !== null) {
+      window.clearTimeout(highlightTimeoutRef.current);
+    }
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const delay = prefersReducedMotion ? 0 : 320;
+
+    highlightTimeoutRef.current = window.setTimeout(() => {
+      el.classList.remove("toc-section-highlight");
+      void el.offsetWidth;
+      el.classList.add("toc-section-highlight");
+
+      highlightTimeoutRef.current = window.setTimeout(() => {
+        el.classList.remove("toc-section-highlight");
+      }, 1200);
+    }, delay);
+  }, []);
 
   useEffect(() => {
     if (headingIds.length === 0) return;
@@ -154,6 +190,7 @@ export function TableOfContents({
     }
 
     setActiveId(id);
+    highlightSection(el);
   };
 
   const handlePrev = () => {
@@ -178,7 +215,6 @@ export function TableOfContents({
 
   if (!tocEnabled || headings.length < 2) return null;
 
-  // ── Desktop: Right-edge timeline with sliding indicator & hierarchy ──
   if (isDesktop) {
     const activeIndex = headings.findIndex((h) => h.id === activeId);
 
@@ -198,55 +234,49 @@ export function TableOfContents({
         </button>
 
         <div className="relative flex flex-col items-end space-y-0.5 py-1">
-
           {headings.map((heading, index) => {
             const isActive = activeId === heading.id;
             const isPast = activeIndex >= 0 && index < activeIndex;
-            const isH3 = heading.level === 3;
+            const depthOffset = getDepthOffset(heading.level);
+            const width = `${Math.max(0.9, 2.1 - depthOffset * 0.22)}rem`;
+            const activeWidth = `${Math.max(0.7, 1.75 - depthOffset * 0.2)}rem`;
+            const idleWidth = `${Math.max(0.45, 1.05 - depthOffset * 0.12)}rem`;
+            const isNested = heading.level > 2;
 
-              return (
+            return (
               <a
                 key={heading.id}
                 href={`#${heading.id}`}
                 aria-current={isActive ? "location" : undefined}
                 className="group/item relative flex h-3 items-center justify-end rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                style={{ width: isH3 ? "1.75rem" : "2rem" }}
+                style={{ width }}
                 onClick={(e) => handleClick(heading.id, e)}
               >
-                {/* Tooltip bubble on the left */}
                 <div
                   className={cn(
                     "pointer-events-none absolute right-full mr-2.5 w-max max-w-[280px] rounded-2xl bg-zinc-800 px-4 py-2.5 text-sm font-medium leading-relaxed text-zinc-100 opacity-0 shadow-lg backdrop-blur-md transition-all duration-200 dark:bg-zinc-200 dark:text-zinc-900",
                     "group-hover/item:-translate-x-1 group-hover/item:opacity-100 group-focus-visible/item:-translate-x-1 group-focus-visible/item:opacity-100",
-                    isH3 && "text-xs"
+                    isNested && "text-xs",
                   )}
                 >
                   {heading.text}
                 </div>
 
-                {/* Dash line — hierarchy: h3 gets shorter & thinner */}
                 <div
                   className={cn(
                     "rounded-full transition-all duration-500 ease-out",
                     isActive
-                      ? isH3
-                        ? "h-[2px] w-4 bg-primary"
-                        : "h-[2.5px] w-7 bg-primary"
+                      ? "h-[2px] bg-primary"
                       : isPast
-                        ? isH3
-                          ? "h-px w-2 bg-muted-foreground/20 group-hover/item:w-3 group-hover/item:bg-foreground/50 group-focus-visible/item:w-3 group-focus-visible/item:bg-foreground/50"
-                          : "h-px w-3 bg-muted-foreground/25 group-hover/item:w-4 group-hover/item:bg-foreground/50 group-focus-visible/item:w-4 group-focus-visible/item:bg-foreground/50"
-                        : isH3
-                          ? "h-px w-2 bg-muted-foreground/30 group-hover/item:w-3 group-hover/item:bg-foreground/60 group-focus-visible/item:w-3 group-focus-visible/item:bg-foreground/60"
-                          : "h-px w-3.5 bg-muted-foreground/30 group-hover/item:w-5 group-hover/item:bg-foreground/60 group-focus-visible/item:w-5 group-focus-visible/item:bg-foreground/60"
+                        ? "h-px bg-muted-foreground/25 group-hover/item:bg-foreground/50 group-focus-visible/item:bg-foreground/50"
+                        : "h-px bg-muted-foreground/30 group-hover/item:bg-foreground/60 group-focus-visible/item:bg-foreground/60",
                   )}
+                  style={{ width: isActive ? activeWidth : idleWidth }}
                 />
               </a>
             );
           })}
         </div>
-
-
 
         <button
           type="button"
@@ -261,7 +291,6 @@ export function TableOfContents({
     );
   }
 
-  // ── Mobile/Tablet: Original inline accordion TOC ──
   return (
     <nav className="mx-auto w-full max-w-3xl" aria-label="Table of contents">
       <button
@@ -285,11 +314,13 @@ export function TableOfContents({
                   onClick={(e) => handleClick(heading.id, e)}
                   className={cn(
                     "w-full rounded-md py-1 text-left text-sm transition-colors hover:text-foreground",
-                    heading.level === 3 ? "pl-5" : "pl-2",
                     activeId === heading.id
                       ? "font-medium text-primary"
                       : "text-muted-foreground",
                   )}
+                  style={{
+                    paddingLeft: `${0.5 + getDepthOffset(heading.level) * 0.75}rem`,
+                  }}
                 >
                   {heading.text}
                 </button>
