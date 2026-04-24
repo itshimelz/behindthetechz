@@ -16,6 +16,7 @@ import { HeadingCopyLinkEnhancer } from "@/components/blog/heading-copy-link-enh
 import { InlineCode } from "@/components/blog/inline-code";
 import { NewsletterCTA } from "@/components/blog/newsletter-cta";
 import { PretextArticleEnhancer } from "@/components/blog/pretext-article-enhancer";
+import { PostScrollMemory } from "@/components/blog/post-scroll-memory";
 import { PostFooter } from "@/components/blog/post-footer";
 import { PostMeta } from "@/components/blog/post-meta";
 import { PostTags } from "@/components/blog/post-tags";
@@ -126,6 +127,7 @@ export default async function BlogPostPage({
       <BlogPostBreadcrumbTitle title={post.title} />
       <ReadingProgress />
       <ScrollToTop />
+      <PostScrollMemory slug={decodedSlug} />
       <HeadingCopyLinkEnhancer />
       <PretextArticleEnhancer />
       <BlogReadingSurface>
