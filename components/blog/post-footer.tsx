@@ -14,6 +14,7 @@ import {
 import { useFavorites } from "@/hooks/use-favorites";
 import { postPath } from "@/lib/blog/post-path";
 import { copyToClipboard } from "@/lib/clipboard";
+import { toast } from "sonner";
 
 import {
   Tooltip,
@@ -207,7 +208,20 @@ export function PostFooter({
     if (didCopy) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+      toast.success("Link copied");
+    } else {
+      toast.error("Could not copy link");
     }
+  };
+
+  const handleToggleFavorite = () => {
+    const wasBookmarked = isBookmarked;
+    toggleFavorite({ slug, title });
+    if (wasBookmarked) {
+      toast("Removed from favorites");
+      return;
+    }
+    toast.success("Saved to favorites");
   };
 
   return (
@@ -341,7 +355,7 @@ export function PostFooter({
           {/* Bookmark / Favorite */}
           <Tooltip>
             <TooltipTrigger
-              onClick={() => toggleFavorite({ slug, title })}
+              onClick={handleToggleFavorite}
               className={`flex items-center justify-center rounded-full p-2 transition-colors hover:bg-muted ${
                 isBookmarked
                   ? "text-primary hover:text-primary/80"

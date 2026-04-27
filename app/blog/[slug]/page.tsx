@@ -17,6 +17,7 @@ import { RelatedPosts } from "@/components/blog/related-posts";
 import { BlogReadingSurface } from "@/components/blog/blog-reading-surface";
 import { ScrollToTop } from "@/components/blog/scroll-to-top";
 import { SeriesNav } from "@/components/blog/series-nav";
+import { SiteBreadcrumb } from "@/components/site-breadcrumb";
 import { TableOfContents } from "@/components/blog/table-of-contents";
 import { TagPill } from "@/components/blog/tag-pill";
 import { getBacklinksForSlug } from "@/lib/blog/get-backlinks";
@@ -124,6 +125,7 @@ export default async function BlogPostPage({
         <div className="mx-auto flex w-full max-w-360 items-start justify-center gap-8 px-4 pb-10 pt-4 md:px-8 md:pt-6">
           <article className="flex w-full max-w-3xl min-w-0 flex-1 flex-col gap-6">
             <div className="mx-auto w-full max-w-3xl space-y-4">
+              <SiteBreadcrumb />
               <PostMeta post={post} />
               <TagPill tags={post.tags} />
             </div>
@@ -158,7 +160,7 @@ export default async function BlogPostPage({
               <MDXRemote
                 source={post.content}
                 components={mdxConfig.components}
-                options={mdxConfig.options as any}
+                options={mdxConfig.options}
               />
             </div>
 

@@ -67,8 +67,7 @@ const getPostsByTagCached = unstable_cache(
 );
 
 export async function getTags(): Promise<Tag[]> {
-  // Intentional: include drafts in non-production so authors can preview tag pages during development.
-  const includeDrafts = process.env.NODE_ENV !== "production";
+  const includeDrafts = false; // Always hide drafts on public tag listings
   return getTagsCached(includeDrafts);
 }
 

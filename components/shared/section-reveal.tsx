@@ -7,17 +7,33 @@ type Props = {
   children: ReactNode;
   delay?: number;
   className?: string;
+  once?: boolean;
+  amount?: number;
+  duration?: number;
+  offsetY?: number;
 };
 
-export function SectionReveal({ children, delay = 0, className }: Props) {
+export function SectionReveal({
+  children,
+  delay = 0,
+  className,
+  once = true,
+  amount = 0.2,
+  duration = 0.18,
+  offsetY = 8,
+}: Props) {
   const prefersReducedMotion = useReducedMotion();
+
+  if (prefersReducedMotion) {
+    return <div className={className}>{children}</div>;
+  }
 
   return (
     <motion.div
-      initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 18 }}
-      whileInView={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.32, delay, ease: "easeOut" }}
+      initial={{ opacity: 0, y: offsetY }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once, amount }}
+      transition={{ duration, delay, ease: [0.22, 1, 0.36, 1] }}
       className={className}
     >
       {children}

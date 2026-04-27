@@ -4,7 +4,7 @@ import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
-
+import type { MDXRemoteProps } from "next-mdx-remote/rsc";
 import { CodeBlock } from "@/components/blog/code-block";
 import { InlineCode } from "@/components/blog/inline-code";
 import { WikiLink } from "@/components/blog/wiki-link";
@@ -19,6 +19,81 @@ type MdxConfigParams = {
 };
 
 export function getPostMdxConfig({ validSlugs, postMetadata }: MdxConfigParams) {
+  type MdxOptions = NonNullable<MDXRemoteProps["options"]>;
+
+  const options = {
+    mdxOptions: {
+      remarkPlugins: [
+        remarkObsidianBlockId,
+        remarkWikiLink,
+        remarkCallouts,
+        remarkGfm,
+        remarkMath,
+      ],
+      rehypePlugins: [
+        rehypeKatex,
+        rehypeSlug,
+        [
+          rehypeAutolinkHeadings,
+          {
+            behavior: "append",
+            properties: {
+              className: ["heading-anchor"],
+              "aria-label": "Copy section link",
+              "data-heading-anchor": "true",
+              title: "Copy link to this section",
+            },
+            content: [
+              {
+                type: "element",
+                tagName: "svg",
+                properties: {
+                  "aria-hidden": "true",
+                  xmlns: "http://www.w3.org/2000/svg",
+                  width: "16",
+                  height: "16",
+                  viewBox: "0 0 24 24",
+                  fill: "none",
+                  stroke: "currentColor",
+                  strokeWidth: "2",
+                  strokeLinecap: "round",
+                  strokeLinejoin: "round",
+                },
+                children: [
+                  {
+                    type: "element",
+                    tagName: "path",
+                    properties: {
+                      d: "M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71",
+                    },
+                    children: [],
+                  },
+                  {
+                    type: "element",
+                    tagName: "path",
+                    properties: {
+                      d: "M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71",
+                    },
+                    children: [],
+                  },
+                ],
+              },
+            ],
+          },
+        ] as const,
+        [
+          rehypePrettyCode,
+          {
+            theme: {
+              light: "github-light",
+              dark: "github-dark",
+            },
+          },
+        ] as const,
+      ],
+    },
+  } satisfies MdxOptions;
+
   return {
     components: {
       pre: (props: React.HTMLAttributes<HTMLPreElement>) => (
@@ -120,77 +195,6 @@ export function getPostMdxConfig({ validSlugs, postMetadata }: MdxConfigParams) 
         </span>
       ),
     },
-    options: {
-      mdxOptions: {
-        remarkPlugins: [
-          remarkObsidianBlockId,
-          remarkWikiLink,
-          remarkCallouts,
-          remarkGfm,
-          remarkMath,
-        ],
-        rehypePlugins: [
-          rehypeKatex,
-          rehypeSlug,
-          [
-            rehypeAutolinkHeadings,
-            {
-              behavior: "append",
-              properties: {
-                className: ["heading-anchor"],
-                "aria-label": "Copy section link",
-                "data-heading-anchor": "true",
-                title: "Copy link to this section",
-              },
-              content: [
-                {
-                  type: "element",
-                  tagName: "svg",
-                  properties: {
-                    "aria-hidden": "true",
-                    xmlns: "http://www.w3.org/2000/svg",
-                    width: "16",
-                    height: "16",
-                    viewBox: "0 0 24 24",
-                    fill: "none",
-                    stroke: "currentColor",
-                    strokeWidth: "2",
-                    strokeLinecap: "round",
-                    strokeLinejoin: "round",
-                  },
-                  children: [
-                    {
-                      type: "element",
-                      tagName: "path",
-                      properties: {
-                        d: "M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71",
-                      },
-                      children: [],
-                    },
-                    {
-                      type: "element",
-                      tagName: "path",
-                      properties: {
-                        d: "M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71",
-                      },
-                      children: [],
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-          [
-            rehypePrettyCode,
-            {
-              theme: {
-                light: "github-light",
-                dark: "github-dark",
-              },
-            },
-          ],
-        ],
-      },
-    },
+    options,
   };
 }

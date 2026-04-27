@@ -21,6 +21,7 @@ import {
 import { copyToClipboard } from "@/lib/clipboard";
 import { postPath } from "@/lib/blog/post-path";
 import { SITE_URL } from "@/lib/site";
+import { toast } from "sonner";
 
 type Props = {
   slug: string;
@@ -42,14 +43,14 @@ function ShareOption({
     <button
       type="button"
       onClick={onClick}
-      className="flex flex-col items-center gap-2 rounded-xl p-3 transition-colors group"
+      className="group flex min-w-0 flex-col items-center gap-1.5 rounded-xl p-2 transition-colors sm:gap-2 sm:p-3"
     >
       <div
-        className={`flex size-12 items-center justify-center rounded-full ${color} transition-transform group-hover:scale-110`}
+        className={`flex size-10 items-center justify-center rounded-full ${color} transition-transform group-hover:scale-110 sm:size-12`}
       >
         {icon}
       </div>
-      <span className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
+      <span className="max-w-full truncate text-[11px] font-medium text-muted-foreground transition-colors group-hover:text-foreground sm:text-xs">
         {label}
       </span>
     </button>
@@ -70,6 +71,9 @@ export function ShareButton({ slug, title }: Props) {
     if (didCopy) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+      toast.success("Link copied");
+    } else {
+      toast.error("Could not copy link");
     }
   };
 
@@ -190,7 +194,10 @@ export function ShareButton({ slug, title }: Props) {
       <Button
         variant="ghost"
         size="icon"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setOpen(true);
+          toast("Share options opened");
+        }}
         className="rounded-full text-muted-foreground hover:text-foreground transition-colors"
         title="Share this post"
       >
@@ -199,14 +206,16 @@ export function ShareButton({ slug, title }: Props) {
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="w-[calc(100vw-1.5rem)] max-w-88 p-3 sm:max-w-md sm:p-4">
           <DialogHeader>
             <DialogTitle>Share this post</DialogTitle>
-            <DialogDescription className="truncate">{title}</DialogDescription>
+            <DialogDescription className="line-clamp-2 wrap-break-word pr-8">
+              {title}
+            </DialogDescription>
           </DialogHeader>
 
           {/* Share options grid */}
-          <div className="grid grid-cols-3 gap-1 sm:grid-cols-6">
+          <div className="grid grid-cols-3 gap-0.5 sm:grid-cols-6 sm:gap-1">
             {shareOptions.map((option) => (
               <ShareOption
                 key={option.label}
@@ -221,17 +230,17 @@ export function ShareButton({ slug, title }: Props) {
           </div>
 
           {/* Copy link */}
-          <div className="flex min-w-0 items-center gap-2 rounded-lg border border-border bg-muted/30 p-2">
+          <div className="flex min-w-0 flex-col gap-2 rounded-lg border border-border bg-muted/30 p-2 sm:flex-row sm:items-center">
             <input
               readOnly
               value={postUrl}
-              className="min-w-0 flex-1 truncate bg-transparent px-1 text-sm text-foreground outline-none"
+              className="min-w-0 w-full flex-1 truncate bg-transparent px-1 text-sm text-foreground outline-none"
             />
             <Button
               variant="secondary"
               size="sm"
               onClick={handleCopyLink}
-              className="shrink-0 gap-1.5"
+              className="w-full shrink-0 gap-1.5 sm:w-auto"
             >
               <HugeiconsIcon
                 icon={copied ? Tick02Icon : Copy01Icon}

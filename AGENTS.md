@@ -23,18 +23,23 @@ app/
 ├── layout.tsx          # Root layout with SidebarProvider, theme hydration
 ├── page.tsx            # Home page
 ├── globals.css         # Design tokens, theme variables, prose styles
-├── blog/[slug]/        # Individual blog post page (Server Component) with dynamic search and loading skeletons
+├── blog/[slug]/        # Individual blog post page (Server Component) using extracted MDX config
 ├── blog/               # All posts listing with search/filter
 ├── categories/         # Category listing and per-category pages with Suspense loading skeletons
 ├── graph/              # Interactive graph view of post connections
 ├── about/              # About page
+├── changelog/          # Product updates and release notes
+├── tags/               # Tag listing and per-tag pages
+├── unsubscribe/        # Newsletter unsubscribe form
+├── feed.xml/route.ts   # RSS feed endpoint
 ├── robots.ts           # SEO robots config
 ├── sitemap.ts          # Dynamic sitemap
 components/
 ├── ui/                 # Reusable shadcn UI primitives (base-ui based)
-├── blog/               # Blog-specific components (post-meta, code-block, etc.)
+├── blog/               # Blog-specific components (post-meta, code-block, graph, search, taxonomy)
+├── user/               # Extracted user dialog components (author/preferences/favorites)
 ├── app-sidebar.tsx     # Main sidebar with nav, categories, favorites, NavUser
-├── nav-user.tsx        # User profile footer with dropdown (theme, account, favorites)
+├── nav-user.tsx        # User profile footer with dropdown + extracted dialogs
 ├── nav-secondary.tsx   # Secondary nav items (About, Help)
 ├── site-breadcrumb.tsx # Breadcrumb navigation
 ├── site-footer.tsx     # Site footer
@@ -44,9 +49,17 @@ hooks/
 ├── use-favorites.ts    # localStorage-based favorites with cross-tab sync
 ├── use-theme.ts        # Theme toggle (useSyncExternalStore + MutationObserver)
 ├── use-mobile.ts       # Mobile detection hook
+├── use-local-storage-pref.ts # Shared boolean preference hook factory
+├── use-reading-progress.ts   # Reading progress preference
+├── use-post-scroll-memory.ts # Per-post scroll memory preference
+├── use-toc.ts                # Table of contents preference
+├── use-blog-reading-preferences.ts # Blog reading surface preferences
 lib/
 ├── utils.ts            # Shared cn() class merge helper
-└── blog/               # Blog utilities (get-post-by-slug, get-categories, types, etc.)
+├── site.ts             # Canonical SITE_URL helper
+├── clipboard.ts        # Shared clipboard helper with fallback
+├── format-date.ts      # Shared date + relative date formatters
+└── blog/               # Blog utilities (post-path, mdx-config, taxonomy-query, data fetchers, types, etc.)
 ```
 
 ## Runbook
@@ -96,6 +109,8 @@ lib/
 
 - Posts are stored in PostgreSQL and queried via Prisma (`lib/blog/*`).
 - MDX source is `contentMdx` in DB and rendered with the existing MDX pipeline.
+- MDX component map and plugin config are centralized in `lib/blog/mdx-config.tsx`.
+- Blog post URL creation is centralized in `lib/blog/post-path.ts`.
 - Wiki-style interlinking: `[[slug]]` syntax in MDX rendered as internal links.
 - Code blocks use `rehype-pretty-code` with Shiki syntax highlighting.
 - Math blocks use `remark-math` + `rehype-katex`.
@@ -105,7 +120,8 @@ lib/
 - `SidebarProvider` wraps the entire app in `layout.tsx`.
 - Sidebar uses `collapsible="icon"` mode — collapses to icons, does NOT slide off-screen.
 - Toggle button is inside the sidebar header (not in main content area).
-- `NavUser` in sidebar footer with dropdown menu (theme toggle, account dialog, favorites dialog).
+- `NavUser` in sidebar footer with dropdown menu (theme toggle, reading preferences, favorites, author dialog).
+- Category icon mapping lives in `lib/blog/category-icons.ts`.
 
 ## UI and Styling Conventions
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { usePostScrollMemoryPreference } from "@/hooks/use-post-scroll-memory";
 
 type ScrollMemoryPayload = {
@@ -19,6 +19,8 @@ function getStorageKey(slug: string) {
 
 export function PostScrollMemory({ slug }: { slug: string }) {
   const { enabled } = usePostScrollMemoryPreference();
+  const lastKnownYRef = useRef(0);
+  const lastKnownMaxRef = useRef(0);
 
   useEffect(() => {
     if (!enabled) return;
@@ -32,9 +34,15 @@ export function PostScrollMemory({ slug }: { slug: string }) {
       Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
 
     const writeScrollState = () => {
+      const currentY = window.scrollY;
+      const currentMax = getMaxScroll();
+      // On route transitions, window.scrollY may reset before cleanup runs.
+      // Persist the highest-confidence in-session values instead.
+      const y = Math.max(currentY, lastKnownYRef.current);
+      const max = Math.max(currentMax, lastKnownMaxRef.current);
       const payload: ScrollMemoryPayload = {
-        y: window.scrollY,
-        max: getMaxScroll(),
+        y,
+        max,
         updatedAt: Date.now(),
       };
       sessionStorage.setItem(key, JSON.stringify(payload));
@@ -64,9 +72,34 @@ export function PostScrollMemory({ slug }: { slug: string }) {
             ? payload.max
             : fallbackMax;
         const ratio = recordedMax > 0 ? payload.y / recordedMax : 0;
-        const target = Math.round(Math.max(0, Math.min(1, ratio)) * fallbackMax);
+        const getTargetY = () =>
+          Math.round(Math.max(0, Math.min(1, ratio)) * getMaxScroll());
 
-        window.scrollTo({ top: target, behavior: "auto" });
+        let attempt = 0;
+        const maxAttempts = 6;
+        let retryTimer: number | null = null;
+
+        const tryRestore = () => {
+          const target = getTargetY();
+          window.scrollTo({ top: target, behavior: "auto" });
+          attempt += 1;
+
+          // Retry a few times while images/MDX content settle to avoid early undershoot.
+          if (attempt < maxAttempts) {
+            retryTimer = window.setTimeout(
+              tryRestore,
+              attempt < 3 ? 120 : 220,
+            );
+          }
+        };
+
+        tryRestore();
+
+        return () => {
+          if (retryTimer !== null) {
+            window.clearTimeout(retryTimer);
+          }
+        };
       } catch {
         sessionStorage.removeItem(key);
       }
@@ -82,20 +115,33 @@ export function PostScrollMemory({ slug }: { slug: string }) {
       }
     };
 
+    lastKnownYRef.current = window.scrollY;
+    lastKnownMaxRef.current = getMaxScroll();
+
+    let cleanupRestore: (() => void) | undefined;
     requestAnimationFrame(() => {
-      requestAnimationFrame(restoreScroll);
+      requestAnimationFrame(() => {
+        cleanupRestore = restoreScroll();
+      });
     });
 
-    window.addEventListener("scroll", scheduleSave, { passive: true });
+    const onScroll = () => {
+      lastKnownYRef.current = window.scrollY;
+      lastKnownMaxRef.current = getMaxScroll();
+      scheduleSave();
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("pagehide", writeScrollState);
     document.addEventListener("visibilitychange", onVisibilityChange);
 
     return () => {
+      cleanupRestore?.();
       if (saveTimer !== null) {
         window.clearTimeout(saveTimer);
       }
       writeScrollState();
-      window.removeEventListener("scroll", scheduleSave);
+      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("pagehide", writeScrollState);
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };

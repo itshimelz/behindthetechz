@@ -27,6 +27,12 @@ export function SiteFooter() {
           >
             Graph View
           </Link>
+          <Link
+            href="/feed.xml"
+            className="transition-colors hover:text-foreground"
+          >
+            RSS
+          </Link>
           {/*
           <Link
             href="/unsubscribe"
