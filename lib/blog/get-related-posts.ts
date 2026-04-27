@@ -1,6 +1,6 @@
 import { unstable_cache } from "next/cache";
 
-import { BLOG_CACHE_TAGS } from "@/lib/blog/cache-tags";
+import { BLOG_CACHE_TAGS, BLOG_REVALIDATE_SECONDS } from "@/lib/blog/cache-tags";
 import {
   getPostStatusWhere,
   mapDbPostToPost,
@@ -8,8 +8,6 @@ import {
 } from "@/lib/blog/get-all-posts";
 import type { Post } from "@/lib/blog/types";
 import { prisma } from "@/lib/prisma";
-
-const BLOG_REVALIDATE_SECONDS = 300;
 
 const getRelatedPostsCached = unstable_cache(
   async (

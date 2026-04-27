@@ -1,6 +1,6 @@
 import { unstable_cache } from "next/cache";
 
-import { BLOG_CACHE_TAGS } from "@/lib/blog/cache-tags";
+import { BLOG_CACHE_TAGS, BLOG_REVALIDATE_SECONDS } from "@/lib/blog/cache-tags";
 import { getAllPosts } from "@/lib/blog/get-all-posts";
 import { extractWikiLinkSlugs } from "@/lib/blog/remark-wiki-link";
 
@@ -8,8 +8,6 @@ export type BacklinkEntry = {
   slug: string;
   title: string;
 };
-
-const BLOG_REVALIDATE_SECONDS = 300;
 
 const getBacklinksForSlugCached = unstable_cache(
   async (targetSlug: string) => {

@@ -8,6 +8,7 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 
+import { formatPostDate } from "@/lib/format-date";
 import { cn } from "@/lib/utils";
 import type { Post } from "@/lib/blog/get-all-posts";
 
@@ -81,7 +82,7 @@ export function WikiLink({
             <HugeiconsIcon icon={Calendar01Icon} className="size-3" />
             <span>
               {metadata.date &&
-                new Date(metadata.date).toLocaleDateString("en-US", {
+                formatPostDate(metadata.date, {
                   month: "short",
                   day: "numeric",
                   year: "numeric",

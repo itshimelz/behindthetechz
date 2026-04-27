@@ -2,6 +2,7 @@ import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Tag01Icon } from "@hugeicons/core-free-icons";
 import { Badge } from "@/components/ui/badge";
+import { formatPostDate } from "@/lib/format-date";
 
 type Props = {
   tags: string[];
@@ -15,7 +16,7 @@ export function PostTags({ tags, category, date }: Props) {
   const toTagSlug = (tag: string) =>
     tag.trim().toLowerCase().replace(/\s+/g, "-");
 
-  const formattedDate = new Date(date).toLocaleDateString("en-US", {
+  const formattedDate = formatPostDate(date, {
     month: "short",
     day: "numeric",
     year: "numeric",

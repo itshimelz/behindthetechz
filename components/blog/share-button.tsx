@@ -18,16 +18,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { copyToClipboard } from "@/lib/clipboard";
+import { postPath } from "@/lib/blog/post-path";
+import { SITE_URL } from "@/lib/site";
 
 type Props = {
   slug: string;
   title: string;
 };
-
-const SITE_URL =
-  typeof window !== "undefined"
-    ? window.location.origin
-    : "https://behindthetechz.com";
 
 function ShareOption({
   icon,
@@ -62,23 +60,14 @@ export function ShareButton({ slug, title }: Props) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const postUrl = `${SITE_URL}/blog/${slug}`;
+  const origin = typeof window !== "undefined" ? window.location.origin : SITE_URL;
+  const postUrl = `${origin}${postPath(slug)}`;
   const encodedUrl = encodeURIComponent(postUrl);
   const encodedTitle = encodeURIComponent(title);
 
   const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(postUrl);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Fallback for older browsers
-      const textArea = document.createElement("textarea");
-      textArea.value = postUrl;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textArea);
+    const didCopy = await copyToClipboard(postUrl);
+    if (didCopy) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }

@@ -1,6 +1,6 @@
 import { unstable_cache } from "next/cache";
 
-import { BLOG_CACHE_TAGS } from "@/lib/blog/cache-tags";
+import { BLOG_CACHE_TAGS, BLOG_REVALIDATE_SECONDS } from "@/lib/blog/cache-tags";
 import { getAllPosts } from "@/lib/blog/get-all-posts";
 import { extractWikiLinkSlugs } from "@/lib/blog/remark-wiki-link";
 
@@ -23,8 +23,6 @@ export type GraphData = {
   nodes: GraphNode[];
   links: GraphLink[];
 };
-
-const BLOG_REVALIDATE_SECONDS = 300;
 
 const getGraphDataCached = unstable_cache(
   async (): Promise<GraphData> => {

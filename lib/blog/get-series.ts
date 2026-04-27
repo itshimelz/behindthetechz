@@ -1,10 +1,8 @@
 import { unstable_cache } from "next/cache";
 
-import { BLOG_CACHE_TAGS } from "@/lib/blog/cache-tags";
+import { BLOG_CACHE_TAGS, BLOG_REVALIDATE_SECONDS } from "@/lib/blog/cache-tags";
 import { getPostStatusWhere } from "@/lib/blog/get-all-posts";
 import { prisma } from "@/lib/prisma";
-
-const BLOG_REVALIDATE_SECONDS = 300;
 
 export type SeriesPost = {
   slug: string;

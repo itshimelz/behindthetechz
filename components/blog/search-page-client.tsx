@@ -7,6 +7,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Cancel01Icon, Search01Icon } from "@hugeicons/core-free-icons";
 
 import { Input } from "@/components/ui/input";
+import { postPath } from "@/lib/blog/post-path";
 import type { Post } from "@/lib/blog/types";
 
 type Props = {
@@ -179,7 +180,7 @@ export function SearchPageClient({ posts }: Props) {
           {filteredPosts.map((post) => (
             <li key={post.slug}>
               <Link
-                href={`/blog/${post.slug}`}
+                href={postPath(post.slug)}
                 className="block rounded-xl px-1 py-4 transition-colors hover:bg-muted/40"
               >
                 <div className="flex items-start gap-3">

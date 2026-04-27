@@ -9,6 +9,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { RefreshIcon, TimeQuarter02Icon } from "@hugeicons/core-free-icons";
 import type { Post } from "@/lib/blog/types";
 import { ViewCounter } from "@/components/blog/view-counter";
+import { formatPostDate, getRelativeTimeString } from "@/lib/format-date";
 import { getCategoryColorClass, cn } from "@/lib/utils";
 
 type Props = {
@@ -19,26 +20,6 @@ const AUTHOR = {
   name: "Rahat Hossain Himel",
   avatar: process.env.NEXT_PUBLIC_AUTHOR_AVATAR || "/himel-avatar.jpg",
 };
-
-function getRelativeTimeString(date: Date): string {
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  if (diffDays < 1) return "today";
-  if (diffDays === 1) return "yesterday";
-  if (diffDays < 7) return `${diffDays} days ago`;
-  if (diffDays < 30) {
-    const weeks = Math.floor(diffDays / 7);
-    return `${weeks} ${weeks === 1 ? "week" : "weeks"} ago`;
-  }
-  if (diffDays < 365) {
-    const months = Math.floor(diffDays / 30);
-    return `${months} ${months === 1 ? "month" : "months"} ago`;
-  }
-  const years = Math.floor(diffDays / 365);
-  return `${years} ${years === 1 ? "year" : "years"} ago`;
-}
 
 function hasSignificantUpdate(post: Post): boolean {
   if (!post.updatedAt) return false;
@@ -71,13 +52,13 @@ export function PostMeta({ post }: Props) {
                   className="size-3"
                   strokeWidth={2}
                 />
-                Updated {getRelativeTimeString(new Date(post.updatedAt!))}
+                Updated {getRelativeTimeString(post.updatedAt!)}
               </span>
             </TooltipTrigger>
             <TooltipContent>
               <p>
                 Last updated on{" "}
-                {new Date(post.updatedAt!).toLocaleDateString("en-US", {
+                {formatPostDate(post.updatedAt!, {
                   year: "numeric",
                   month: "long",
                   day: "numeric",
@@ -127,7 +108,7 @@ export function PostMeta({ post }: Props) {
             <Tooltip>
               <TooltipTrigger>
                 <span className="cursor-help">
-                  {publishedDate.toLocaleDateString("en-US", {
+                  {formatPostDate(post.date, {
                     year: "numeric",
                     month: "short",
                     day: "numeric",

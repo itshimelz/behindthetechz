@@ -7,6 +7,7 @@ import type {
 } from "mdast";
 import type { Plugin } from "unified";
 
+import { postPath } from "@/lib/blog/post-path";
 import { titleToFilename } from "@/lib/blog/title-to-filename";
 
 const WIKI_LINK_REGEX = /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g;
@@ -113,7 +114,7 @@ function buildWikiHref(target: string): string {
   if (!slug && !fragment) return "#";
   if (!slug) return fragmentPart || "#";
 
-  return `/blog/${slug}${fragmentPart}`;
+  return `${postPath(slug)}${fragmentPart}`;
 }
 
 function parseWikiTarget(target: string): ParsedWikiTarget {

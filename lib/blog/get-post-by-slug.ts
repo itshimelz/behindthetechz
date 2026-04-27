@@ -1,5 +1,6 @@
 import { unstable_cache } from "next/cache";
 
+import { BLOG_REVALIDATE_SECONDS } from "@/lib/blog/cache-tags";
 import { prisma } from "@/lib/prisma";
 import type { Post } from "@/lib/blog/types";
 import {
@@ -17,8 +18,6 @@ export async function getAllSlugs(): Promise<string[]> {
   const includeDrafts = false; // Always hide drafts
   return getAllSlugsCached(includeDrafts);
 }
-
-const BLOG_REVALIDATE_SECONDS = 300;
 
 const getPostBySlugCached = unstable_cache(
   async (slug: string, includeDrafts: boolean) => {

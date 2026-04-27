@@ -1,6 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
+import { postPath } from "@/lib/blog/post-path";
 import type { Post } from "@/lib/blog/types";
+import { formatPostDate } from "@/lib/format-date";
 
 type Props = {
   posts: Post[];
@@ -20,7 +22,7 @@ export function RelatedPosts({ posts }: Props) {
         {posts.map((post, index) => (
           <Link
             key={post.slug}
-            href={`/blog/${post.slug}`}
+            href={postPath(post.slug)}
             className={`group flex items-start gap-3 py-3.5 ${
               index < posts.length - 1 ? "border-b border-border/60" : ""
             }`}
@@ -33,7 +35,7 @@ export function RelatedPosts({ posts }: Props) {
                 {post.excerpt}
               </p>
               <p className="pt-0.5 text-[11px] font-medium uppercase tracking-wide text-muted-foreground/80 sm:text-xs">
-                {new Date(post.date).toLocaleDateString("en-US", {
+                {formatPostDate(post.date, {
                   month: "short",
                   day: "numeric",
                   year: "numeric",

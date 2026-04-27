@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowRight01Icon, LinkSquare02Icon } from "@hugeicons/core-free-icons";
+import { postPath } from "@/lib/blog/post-path";
 
 import {
   Dialog,
@@ -40,7 +41,7 @@ export function BacklinksSection({ backlinks }: Props) {
         {visibleLinks.map((bl) => (
           <Link
             key={bl.slug}
-            href={`/blog/${bl.slug}`}
+            href={postPath(bl.slug)}
             className="hover:bg-muted rounded-md border border-border bg-background px-3 py-1.5 text-sm transition-colors"
           >
             {bl.title}
@@ -70,7 +71,7 @@ export function BacklinksSection({ backlinks }: Props) {
               {backlinks.map((bl) => (
                 <li key={bl.slug} className="py-2.5">
                   <Link
-                    href={`/blog/${bl.slug}`}
+                    href={postPath(bl.slug)}
                     onClick={() => setDialogOpen(false)}
                     className="flex items-center gap-2 min-w-0 flex-1 group"
                   >

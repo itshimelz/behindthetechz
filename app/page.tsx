@@ -18,6 +18,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getAllPosts } from "@/lib/blog/get-all-posts";
 import { getCategories } from "@/lib/blog/get-categories";
+import { postPath } from "@/lib/blog/post-path";
+import { formatPostDate } from "@/lib/format-date";
 import { cn, getCategoryColorClass } from "@/lib/utils";
 
 export default async function HomePage() {
@@ -185,7 +187,7 @@ export default async function HomePage() {
 
                       <div className="space-y-3">
                         <Link
-                          href={`/blog/${featuredPost.slug}`}
+                          href={postPath(featuredPost.slug)}
                           className="group/title block"
                         >
                           <h3 className="text-lg font-semibold tracking-tight text-foreground transition-colors group-hover/title:text-primary md:text-2xl">
@@ -199,7 +201,7 @@ export default async function HomePage() {
 
                       <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 text-xs text-muted-foreground md:gap-x-4 md:gap-y-2 md:text-sm">
                         <span>
-                          {new Date(featuredPost.date).toLocaleDateString("en-US", {
+                          {formatPostDate(featuredPost.date, {
                             month: "long",
                             day: "numeric",
                             year: "numeric",

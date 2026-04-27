@@ -8,6 +8,9 @@ import { HugeiconsIcon } from "@hugeicons/react";
 
 import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
+import { getCategoryIconByKey } from "@/lib/blog/category-icons";
+import { postPath } from "@/lib/blog/post-path";
+import { relativeDate } from "@/lib/format-date";
 import { cn } from "@/lib/utils";
 import {
   Sidebar,
@@ -106,44 +109,12 @@ const navSecondary = [
   },
 ];
 
-const CATEGORY_ICON_BY_KEY: Record<
-  string,
-  React.ComponentProps<typeof HugeiconsIcon>["icon"]
-> = {
-  tag: Tag01Icon,
-  programming: Notebook01Icon,
-  development: Notebook01Icon,
-  design: GridViewIcon,
-  productivity: Bookmark02Icon,
-  graph: ChartBubble02Icon,
-};
-
-function getCategoryIconByKey(iconKey?: string) {
-  if (!iconKey) return Tag01Icon;
-  return CATEGORY_ICON_BY_KEY[iconKey] ?? Tag01Icon;
-}
-
 /** Max favorites shown inline before overflow triggers a "View all" link. */
 const SIDEBAR_FAVORITES_LIMIT = 5;
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-/** Compact relative date for sidebar metadata (e.g. "2d", "3w", "Jan 5"). */
-function relativeDate(date: Date | string | null): string {
-  if (!date) return "";
-  const d = typeof date === "string" ? new Date(date) : date;
-  const now = new Date();
-  const diffMs = now.getTime() - d.getTime();
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  if (diffDays < 1) return "today";
-  if (diffDays === 1) return "1d";
-  if (diffDays < 7) return `${diffDays}d`;
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)}w`;
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
 
 // ---------------------------------------------------------------------------
 // Animation variants
@@ -379,7 +350,7 @@ export function AppSidebar({
                   <AnimatedItem animate={getAnimState(favoritesOpen)}>
                     <SidebarMenuButton
                       tooltip={fav.title}
-                      render={<Link href={`/blog/${fav.slug}`} title={fav.title} />}
+                      render={<Link href={postPath(fav.slug)} title={fav.title} />}
                       onClick={closeMobileDrawer}
                       isActive={activeBlogSlug === fav.slug}
                     >
@@ -415,95 +386,76 @@ export function AppSidebar({
         </CollapsibleSection>
 
         {/* 3. Recent Posts */}
-        <Collapsible
+        <CollapsibleSection
+          label="Recent Posts"
           defaultOpen={!isMobile}
-          className="group/collapsible"
           onOpenChange={setRecentOpen}
+          animationState={getAnimState(recentOpen)}
         >
-          <SidebarGroup>
-            <SidebarGroupLabel render={<CollapsibleTrigger />}>
-              Recent Posts
-              <HugeiconsIcon
-                icon={ArrowRight01Icon}
-                className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90"
-                aria-hidden="true"
-              />
-            </SidebarGroupLabel>
-            <CollapsibleContent>
-              <SidebarGroupContent>
-                {recentPosts.length === 0 ? (
-                  <Empty className="mx-1 py-6 px-3">
-                    <EmptyHeader className="gap-1.5">
-                      <EmptyMedia className="size-8">
-                        <HugeiconsIcon
-                          icon={Notebook01Icon}
-                          strokeWidth={1.8}
-                          aria-hidden="true"
-                        />
-                      </EmptyMedia>
-                      <EmptyTitle className="text-sm">
-                        No recent posts
-                      </EmptyTitle>
-                      <EmptyDescription className="text-xs">
-                        Publish your first post to populate this section.
-                      </EmptyDescription>
-                    </EmptyHeader>
-                  </Empty>
-                ) : (
-                  <motion.div
-                    variants={sidebarListVariants}
-                    initial={false}
-                    animate={getAnimState(recentOpen)}
+          {recentPosts.length === 0 ? (
+            <SidebarMenuItem>
+              <Empty className="mx-1 py-6 px-3">
+                <EmptyHeader className="gap-1.5">
+                  <EmptyMedia className="size-8">
+                    <HugeiconsIcon
+                      icon={Notebook01Icon}
+                      strokeWidth={1.8}
+                      aria-hidden="true"
+                    />
+                  </EmptyMedia>
+                  <EmptyTitle className="text-sm">No recent posts</EmptyTitle>
+                  <EmptyDescription className="text-xs">
+                    Publish your first post to populate this section.
+                  </EmptyDescription>
+                </EmptyHeader>
+              </Empty>
+            </SidebarMenuItem>
+          ) : (
+            <>
+              {recentPosts.map((post) => (
+                <SidebarMenuItem key={post.slug}>
+                  <AnimatedItem animate={getAnimState(recentOpen)}>
+                    <SidebarMenuButton
+                      tooltip={post.title}
+                      render={<Link href={postPath(post.slug)} title={post.title} />}
+                      onClick={closeMobileDrawer}
+                      isActive={activeBlogSlug === post.slug}
+                    >
+                      <HugeiconsIcon
+                        icon={Notebook01Icon}
+                        strokeWidth={2}
+                        aria-hidden="true"
+                      />
+                      <span className="truncate">{post.title}</span>
+                      {post.publishedAt && (
+                        <span className="text-muted-foreground ml-auto shrink-0 text-[10px]">
+                          {relativeDate(post.publishedAt)}
+                        </span>
+                      )}
+                    </SidebarMenuButton>
+                  </AnimatedItem>
+                </SidebarMenuItem>
+              ))}
+              <SidebarMenuItem>
+                <AnimatedItem animate={getAnimState(recentOpen)}>
+                  <SidebarMenuButton
+                    tooltip="View all posts"
+                    render={<Link href="/blog" title="View all posts" />}
+                    onClick={closeMobileDrawer}
+                    className="text-muted-foreground"
                   >
-                    <SidebarMenu>
-                      {recentPosts.map((post) => (
-                        <SidebarMenuItem key={post.slug}>
-                          <AnimatedItem animate={getAnimState(recentOpen)}>
-                            <SidebarMenuButton
-                              tooltip={post.title}
-                              render={<Link href={`/blog/${post.slug}`} title={post.title} />}
-                              onClick={closeMobileDrawer}
-                              isActive={activeBlogSlug === post.slug}
-                            >
-                              <HugeiconsIcon
-                                icon={Notebook01Icon}
-                                strokeWidth={2}
-                                aria-hidden="true"
-                              />
-                              <span className="truncate">{post.title}</span>
-                              {post.publishedAt && (
-                                <span className="text-muted-foreground ml-auto shrink-0 text-[10px]">
-                                  {relativeDate(post.publishedAt)}
-                                </span>
-                              )}
-                            </SidebarMenuButton>
-                          </AnimatedItem>
-                        </SidebarMenuItem>
-                      ))}
-                      <SidebarMenuItem>
-                        <AnimatedItem animate={getAnimState(recentOpen)}>
-                          <SidebarMenuButton
-                            tooltip="View all posts"
-                            render={<Link href="/blog" title="View all posts" />}
-                            onClick={closeMobileDrawer}
-                            className="text-muted-foreground"
-                          >
-                            <HugeiconsIcon
-                              icon={ArrowRight01Icon}
-                              strokeWidth={2}
-                              aria-hidden="true"
-                            />
-                            <span>View all posts</span>
-                          </SidebarMenuButton>
-                        </AnimatedItem>
-                      </SidebarMenuItem>
-                    </SidebarMenu>
-                  </motion.div>
-                )}
-              </SidebarGroupContent>
-            </CollapsibleContent>
-          </SidebarGroup>
-        </Collapsible>
+                    <HugeiconsIcon
+                      icon={ArrowRight01Icon}
+                      strokeWidth={2}
+                      aria-hidden="true"
+                    />
+                    <span>View all posts</span>
+                  </SidebarMenuButton>
+                </AnimatedItem>
+              </SidebarMenuItem>
+            </>
+          )}
+        </CollapsibleSection>
 
         {/* 4. Top Categories */}
         {categories.length > 0 && (

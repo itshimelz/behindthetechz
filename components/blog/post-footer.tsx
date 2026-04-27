@@ -12,6 +12,8 @@ import {
   Tick02Icon,
 } from "@hugeicons/core-free-icons";
 import { useFavorites } from "@/hooks/use-favorites";
+import { postPath } from "@/lib/blog/post-path";
+import { copyToClipboard } from "@/lib/clipboard";
 
 import {
   Tooltip,
@@ -200,18 +202,9 @@ export function PostFooter({
   };
 
   const handleCopyLink = async () => {
-    try {
-      const url = `${window.location.origin}/blog/${slug}`;
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      const textArea = document.createElement("textarea");
-      textArea.value = `${window.location.origin}/blog/${slug}`;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textArea);
+    const url = `${window.location.origin}${postPath(slug)}`;
+    const didCopy = await copyToClipboard(url);
+    if (didCopy) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
