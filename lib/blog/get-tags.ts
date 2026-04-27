@@ -1,15 +1,17 @@
 import { unstable_cache } from "next/cache";
 
-import { BLOG_CACHE_TAGS } from "@/lib/blog/cache-tags";
+import { BLOG_CACHE_TAGS, BLOG_REVALIDATE_SECONDS } from "@/lib/blog/cache-tags";
 import {
   getPostStatusWhere,
   mapDbPostToPost,
   postWithRelationsInclude,
 } from "@/lib/blog/get-all-posts";
+import {
+  sortAndFilterTaxonomyByCount,
+  taxonomyPostCountSelect,
+} from "@/lib/blog/taxonomy-query";
 import type { Tag } from "@/lib/blog/types";
 import { prisma } from "@/lib/prisma";
-
-const BLOG_REVALIDATE_SECONDS = 300;
 
 const getTagsCached = unstable_cache(
   async (includeDrafts: boolean) => {
@@ -18,25 +20,18 @@ const getTagsCached = unstable_cache(
         name: true,
         slug: true,
         _count: {
-          select: {
-            posts: {
-              where: {
-                post: getPostStatusWhere(includeDrafts),
-              },
-            },
-          },
+          select: taxonomyPostCountSelect(includeDrafts),
         },
       },
     });
 
-    return tags
-      .map((tag) => ({
+    return sortAndFilterTaxonomyByCount(
+      tags.map((tag) => ({
         name: tag.name,
         slug: tag.slug,
         count: tag._count.posts,
-      }))
-      .filter((tag) => tag.count > 0)
-      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+      })),
+    );
   },
   ["blog-tags"],
   {
@@ -72,7 +67,7 @@ const getPostsByTagCached = unstable_cache(
 );
 
 export async function getTags(): Promise<Tag[]> {
-  const includeDrafts = process.env.NODE_ENV !== "production";
+  const includeDrafts = false; // Always hide drafts on public tag listings
   return getTagsCached(includeDrafts);
 }
 

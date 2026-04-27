@@ -24,9 +24,16 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { Input } from "@/components/ui/input";
+import { GraphToolbar } from "@/components/blog/graph/graph-toolbar";
+import {
+  drawGraphLinkArrow,
+  drawGraphNode,
+} from "@/components/blog/graph/graph-canvas";
+import { useGraphColors } from "@/components/blog/graph/use-graph-colors";
 import { useTheme } from "@/hooks/use-theme";
 
 import type { GraphData, GraphNode } from "@/lib/blog/get-graph-data";
+import { postPath } from "@/lib/blog/post-path";
 import type { ForceGraphMethods } from "react-force-graph-2d";
 
 const ForceGraph2D = dynamic(() => import("react-force-graph-2d"), {
@@ -115,41 +122,7 @@ export function GraphView({ data }: Props) {
     };
   }, [activeNodeId, prefersReducedMotion]);
 
-  const graphColors = useMemo(() => {
-    const fallback = {
-      background: isDark ? "#12161B" : "#F5F7F8",
-      link: isDark ? "rgba(148, 156, 168, 0.28)" : "rgba(124, 133, 145, 0.32)",
-      linkDim: isDark
-        ? "rgba(101, 111, 123, 0.14)"
-        : "rgba(145, 153, 162, 0.16)",
-      linkActive: isDark
-        ? "rgba(196, 205, 214, 0.68)"
-        : "rgba(95, 107, 123, 0.64)",
-      nodeDim: isDark ? "#3f4652" : "#cfd5dc",
-      nodeSelected: isDark ? "#bcc7d5" : "#56677c",
-      text: isDark ? "#dbe2ea" : "#374151",
-      textMuted: isDark ? "#9aa5b3" : "#6b7280",
-    };
-
-    if (typeof window === "undefined") return fallback;
-
-    const styles = getComputedStyle(document.documentElement);
-    const pick = (name: string, fallbackValue: string) => {
-      const cssValue = styles.getPropertyValue(name).trim();
-      return cssValue || fallbackValue;
-    };
-
-    return {
-      background: pick("--graph-bg", fallback.background),
-      link: pick("--graph-link", fallback.link),
-      linkDim: pick("--graph-link-dim", fallback.linkDim),
-      linkActive: pick("--graph-link-active", fallback.linkActive),
-      nodeDim: pick("--graph-node-dim", fallback.nodeDim),
-      nodeSelected: pick("--graph-node-selected", fallback.nodeSelected),
-      text: pick("--graph-label", fallback.text),
-      textMuted: pick("--graph-label-muted", fallback.textMuted),
-    };
-  }, [isDark]);
+  const graphColors = useGraphColors(isDark);
 
   const categoryColorMap = useMemo(() => {
     const palette = [
@@ -357,79 +330,25 @@ export function GraphView({ data }: Props) {
 
   const nodeCanvasObject = useCallback(
     (node: object, ctx: CanvasRenderingContext2D, globalScale: number) => {
-      const graphNode = node as ForceGraphNode;
-      const isSelected = graphNode.id === selectedNodeId;
-      const isHovered = graphNode.id === hoveredNodeId;
-      const emphasized = isNodeEmphasized(graphNode.id);
-      const hoverMix = hoverTransitionRef.current;
-      const radius = 3 + Math.cbrt(graphNode.val) * 1.4;
-
-      const fillColor =
-        isSelected || isHovered
-          ? graphColors.nodeSelected
-          : emphasized
-            ? getNodeBaseColor(graphNode)
-            : graphColors.nodeDim;
-
-      ctx.save();
-      ctx.globalAlpha = emphasized ? 1 : 1 - 0.55 * hoverMix;
-      ctx.beginPath();
-      ctx.arc(
-        graphNode.x || 0,
-        graphNode.y || 0,
-        radius,
-        0,
-        2 * Math.PI,
-        false,
-      );
-      ctx.fillStyle = fillColor;
-      ctx.fill();
-
-      if (isSelected || isHovered) {
-        ctx.beginPath();
-        ctx.arc(
-          graphNode.x || 0,
-          graphNode.y || 0,
-          radius + 2,
-          0,
-          2 * Math.PI,
-          false,
-        );
-        ctx.strokeStyle = isDark
-          ? "rgba(240,245,250,0.7)"
-          : "rgba(46,60,78,0.55)";
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-      }
-
-      const shouldShowLabel =
-        showLabels &&
-        (graphNode.id === activeNodeId ||
-          globalScale > 1.35 ||
-          (globalScale > 0.95 && graphNode.val >= 10));
-
-      if (shouldShowLabel) {
-        const fontSize = Math.min(10, Math.max(8, 5 + graphNode.val / 5));
-        ctx.font = `500 ${fontSize}px "Google Sans", "Tiro Bangla", sans-serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillStyle = emphasized ? graphColors.text : graphColors.textMuted;
-        ctx.fillText(
-          graphNode.name,
-          graphNode.x || 0,
-          (graphNode.y || 0) + radius + fontSize / 1.5 + 2,
-        );
-      }
-
-      ctx.restore();
+      drawGraphNode({
+        node: node as ForceGraphNode,
+        ctx,
+        globalScale,
+        activeNodeId,
+        selectedNodeId,
+        hoveredNodeId,
+        showLabels,
+        isDark,
+        hoverMix: hoverTransitionRef.current,
+        colors: graphColors,
+        isNodeEmphasized,
+        getNodeBaseColor,
+      });
     },
     [
       activeNodeId,
       getNodeBaseColor,
-      graphColors.nodeDim,
-      graphColors.nodeSelected,
-      graphColors.text,
-      graphColors.textMuted,
+      graphColors,
       hoveredNodeId,
       isDark,
       isNodeEmphasized,
@@ -440,61 +359,17 @@ export function GraphView({ data }: Props) {
 
   const linkCanvasObject = useCallback(
     (link: object, ctx: CanvasRenderingContext2D, globalScale: number) => {
-      if (!showArrows) return;
-
-      const graphLink = link as ForceGraphLink;
-      const source =
-        typeof graphLink.source === "object" ? graphLink.source : null;
-      const target =
-        typeof graphLink.target === "object" ? graphLink.target : null;
-
-      if (
-        !source ||
-        !target ||
-        typeof source.x !== "number" ||
-        typeof source.y !== "number" ||
-        typeof target.x !== "number" ||
-        typeof target.y !== "number"
-      ) {
-        return;
-      }
-
-      const sourceId = source.id;
-      const targetId = target.id;
-      const emphasized =
-        !activeNodeId ||
-        sourceId === activeNodeId ||
-        targetId === activeNodeId;
-      const hoverMix = hoverTransitionRef.current;
-
-      const dx = target.x - source.x;
-      const dy = target.y - source.y;
-      const distance = Math.hypot(dx, dy);
-      if (!distance) return;
-
-      const ux = dx / distance;
-      const uy = dy / distance;
-
-      const targetRadius = 3 + Math.cbrt(target.val) * 1.4;
-      const tipX = target.x - ux * (targetRadius + 0.35);
-      const tipY = target.y - uy * (targetRadius + 0.35);
-
-      const arrowScale = (emphasized ? 0.98 : 0.86) / Math.max(1, globalScale);
-      const arrowAngle = Math.atan2(dy, dx);
-      const arrowSvgPath = new Path2D("M0 0 L-6.8 3.4 L-4.8 0 L-6.8 -3.4 Z");
-
-      const color = emphasized ? graphColors.linkActive : graphColors.linkDim;
-
-      ctx.save();
-      ctx.globalAlpha = emphasized ? 0.95 : 0.85 - 0.3 * hoverMix;
-      ctx.fillStyle = color;
-      ctx.translate(tipX, tipY);
-      ctx.rotate(arrowAngle);
-      ctx.scale(arrowScale, arrowScale);
-      ctx.fill(arrowSvgPath);
-      ctx.restore();
+      drawGraphLinkArrow({
+        link: link as ForceGraphLink,
+        ctx,
+        globalScale,
+        showArrows,
+        activeNodeId,
+        hoverMix: hoverTransitionRef.current,
+        colors: graphColors,
+      });
     },
-    [activeNodeId, graphColors.linkActive, graphColors.linkDim, showArrows],
+    [activeNodeId, graphColors, showArrows],
   );
 
   const handleZoomIn = useCallback(() => {
@@ -718,74 +593,18 @@ export function GraphView({ data }: Props) {
             </motion.div>
           </motion.div>
 
-          <motion.div
-            initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: -12 }}
-            animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-            transition={{ duration: 0.28, ease: "easeOut", delay: 0.14 }}
-            className="absolute top-4 right-4 flex w-40 flex-col gap-3"
-          >
-            <motion.div
-              layout
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              className="rounded-xl border bg-background/90 p-3 shadow-sm backdrop-blur-sm"
-            >
-              <label
-                htmlFor="link-distance"
-                className="mb-2 block text-xs font-semibold uppercase tracking-wide text-muted-foreground"
-              >
-                Path Length
-              </label>
-              <input
-                id="link-distance"
-                type="range"
-                min="30"
-                max="250"
-                value={linkDistance}
-                onChange={(event) =>
-                  setLinkDistance(Number(event.target.value))
-                }
-                className="w-full accent-primary"
-                title="Adjust spacing between graph nodes"
-              />
-              <p className="mt-1 text-[10px] text-muted-foreground">
-                {linkDistance}px
-              </p>
-            </motion.div>
-
-            <motion.div
-              layout
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              className="rounded-xl border bg-background/90 p-2 shadow-sm backdrop-blur-sm"
-            >
-              <div className="grid grid-cols-3 gap-1">
-                <Button size="xs" variant="outline" onClick={handleZoomIn}>
-                  +
-                </Button>
-                <Button size="xs" variant="outline" onClick={handleZoomOut}>
-                  -
-                </Button>
-                <Button size="xs" variant="outline" onClick={handleFit}>
-                  Fit
-                </Button>
-              </div>
-              <div className="mt-2 flex flex-col gap-1">
-                <Button
-                  size="xs"
-                  variant={showLabels ? "default" : "outline"}
-                  onClick={() => setShowLabels((prev) => !prev)}
-                >
-                  Labels
-                </Button>
-                <Button
-                  size="xs"
-                  variant={showArrows ? "default" : "outline"}
-                  onClick={() => setShowArrows((prev) => !prev)}
-                >
-                  Arrows
-                </Button>
-              </div>
-            </motion.div>
-          </motion.div>
+          <GraphToolbar
+            prefersReducedMotion={prefersReducedMotion}
+            linkDistance={linkDistance}
+            setLinkDistance={setLinkDistance}
+            handleZoomIn={handleZoomIn}
+            handleZoomOut={handleZoomOut}
+            handleFit={handleFit}
+            showLabels={showLabels}
+            setShowLabels={setShowLabels}
+            showArrows={showArrows}
+            setShowArrows={setShowArrows}
+          />
 
           <AnimatePresence initial={false} mode="wait">
             {selectedNode ? (
@@ -905,7 +724,7 @@ export function GraphView({ data }: Props) {
 
               <div className="flex items-center gap-2">
                 <Button
-                  render={<Link href={`/blog/${selectedNode.id}`} />}
+                  render={<Link href={postPath(selectedNode.id)} />}
                   size="sm"
                   className="gap-1"
                 >
@@ -915,7 +734,7 @@ export function GraphView({ data }: Props) {
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => router.push(`/blog/${selectedNode.id}`)}
+                  onClick={() => router.push(postPath(selectedNode.id))}
                 >
                   Go now
                 </Button>

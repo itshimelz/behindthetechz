@@ -12,6 +12,9 @@ import {
   Tick02Icon,
 } from "@hugeicons/core-free-icons";
 import { useFavorites } from "@/hooks/use-favorites";
+import { postPath } from "@/lib/blog/post-path";
+import { copyToClipboard } from "@/lib/clipboard";
+import { toast } from "sonner";
 
 import {
   Tooltip,
@@ -200,21 +203,25 @@ export function PostFooter({
   };
 
   const handleCopyLink = async () => {
-    try {
-      const url = `${window.location.origin}/blog/${slug}`;
-      await navigator.clipboard.writeText(url);
+    const url = `${window.location.origin}${postPath(slug)}`;
+    const didCopy = await copyToClipboard(url);
+    if (didCopy) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    } catch {
-      const textArea = document.createElement("textarea");
-      textArea.value = `${window.location.origin}/blog/${slug}`;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textArea);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      toast.success("Link copied");
+    } else {
+      toast.error("Could not copy link");
     }
+  };
+
+  const handleToggleFavorite = () => {
+    const wasBookmarked = isBookmarked;
+    toggleFavorite({ slug, title });
+    if (wasBookmarked) {
+      toast("Removed from favorites");
+      return;
+    }
+    toast.success("Saved to favorites");
   };
 
   return (
@@ -348,7 +355,7 @@ export function PostFooter({
           {/* Bookmark / Favorite */}
           <Tooltip>
             <TooltipTrigger
-              onClick={() => toggleFavorite({ slug, title })}
+              onClick={handleToggleFavorite}
               className={`flex items-center justify-center rounded-full p-2 transition-colors hover:bg-muted ${
                 isBookmarked
                   ? "text-primary hover:text-primary/80"

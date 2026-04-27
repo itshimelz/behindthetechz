@@ -5,6 +5,7 @@ import {
   ArrowRight02Icon,
   Notebook01Icon,
 } from "@hugeicons/core-free-icons";
+import { postPath } from "@/lib/blog/post-path";
 import type { SeriesWithPosts } from "@/lib/blog/get-series";
 import { cn } from "@/lib/utils";
 
@@ -53,7 +54,7 @@ export function SeriesNav({ series, currentSlug }: Props) {
               </span>
             ) : (
               <Link
-                href={`/blog/${post.slug}`}
+                href={postPath(post.slug)}
                 className="flex items-center gap-2 text-sm py-1 pl-2 rounded-md text-muted-foreground hover:text-foreground transition-colors"
               >
                 <span className="text-xs opacity-60 w-5 shrink-0 tabular-nums">
@@ -71,7 +72,7 @@ export function SeriesNav({ series, currentSlug }: Props) {
         <div className="flex items-center justify-between gap-4 pt-2 border-t border-border/50">
           {prevPost ? (
             <Link
-              href={`/blog/${prevPost.slug}`}
+              href={postPath(prevPost.slug)}
               className={cn(
                 "flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors",
               )}
@@ -88,7 +89,7 @@ export function SeriesNav({ series, currentSlug }: Props) {
           )}
           {nextPost && (
             <Link
-              href={`/blog/${nextPost.slug}`}
+              href={postPath(nextPost.slug)}
               className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors ml-auto"
             >
               <span className="truncate max-w-[150px]">{nextPost.title}</span>

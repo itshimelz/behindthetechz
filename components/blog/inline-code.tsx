@@ -1,6 +1,7 @@
 "use client";
 
 import { toast } from "sonner";
+import { copyToClipboard } from "@/lib/clipboard";
 import { cn } from "@/lib/utils";
 
 export function InlineCode({
@@ -30,8 +31,10 @@ export function InlineCode({
       typeof children === "string"
         ? children
         : e.currentTarget.textContent || "";
-    await navigator.clipboard.writeText(text);
-    toast.success("Code copied to clipboard");
+    const didCopy = await copyToClipboard(text);
+    if (didCopy) {
+      toast.success("Code copied to clipboard");
+    }
   };
 
   return (

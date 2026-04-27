@@ -1,6 +1,7 @@
 import { Prisma, PostStatus } from "@/lib/generated/prisma/client";
 import { unstable_cache } from "next/cache";
 
+import { BLOG_REVALIDATE_SECONDS } from "@/lib/blog/cache-tags";
 import { prisma } from "@/lib/prisma";
 import type { Post, PostFrontmatter } from "@/lib/blog/types";
 export type { Post };
@@ -66,8 +67,6 @@ export function mapDbPostToPost(post: DbPostWithRelations): Post {
     wordCount,
   };
 }
-
-const BLOG_REVALIDATE_SECONDS = 300;
 
 const getAllPostsCached = unstable_cache(
   async (includeDrafts: boolean) => {

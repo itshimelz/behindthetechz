@@ -5,6 +5,9 @@ import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Link04Icon, Tick02Icon } from "@hugeicons/core-free-icons";
 import { toast } from "sonner";
+import { postPath } from "@/lib/blog/post-path";
+import { copyToClipboard } from "@/lib/clipboard";
+import { formatPostDate } from "@/lib/format-date";
 import type { Post } from "@/lib/blog/types";
 
 type Props = {
@@ -44,20 +47,9 @@ export function PostCard({ post, searchQuery }: Props) {
   const handleCopyLink = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const url = `${window.location.origin}/blog/${post.slug}`;
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      toast.success("Link copied to clipboard");
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Fallback
-      const textArea = document.createElement("textarea");
-      textArea.value = url;
-      document.body.appendChild(textArea);
-      textArea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textArea);
+    const url = `${window.location.origin}${postPath(post.slug)}`;
+    const didCopy = await copyToClipboard(url);
+    if (didCopy) {
       setCopied(true);
       toast.success("Link copied to clipboard");
       setTimeout(() => setCopied(false), 2000);
@@ -65,7 +57,7 @@ export function PostCard({ post, searchQuery }: Props) {
   };
 
   return (
-    <Link href={`/blog/${post.slug}`} className="group flex flex-col gap-2">
+    <Link href={postPath(post.slug)} className="group flex flex-col gap-2">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4">
         <div className="flex items-center gap-2 min-w-0 flex-1">
           <h3 className="text-lg font-medium group-hover:text-primary transition-colors line-clamp-1 text-foreground">
@@ -85,7 +77,7 @@ export function PostCard({ post, searchQuery }: Props) {
           </button>
         </div>
         <span className="text-xs italic text-muted-foreground/70 shrink-0 tabular-nums sm:text-sm sm:text-muted-foreground">
-          {new Date(post.date).toLocaleDateString("en-US", {
+          {formatPostDate(post.date, {
             month: "short",
             day: "numeric",
             year: "numeric",

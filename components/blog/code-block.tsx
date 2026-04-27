@@ -14,6 +14,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { copyToClipboard } from "@/lib/clipboard";
 import { cn } from "@/lib/utils";
 
 interface CodeBlockProps extends React.HTMLAttributes<HTMLPreElement> {
@@ -34,10 +35,12 @@ export function CodeBlock({ children, className, ...props }: CodeBlockProps) {
       // The text inside pre might have span tags from syntax highlighting.
       // textContent will extract just the raw text.
       const text = preRef.current.textContent || "";
-      await navigator.clipboard.writeText(text);
-      toast.success("Code copied to clipboard");
-      setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
+      const didCopy = await copyToClipboard(text);
+      if (didCopy) {
+        toast.success("Code copied to clipboard");
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
+      }
     }
   };
 

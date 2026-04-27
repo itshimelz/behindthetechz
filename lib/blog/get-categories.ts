@@ -1,13 +1,16 @@
 import { prisma } from "@/lib/prisma";
 import { unstable_cache } from "next/cache";
+import { BLOG_REVALIDATE_SECONDS } from "@/lib/blog/cache-tags";
 import {
   getPostStatusWhere,
   mapDbPostToPost,
   postWithRelationsInclude,
 } from "@/lib/blog/get-all-posts";
+import {
+  sortAndFilterTaxonomyByCount,
+  taxonomyPostCountSelect,
+} from "@/lib/blog/taxonomy-query";
 import type { Category } from "@/lib/blog/types";
-
-const BLOG_REVALIDATE_SECONDS = 300;
 
 const getCategoriesCached = unstable_cache(
   async (includeDrafts: boolean) => {
@@ -17,26 +20,19 @@ const getCategoriesCached = unstable_cache(
         slug: true,
         iconKey: true,
         _count: {
-          select: {
-            posts: {
-              where: {
-                post: getPostStatusWhere(includeDrafts),
-              },
-            },
-          },
+          select: taxonomyPostCountSelect(includeDrafts),
         },
       },
     });
 
-    return categories
-      .map((category) => ({
+    return sortAndFilterTaxonomyByCount(
+      categories.map((category) => ({
         name: category.name,
         slug: category.slug,
         iconKey: category.iconKey,
         count: category._count.posts,
-      }))
-      .filter((category) => category.count > 0)
-      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
+      })),
+    );
   },
   ["blog-categories"],
   {

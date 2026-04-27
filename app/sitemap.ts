@@ -1,14 +1,13 @@
 import type { MetadataRoute } from "next";
 import { getAllPosts } from "@/lib/blog/get-all-posts";
+import { postPath } from "@/lib/blog/post-path";
+import { SITE_URL } from "@/lib/site";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const SITE_URL =
-    process.env.NEXT_PUBLIC_SITE_URL || "https://behindthetechz.live";
-
   const posts = await getAllPosts();
 
   const postEntries: MetadataRoute.Sitemap = posts.map((post) => ({
-    url: `${SITE_URL}/blog/${post.slug}`,
+    url: `${SITE_URL}${postPath(post.slug)}`,
     lastModified: post.updatedAt || post.date,
     changeFrequency: "monthly",
     priority: 0.8,

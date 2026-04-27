@@ -1,18 +1,14 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import Link from "next/link";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { Search01Icon } from "@hugeicons/core-free-icons";
 
 import { BlogBreadcrumbTitleProvider } from "@/components/blog/blog-breadcrumb-title-context";
 import { AppSidebar } from "@/components/app-sidebar";
-import { SiteBreadcrumb } from "@/components/site-breadcrumb";
 import { SiteFooter } from "@/components/site-footer";
+import { TopHeader } from "@/components/top-header";
 import {
   SidebarInset,
   SidebarProvider,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -21,12 +17,10 @@ import {
   getPublishedPostCount,
   getRecentPostLinks,
 } from "@/lib/blog/get-all-posts";
+import { SITE_URL } from "@/lib/site";
 
 import "katex/dist/katex.min.css";
 import "./globals.css";
-
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://behindthetechz.live";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -172,24 +166,7 @@ export default async function RootLayout({
               publishedPostsCount={publishedPostsCount}
             />
             <SidebarInset>
-              <header className="flex h-14 shrink-0 items-center gap-2">
-                <div className="flex flex-1 items-center gap-2 px-3">
-                  <SidebarTrigger className="md:hidden" />
-                  <SiteBreadcrumb />
-                  <Link
-                    href="/search"
-                    aria-label="Open search"
-                    className="focus-visible:border-ring focus-visible:ring-ring/50 ml-auto inline-flex size-8 items-center justify-center rounded-lg border border-transparent transition-colors hover:bg-muted focus-visible:ring-3 outline-none md:hidden"
-                  >
-                    <HugeiconsIcon
-                      icon={Search01Icon}
-                      strokeWidth={2}
-                      className="text-muted-foreground"
-                      aria-hidden="true"
-                    />
-                  </Link>
-                </div>
-              </header>
+              <TopHeader />
               <main id="main-content" className="flex flex-1 flex-col">
                 {children}
               </main>

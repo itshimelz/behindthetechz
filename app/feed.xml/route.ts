@@ -1,7 +1,6 @@
 import { getAllPosts } from "@/lib/blog/get-all-posts";
-
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://behindthetechz.live";
+import { postPath } from "@/lib/blog/post-path";
+import { SITE_URL } from "@/lib/site";
 
 function escapeXml(str: string): string {
   return str
@@ -20,8 +19,8 @@ export async function GET() {
       (post) => `
     <item>
       <title>${escapeXml(post.title)}</title>
-      <link>${SITE_URL}/blog/${post.slug}</link>
-      <guid isPermaLink="true">${SITE_URL}/blog/${post.slug}</guid>
+      <link>${SITE_URL}${postPath(post.slug)}</link>
+      <guid isPermaLink="true">${SITE_URL}${postPath(post.slug)}</guid>
       <description>${escapeXml(post.excerpt)}</description>
       <pubDate>${new Date(post.date).toUTCString()}</pubDate>
       <category>${escapeXml(post.category)}</category>

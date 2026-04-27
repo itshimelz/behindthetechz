@@ -8,6 +8,8 @@ export const BLOG_CACHE_TAGS = {
   graph: "blog:graph",
 } as const;
 
+export const BLOG_REVALIDATE_SECONDS = 300;
+
 export const BLOG_DEFAULT_REVALIDATE_TAGS = [
   BLOG_CACHE_TAGS.posts,
   BLOG_CACHE_TAGS.categories,
