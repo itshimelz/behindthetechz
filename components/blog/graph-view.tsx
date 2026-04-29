@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { forceCollide } from "d3-force-3d";
 import { AnimatePresence, animate, motion, useReducedMotion } from "framer-motion";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
@@ -76,9 +75,6 @@ export function GraphView({ data }: Props) {
   const setFgRef = useCallback((instance: ForceGraphMethods | null) => {
     fgRef.current = instance;
     if (!instance) return;
-
-    // Register collision force immediately
-    instance.d3Force("collide", forceCollide(34) as never);
 
     // Strengthen charge repulsion
     const chargeForce = instance.d3Force("charge");

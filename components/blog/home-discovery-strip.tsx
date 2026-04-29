@@ -16,7 +16,7 @@ type HomeDiscoveryStripProps = {
 
 export function HomeDiscoveryStrip({ categories }: HomeDiscoveryStripProps) {
   return (
-    <section className="w-full bg-card px-5 py-6 sm:px-7 md:px-8 md:py-7 dark:bg-transparent">
+    <section className="w-full bg-card px-5 py-2 sm:px-7 md:px-8 md:py-2 dark:bg-transparent">
       <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
         <div className="space-y-3">
           <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">

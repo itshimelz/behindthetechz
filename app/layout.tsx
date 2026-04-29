@@ -3,19 +3,12 @@ import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
 import { BlogBreadcrumbTitleProvider } from "@/components/blog/blog-breadcrumb-title-context";
-import { AppSidebar } from "@/components/app-sidebar";
+import { SiteNavbar } from "@/components/site-navbar";
 import { SiteFooter } from "@/components/site-footer";
-import { TopHeader } from "@/components/top-header";
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { getCategories } from "@/lib/blog/get-categories";
 import {
   getPublishedPostCount,
-  getRecentPostLinks,
 } from "@/lib/blog/get-all-posts";
 import { SITE_URL } from "@/lib/site";
 
@@ -95,11 +88,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [categories, recentPosts, publishedPostsCount] = await Promise.all([
-    getCategories(),
-    getRecentPostLinks(5),
-    getPublishedPostCount(),
-  ]);
+  const publishedPostsCount = await getPublishedPostCount();
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -162,21 +151,14 @@ export default async function RootLayout({
         </a>
         <TooltipProvider>
           <BlogBreadcrumbTitleProvider>
-          <SidebarProvider>
-            <AppSidebar
-              categories={categories}
-              recentPosts={recentPosts}
-              publishedPostsCount={publishedPostsCount}
-            />
-            <SidebarInset>
-              <TopHeader />
+            <div className="flex min-h-svh w-full flex-col bg-background">
+              <SiteNavbar publishedPostsCount={publishedPostsCount} />
               <main id="main-content" className="flex flex-1 flex-col">
                 {children}
               </main>
               <SiteFooter />
-            </SidebarInset>
+            </div>
             <Toaster position="top-center" />
-          </SidebarProvider>
           </BlogBreadcrumbTitleProvider>
         </TooltipProvider>
         <Analytics />
@@ -185,3 +167,4 @@ export default async function RootLayout({
     </html>
   );
 }
+

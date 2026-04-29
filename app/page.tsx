@@ -53,7 +53,11 @@ export default async function HomePage() {
               Prefer browsing everything?
             </p>
             <div className="flex flex-wrap items-center gap-2">
-              <Button render={<Link href="/blog" />} variant="outline" className="rounded-full">
+              <Button
+                render={<Link href="/blog" />}
+                variant="outline"
+                className="rounded-full"
+              >
                 Open archive
                 <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" />
               </Button>

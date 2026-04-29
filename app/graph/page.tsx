@@ -6,7 +6,7 @@ export default async function GraphPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <div className="relative min-h-[calc(100svh-3.5rem)] flex-1 overflow-hidden">
+      <div className="relative h-[calc(100svh-3.5rem)] overflow-hidden">
         <GraphViewLazy data={data} />
       </div>
     </div>

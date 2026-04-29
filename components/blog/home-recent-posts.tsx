@@ -10,7 +10,7 @@ export function HomeRecentPosts({ posts }: HomeRecentPostsProps) {
   return (
     <section
       id="recent-posts"
-      className="w-full bg-card px-5 py-6 sm:px-7 md:px-8 md:py-7 dark:bg-transparent"
+      className="w-full bg-card px-5 py-2 sm:px-7 md:px-8 md:py-2 dark:bg-transparent"
     >
       <div className="space-y-5 md:space-y-6">
         <SectionIntro

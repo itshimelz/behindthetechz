@@ -15,7 +15,10 @@ type Props = {
 function FeaturedPostCard({ post }: { post: Post }) {
   return (
     <div className="group flex flex-col gap-5 h-full">
-      <Link href={postPath(post.slug)} className="block w-full overflow-hidden rounded-2xl bg-muted/20 h-64 sm:h-72 md:h-80 shrink-0">
+      <Link
+        href={postPath(post.slug)}
+        className="block w-full overflow-hidden rounded-2xl bg-muted/20 h-64 sm:h-72 md:h-80 shrink-0"
+      >
         <img
           src={post.coverImage}
           alt={post.title}
@@ -23,30 +26,31 @@ function FeaturedPostCard({ post }: { post: Post }) {
           loading="lazy"
         />
       </Link>
-      
+
       <div className="flex flex-col gap-2 flex-1">
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <span className="font-medium text-primary uppercase tracking-wider">
             {post.category}
           </span>
           <span>·</span>
-          <time dateTime={post.date}>
-            {formatPostDate(post.date)}
-          </time>
+          <time dateTime={post.date}>{formatPostDate(post.date)}</time>
         </div>
-        
-        <Link href={postPath(post.slug)} className="group-hover:text-primary transition-colors">
-          <h3 className="text-2xl sm:text-3xl font-bold leading-tight text-foreground line-clamp-2">
+
+        <Link
+          href={postPath(post.slug)}
+          className="group-hover:text-primary transition-colors"
+        >
+          <h3 className="text-xl sm:text-2xl font-bold leading-tight text-foreground line-clamp-2">
             {post.title}
           </h3>
         </Link>
-        
+
         <p className="line-clamp-3 text-base leading-relaxed text-muted-foreground mt-1">
           {post.excerpt}
         </p>
-        
-        <Link 
-          href={postPath(post.slug)} 
+
+        <Link
+          href={postPath(post.slug)}
           className="mt-auto pt-3 inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
         >
           Read full post
@@ -65,7 +69,7 @@ export function HomeFeaturedPosts({ posts }: Props) {
   }
 
   return (
-    <section className="w-full px-5 py-6 sm:px-7 md:px-8 md:py-7">
+    <section className="w-full px-5 py-4 sm:px-7 md:px-8 md:py-2">
       <div className="space-y-8">
         <SectionIntro
           eyebrow="Latest Updates"

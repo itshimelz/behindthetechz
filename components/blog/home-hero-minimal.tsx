@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export function HomeHeroMinimal() {
   return (
-    <section className="w-full bg-card px-5 py-8 sm:px-7 sm:py-10 md:px-8 md:py-12 dark:bg-transparent">
+    <section className="w-full bg-card px-5 py-2 sm:px-7 md:px-8 md:py-2 dark:bg-transparent">
       <div className="max-w-3xl space-y-5">
         <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
           behind the TechZ

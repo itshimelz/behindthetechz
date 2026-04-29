@@ -1,5 +1,6 @@
 import React from "react";
 import { HugeiconsIcon } from "@hugeicons/react";
+import type { IconSvgElement } from "@hugeicons/react";
 import {
   BulbIcon,
   InformationCircleIcon,
@@ -7,7 +8,6 @@ import {
   Alert02Icon,
   Shield01Icon,
 } from "@hugeicons/core-free-icons";
-import type { IconSvgObject } from "@hugeicons/core-free-icons";
 import { cn } from "@/lib/utils";
 
 type CalloutType = "note" | "tip" | "important" | "warning" | "caution";
@@ -20,7 +20,7 @@ type MdxCalloutProps = {
 
 const CALLOUT_STYLES: Record<
   CalloutType,
-  { icon: IconSvgObject; wrapperClasses: string; contentClasses: string }
+  { icon: IconSvgElement; wrapperClasses: string; contentClasses: string }
 > = {
   note: {
     icon: InformationCircleIcon,
