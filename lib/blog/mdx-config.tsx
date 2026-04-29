@@ -6,7 +6,9 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import type { MDXRemoteProps } from "next-mdx-remote/rsc";
 import { CodeBlock } from "@/components/blog/code-block";
+import { MdxImage } from "@/components/blog/mdx-image";
 import { InlineCode } from "@/components/blog/inline-code";
+import { MdxCallout } from "@/components/blog/mdx-callout";
 import { WikiLink } from "@/components/blog/wiki-link";
 import type { Post } from "@/lib/blog/get-all-posts";
 import remarkObsidianBlockId from "@/lib/blog/remark-obsidian-block-id";
@@ -96,6 +98,7 @@ export function getPostMdxConfig({ validSlugs, postMetadata }: MdxConfigParams) 
 
   return {
     components: {
+      callout: (props: any) => <MdxCallout {...props} />,
       pre: (props: React.HTMLAttributes<HTMLPreElement>) => (
         <CodeBlock {...props} />
       ),
@@ -157,19 +160,7 @@ export function getPostMdxConfig({ validSlugs, postMetadata }: MdxConfigParams) 
         );
       },
       img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
-        <span className="my-8 block overflow-hidden rounded-xl border bg-muted/20">
-          <img
-            alt={props.alt || "Post image"}
-            loading="lazy"
-            className="w-full object-cover transition-colors"
-            {...props}
-          />
-          {props.alt && (
-            <span className="block border-t bg-muted/40 px-4 py-2.5 text-center text-sm text-muted-foreground">
-              {props.alt}
-            </span>
-          )}
-        </span>
+        <MdxImage {...props} />
       ),
       iframe: (props: React.IframeHTMLAttributes<HTMLIFrameElement>) => (
         <span className="my-8 block overflow-hidden rounded-xl border bg-muted/20 shadow-sm">

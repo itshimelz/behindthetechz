@@ -2,6 +2,7 @@ import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons";
 import { HomeDiscoveryStrip } from "@/components/blog/home-discovery-strip";
+import { HomeFeaturedPosts } from "@/components/blog/home-featured-posts";
 import { HomeHeroMinimal } from "@/components/blog/home-hero-minimal";
 import { HomeRecentPosts } from "@/components/blog/home-recent-posts";
 import { PretextArticleEnhancer } from "@/components/blog/pretext-article-enhancer";
@@ -31,6 +32,10 @@ export default async function HomePage() {
       />
       <SectionReveal>
         <HomeHeroMinimal />
+      </SectionReveal>
+
+      <SectionReveal delay={0.01}>
+        <HomeFeaturedPosts posts={allPosts} />
       </SectionReveal>
 
       <SectionReveal delay={0.02}>

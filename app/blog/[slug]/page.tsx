@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { NaturalImage } from "@/components/blog/natural-image";
 import { notFound } from "next/navigation";
 import { MDXRemote } from "next-mdx-remote/rsc";
 
@@ -133,16 +133,12 @@ export default async function BlogPostPage({
             {/* Cover image */}
             {post.coverImage && (
               <div className="mx-auto w-full max-w-3xl">
-                <div className="relative aspect-video w-full overflow-hidden rounded-xl border">
-                  <Image
-                    src={post.coverImage}
-                    alt={post.title}
-                    fill
-                    priority
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 768px"
-                  />
-                </div>
+                <NaturalImage
+                  src={post.coverImage}
+                  alt={post.title}
+                  priority
+                  sizes="(max-width: 768px) 100vw, 768px"
+                />
               </div>
             )}
 

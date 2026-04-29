@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useState, type ComponentProps } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { HugeiconsIcon } from "@hugeicons/react";
 
@@ -277,14 +278,21 @@ export function AppSidebar({
             isMobile && "px-1.5 py-1",
           )}
         >
-          <span
-            className={cn(
-              "font-heading font-bold tracking-tight truncate group-data-[collapsible=icon]:hidden",
-              isMobile ? "text-base" : "text-lg",
-            )}
+          <Link
+            href="/"
+            className="group-data-[collapsible=icon]:hidden"
+            onClick={closeMobileDrawer}
+            aria-label="behind the TechZ home"
           >
-            behind the TechZ
-          </span>
+            <Image
+              src="/logo_h.png"
+              alt="behind the TechZ"
+              width={220}
+              height={70}
+              priority
+              className={cn("h-auto w-[170px]", isMobile && "w-[150px]")}
+            />
+          </Link>
           {!isMobile && (
             <SidebarTrigger className="group-data-[collapsible=icon]:mx-auto" />
           )}

@@ -41,6 +41,7 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-callout-tip: var(--callout-tip);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -93,6 +94,7 @@
   --graph-label-muted: #6b7280;
   --wiki-link: oklch(0.488 0.243 264.376);
   --wiki-link-hover: oklch(0.424 0.199 265.638);
+  --callout-tip: #0f766e;
 }
 
 .dark {
@@ -137,6 +139,7 @@
   --graph-label-muted: #9aa5b3;
   --wiki-link: oklch(0.8 0.12 255);
   --wiki-link-hover: oklch(0.86 0.1 255);
+  --callout-tip: #2dd4bf;
 }
 
 @layer base {
@@ -471,38 +474,7 @@
   margin-right: 0.5em;
 }
 
-.prose .callout {
-  border: 1px solid var(--border);
-  border-left-width: 4px;
-  border-radius: 0.75rem;
-  margin: 1.4em 0;
-  padding: 0.9em 1em;
-  background: color-mix(in oklch, var(--muted) 30%, var(--background));
-}
 
-.prose .callout[data-callout="note"],
-.prose .callout[data-callout="important"] {
-  border-left-color: var(--primary);
-}
-
-.prose .callout[data-callout="tip"] {
-  border-left-color: var(--ring);
-}
-
-.prose .callout[data-callout="warning"],
-.prose .callout[data-callout="caution"] {
-  border-left-color: var(--destructive);
-}
-
-.prose .callout .callout-title {
-  margin: 0 0 0.45em;
-}
-
-.prose .callout p:last-child,
-.prose .callout ul:last-child,
-.prose .callout ol:last-child {
-  margin-bottom: 0;
-}
 
 .prose sup {
   line-height: 0;
@@ -665,9 +637,6 @@ html.dark .prose code span {
   .prose img {
     max-width: 100%;
     height: auto;
-  }
-  .prose .callout {
-    padding: 0.8em 0.85em;
   }
 }
 

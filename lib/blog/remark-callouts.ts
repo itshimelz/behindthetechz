@@ -54,15 +54,12 @@ function transformBlockquote(node: Blockquote) {
     node.children.shift();
   }
 
-  const titleNode = createTitleParagraph(title);
-  node.children.unshift(titleNode);
-
   const data = (node.data ??= {});
-  data.hName = "aside";
+  data.hName = "callout";
   data.hProperties = {
     ...data.hProperties,
-    className: ["callout", `callout-${calloutType}`],
-    "data-callout": calloutType,
+    type: calloutType,
+    title: title,
   };
 }
 
