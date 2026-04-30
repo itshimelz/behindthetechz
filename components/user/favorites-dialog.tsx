@@ -61,7 +61,7 @@ export function FavoritesDialog({
         } else {
           alert("Invalid favorites file format.");
         }
-      } catch (err) {
+      } catch {
         alert("Failed to parse file.");
       }
     };

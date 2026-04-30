@@ -63,23 +63,6 @@ function transformBlockquote(node: Blockquote) {
   };
 }
 
-function createTitleParagraph(title: string): Paragraph {
-  return {
-    type: "paragraph",
-    data: {
-      hProperties: {
-        className: ["callout-title"],
-      },
-    },
-    children: [
-      {
-        type: "strong",
-        children: [{ type: "text", value: title }],
-      } satisfies Strong,
-    ],
-  };
-}
-
 function isBlockquote(node: unknown): node is Blockquote {
   return Boolean(node && typeof node === "object" && (node as Blockquote).type === "blockquote");
 }

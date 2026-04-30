@@ -62,10 +62,12 @@ export function SearchPageClient({ posts }: Props) {
   const initialQuery = searchParams.get("q") ?? "";
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [debouncedQuery, setDebouncedQuery] = useState(initialQuery);
+  const [prevInitialQuery, setPrevInitialQuery] = useState(initialQuery);
 
-  useEffect(() => {
+  if (initialQuery !== prevInitialQuery) {
+    setPrevInitialQuery(initialQuery);
     setSearchQuery(initialQuery);
-  }, [initialQuery]);
+  }
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {

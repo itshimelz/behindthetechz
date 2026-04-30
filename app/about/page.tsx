@@ -2,7 +2,6 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  SparklesIcon,
   ChartBubble02Icon,
   BookOpen02Icon,
   Settings02Icon,

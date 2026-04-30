@@ -14,6 +14,7 @@ import type { Post } from "@/lib/blog/get-all-posts";
 import remarkObsidianBlockId from "@/lib/blog/remark-obsidian-block-id";
 import remarkCallouts from "@/lib/blog/remark-callouts";
 import remarkWikiLink from "@/lib/blog/remark-wiki-link";
+import { Tweet } from "react-tweet";
 
 type MdxConfigParams = {
   validSlugs: string[];
@@ -164,18 +165,44 @@ export function getPostMdxConfig({ validSlugs, postMetadata }: MdxConfigParams) 
       img: (props: React.ImgHTMLAttributes<HTMLImageElement>) => (
         <MdxImage {...props} />
       ),
-      iframe: (props: React.IframeHTMLAttributes<HTMLIFrameElement>) => (
-        <span className="my-8 block overflow-hidden rounded-xl border bg-muted/20 shadow-sm">
-          <span className="relative block aspect-video w-full">
+      Tweet: (props: React.ComponentProps<typeof Tweet>) => (
+        <div className="flex justify-center my-8 not-prose">
+          <Tweet {...props} />
+        </div>
+      ),
+      iframe: (props: React.IframeHTMLAttributes<HTMLIFrameElement>) => {
+        const src = props.src || "";
+        const isVideoEmbed =
+          src.includes("youtube.com") ||
+          src.includes("youtu.be") ||
+          src.includes("vimeo.com");
+
+        if (isVideoEmbed) {
+          return (
+            <span className="my-8 block overflow-hidden rounded-xl border bg-muted/20 shadow-sm">
+              <span className="relative block aspect-video w-full">
+                <iframe
+                  className="absolute inset-0 h-full w-full"
+                  loading={props.loading ?? "lazy"}
+                  allowFullScreen={props.allowFullScreen ?? true}
+                  {...props}
+                />
+              </span>
+            </span>
+          );
+        }
+
+        return (
+          <span className="my-8 flex justify-center w-full overflow-hidden rounded-xl bg-muted/5 shadow-sm">
             <iframe
-              className="absolute inset-0 h-full w-full"
+              className="max-w-full"
               loading={props.loading ?? "lazy"}
               allowFullScreen={props.allowFullScreen ?? true}
               {...props}
             />
           </span>
-        </span>
-      ),
+        );
+      },
       video: (props: React.VideoHTMLAttributes<HTMLVideoElement>) => (
         <span className="my-8 block overflow-hidden rounded-xl border bg-muted/20 shadow-sm">
           <video

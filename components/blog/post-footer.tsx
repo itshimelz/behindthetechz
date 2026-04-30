@@ -83,6 +83,7 @@ export function PostFooter({
   useEffect(() => {
     let isActive = true;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
 
     // Restore user claps from localStorage

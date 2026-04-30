@@ -1,12 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+import { type NextRequest, NextResponse } from "next/server";
 
 // ---------------------------------------------------------------------------
 // GET /api/newsletter/unsubscribe?token=xxx  (for email footer links)
 // ---------------------------------------------------------------------------
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   // Feature temporarily disabled
   return new NextResponse(
     unsubscribePage("Unsubscribe feature is currently unavailable."),
@@ -82,7 +79,7 @@ export async function GET(request: NextRequest) {
 // POST /api/newsletter/unsubscribe  (for website unsubscribe form)
 // Body: { email: "user@example.com" }
 // ---------------------------------------------------------------------------
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   // Feature temporarily disabled
   return NextResponse.json({ ok: false, error: "Not available" }, { status: 404 });
   /*

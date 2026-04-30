@@ -32,7 +32,6 @@ export function MdxImage(props: React.ImgHTMLAttributes<HTMLImageElement>) {
           className="relative block w-full aspect-(--ratio)"
           style={{ "--ratio": ratio } as React.CSSProperties}
         >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             alt={props.alt || "Post image"}
             loading="lazy"
@@ -44,7 +43,6 @@ export function MdxImage(props: React.ImgHTMLAttributes<HTMLImageElement>) {
         </span>
       ) : (
         /* Initial render — image loads, fires onLoad to compute ratio */
-        /* eslint-disable-next-line @next/next/no-img-element */
         <img
           alt={props.alt || "Post image"}
           loading="lazy"
