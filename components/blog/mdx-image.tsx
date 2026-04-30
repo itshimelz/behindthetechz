@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
+
 import { cn } from "@/lib/utils";
 
 /**
@@ -28,7 +28,10 @@ export function MdxImage(props: React.ImgHTMLAttributes<HTMLImageElement>) {
   return (
     <span className="my-4 block overflow-hidden rounded-xl border bg-muted/20">
       {ratio ? (
-        <AspectRatio ratio={ratio} className="w-full">
+        <span
+          className="relative block w-full aspect-(--ratio)"
+          style={{ "--ratio": ratio } as React.CSSProperties}
+        >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             alt={props.alt || "Post image"}
@@ -38,7 +41,7 @@ export function MdxImage(props: React.ImgHTMLAttributes<HTMLImageElement>) {
             )}
             {...props}
           />
-        </AspectRatio>
+        </span>
       ) : (
         /* Initial render — image loads, fires onLoad to compute ratio */
         /* eslint-disable-next-line @next/next/no-img-element */

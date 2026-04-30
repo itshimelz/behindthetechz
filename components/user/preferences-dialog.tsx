@@ -20,6 +20,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { BLOG_BG_TONE_OPTIONS } from "@/hooks/use-blog-reading-preferences";
+import { cn } from "@/lib/utils";
 
 const BLOG_BG_TONE_LABELS = {
   default: "Default",
@@ -33,16 +34,18 @@ function SettingRow({
   label,
   description,
   children,
+  iconColor,
 }: {
   icon: React.ComponentProps<typeof HugeiconsIcon>["icon"];
   label: string;
   description?: string;
   children: React.ReactNode;
+  iconColor?: string;
 }) {
   return (
     <div className="flex items-center justify-between gap-4 py-3">
       <div className="flex items-start gap-3 min-w-0">
-        <span className="mt-0.5 text-muted-foreground shrink-0">
+        <span className={cn("mt-0.5 shrink-0", iconColor || "text-muted-foreground")}>
           <HugeiconsIcon icon={icon} className="size-4" strokeWidth={2} aria-hidden="true" />
         </span>
         <div className="min-w-0">
@@ -101,6 +104,7 @@ export function PreferencesDialog({
             icon={theme === "dark" ? Moon02Icon : Sun03Icon}
             label="Dark Mode"
             description="Toggle between light and dark theme"
+            iconColor="text-sky-500"
           >
             <Switch checked={theme === "dark"} onCheckedChange={toggleTheme} />
           </SettingRow>
@@ -108,6 +112,7 @@ export function PreferencesDialog({
             icon={EyeIcon}
             label="Reading Progress"
             description="Show reading progress bar on posts"
+            iconColor="text-indigo-500"
           >
             <Switch
               checked={readingProgressEnabled}
@@ -118,6 +123,7 @@ export function PreferencesDialog({
             icon={Menu01Icon}
             label="Table of Contents"
             description="Show in-page table of contents"
+            iconColor="text-rose-500"
           >
             <Switch checked={tocEnabled} onCheckedChange={setTocEnabled} />
           </SettingRow>
@@ -125,6 +131,7 @@ export function PreferencesDialog({
             icon={Bookmark02Icon}
             label="Resume Post Position"
             description="Remember where you left off in each post"
+            iconColor="text-yellow-500"
           >
             <Switch
               checked={postScrollMemoryEnabled}
@@ -135,6 +142,7 @@ export function PreferencesDialog({
             icon={Settings01Icon}
             label="Blog Background"
             description="Choose a softer page surface for long reads"
+            iconColor="text-slate-500"
           >
             <Select
               value={blogBgTone}

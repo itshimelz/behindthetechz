@@ -1,8 +1,9 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Bookmark02Icon, Delete02Icon } from "@hugeicons/core-free-icons";
+import { Bookmark02Icon, Delete02Icon, Download01Icon, Upload01Icon } from "@hugeicons/core-free-icons";
 
 import {
   Dialog,
@@ -24,6 +25,7 @@ type FavoritesDialogProps = {
   favorites: FavoriteItem[];
   isMounted: boolean;
   toggleFavorite: (favorite: FavoriteItem) => void;
+  importFavorites: (newFavorites: FavoriteItem[]) => void;
 };
 
 export function FavoritesDialog({
@@ -32,7 +34,41 @@ export function FavoritesDialog({
   favorites,
   isMounted,
   toggleFavorite,
+  importFavorites,
 }: FavoritesDialogProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleExport = () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(favorites, null, 2));
+    const downloadAnchorNode = document.createElement("a");
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "behindthetechz_favorites.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  };
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const json = JSON.parse(event.target?.result as string);
+        if (Array.isArray(json) && json.every(item => item.slug && item.title)) {
+          importFavorites(json);
+        } else {
+          alert("Invalid favorites file format.");
+        }
+      } catch (err) {
+        alert("Failed to parse file.");
+      }
+    };
+    reader.readAsText(file);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -102,9 +138,34 @@ export function FavoritesDialog({
             </ul>
           )}
         </div>
-        <p className="text-xs text-muted-foreground">
-          Favorites are private to this device/browser.
-        </p>
+        <div className="flex items-center justify-between mt-2">
+          <p className="text-xs text-muted-foreground">
+            Favorites are private to this device/browser.
+          </p>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={handleExport}
+              title="Export Favorites"
+              className="p-1.5 text-muted-foreground hover:text-primary hover:bg-muted rounded-md transition-colors"
+            >
+              <HugeiconsIcon icon={Download01Icon} className="size-4" strokeWidth={2} aria-hidden="true" />
+            </button>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              title="Import Favorites"
+              className="p-1.5 text-muted-foreground hover:text-primary hover:bg-muted rounded-md transition-colors"
+            >
+              <HugeiconsIcon icon={Upload01Icon} className="size-4" strokeWidth={2} aria-hidden="true" />
+            </button>
+            <input
+              type="file"
+              accept=".json"
+              className="hidden"
+              ref={fileInputRef}
+              onChange={handleImport}
+            />
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

@@ -66,7 +66,7 @@ export default async function HomePage() {
                 variant="outline"
                 className="rounded-full"
               >
-                About author
+                About the site
                 <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" />
               </Button>
             </div>

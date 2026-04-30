@@ -57,7 +57,7 @@ export function NavUser({
     tone: blogBgTone,
     setTone: setBlogBgTone,
   } = useBlogReadingPreferences();
-  const { favorites, toggleFavorite, isMounted } = useFavorites();
+  const { favorites, toggleFavorite, importFavorites, isMounted } = useFavorites();
   const [favoritesOpen, setFavoritesOpen] = useState(false);
   const [authorOpen, setAuthorOpen] = useState(false);
   const [preferencesOpen, setPreferencesOpen] = useState(false);
@@ -146,6 +146,7 @@ export function NavUser({
         favorites={favorites}
         isMounted={isMounted}
         toggleFavorite={toggleFavorite}
+        importFavorites={importFavorites}
       />
     </>
   );

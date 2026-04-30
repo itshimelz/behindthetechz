@@ -98,7 +98,9 @@ export function getPostMdxConfig({ validSlugs, postMetadata }: MdxConfigParams) 
 
   return {
     components: {
-      callout: (props: any) => <MdxCallout {...props} />,
+      callout: (props: React.HTMLAttributes<HTMLDivElement> & { type?: string; title?: string }) => (
+        <MdxCallout {...props} />
+      ),
       pre: (props: React.HTMLAttributes<HTMLPreElement>) => (
         <CodeBlock {...props} />
       ),

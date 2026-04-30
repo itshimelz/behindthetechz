@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -17,7 +17,6 @@ import {
   Notification03Icon,
   Moon02Icon,
   Sun03Icon,
-  Settings01Icon,
   Bookmark02Icon,
   EyeIcon,
   Menu01Icon,
@@ -56,17 +55,17 @@ import { cn } from "@/lib/utils";
 // ---------------------------------------------------------------------------
 
 const navMain = [
-  { title: "Home", url: "/", icon: Home02Icon },
-  { title: "All Posts", url: "/blog", icon: Notebook01Icon },
-  { title: "Categories", url: "/categories", icon: GridViewIcon },
-  { title: "Tags", url: "/tags", icon: Tag01Icon },
-  { title: "Graph View", url: "/graph", icon: ChartBubble02Icon },
+  { title: "Home", url: "/", icon: Home02Icon, color: "text-sky-500" },
+  { title: "All Posts", url: "/blog", icon: Notebook01Icon, color: "text-emerald-500" },
+  { title: "Categories", url: "/categories", icon: GridViewIcon, color: "text-purple-500" },
+  { title: "Tags", url: "/tags", icon: Tag01Icon, color: "text-rose-500" },
+  { title: "Graph View", url: "/graph", icon: ChartBubble02Icon, color: "text-amber-500" },
 ];
 
 const navSecondary = [
-  { title: "What's New", url: "/changelog", icon: Notification03Icon },
-  { title: "About", url: "/about", icon: UserIcon },
-  { title: "Help", url: "/help", icon: MessageQuestionIcon },
+  { title: "What's New", url: "/changelog", icon: Notification03Icon, color: "text-pink-500" },
+  { title: "About", url: "/about", icon: UserIcon, color: "text-blue-500" },
+  { title: "Help", url: "/help", icon: MessageQuestionIcon, color: "text-teal-500" },
 ];
 
 // ---------------------------------------------------------------------------
@@ -100,7 +99,7 @@ function MobileNavContent({
                 : "text-muted-foreground hover:bg-muted hover:text-foreground",
             )}
           >
-            <HugeiconsIcon icon={item.icon} className="size-4" strokeWidth={2} />
+            <HugeiconsIcon icon={item.icon} className={cn("size-4", item.color)} strokeWidth={2} />
             {item.title}
           </Link>
         );
@@ -124,7 +123,7 @@ function MobileNavContent({
                 : "text-muted-foreground hover:bg-muted hover:text-foreground",
             )}
           >
-            <HugeiconsIcon icon={item.icon} className="size-4" strokeWidth={2} />
+            <HugeiconsIcon icon={item.icon} className={cn("size-4", item.color)} strokeWidth={2} />
             {item.title}
           </Link>
         );
@@ -151,13 +150,26 @@ export function SiteNavbar({
   const { enabled: tocEnabled, setEnabled: setTocEnabled } = useTocPreference();
   const { tone: blogBgTone, setTone: setBlogBgTone } =
     useBlogReadingPreferences();
-  const { favorites, toggleFavorite, isMounted } = useFavorites();
+  const { favorites, toggleFavorite, isMounted, importFavorites } = useFavorites();
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [favoritesOpen, setFavoritesOpen] = useState(false);
   const [authorOpen, setAuthorOpen] = useState(false);
   const [preferencesOpen, setPreferencesOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [desktopMenuOpen, setDesktopMenuOpen] = useState(false);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = useCallback(() => {
+    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    setDesktopMenuOpen(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setDesktopMenuOpen(false);
+    }, 150);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 2);
@@ -247,14 +259,18 @@ export function SiteNavbar({
             </Button>
 
             {/* Preferences dropdown (desktop) */}
-            <div className="hidden md:flex">
-              <DropdownMenu>
+            <div 
+              className="hidden md:flex"
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+            >
+              <DropdownMenu open={desktopMenuOpen} onOpenChange={setDesktopMenuOpen}>
                 <DropdownMenuTrigger
                   render={
-                    <Button variant="ghost" size="icon-sm" aria-label="Preferences" />
+                    <Button variant="ghost" size="icon-sm" aria-label="Menu" />
                   }
                 >
-                  <HugeiconsIcon icon={Settings01Icon} className="size-4" strokeWidth={2} />
+                  <HugeiconsIcon icon={Menu01Icon} className="size-4" strokeWidth={2} />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   className="min-w-48 rounded-lg"
@@ -263,18 +279,18 @@ export function SiteNavbar({
                 >
                   <DropdownMenuGroup>
                     <DropdownMenuItem onClick={() => setPreferencesOpen(true)}>
-                      <HugeiconsIcon icon={EyeIcon} strokeWidth={2} aria-hidden="true" />
+                      <HugeiconsIcon icon={EyeIcon} strokeWidth={2} aria-hidden="true" className="text-indigo-500" />
                       Reading Preferences
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setFavoritesOpen(true)}>
-                      <HugeiconsIcon icon={Bookmark02Icon} strokeWidth={2} aria-hidden="true" />
+                      <HugeiconsIcon icon={Bookmark02Icon} strokeWidth={2} aria-hidden="true" className="text-yellow-500" />
                       All Favorites
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
                     <DropdownMenuItem onClick={() => setAuthorOpen(true)}>
-                      <HugeiconsIcon icon={UserIcon} strokeWidth={2} aria-hidden="true" />
+                      <HugeiconsIcon icon={UserIcon} strokeWidth={2} aria-hidden="true" className="text-blue-500" />
                       About Author
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
@@ -282,7 +298,7 @@ export function SiteNavbar({
                   <DropdownMenuGroup>
                     {navSecondary.map((item) => (
                       <DropdownMenuItem key={item.title} render={<Link href={item.url} />}>
-                        <HugeiconsIcon icon={item.icon} strokeWidth={2} aria-hidden="true" />
+                        <HugeiconsIcon icon={item.icon} strokeWidth={2} aria-hidden="true" className={item.color} />
                         {item.title}
                       </DropdownMenuItem>
                     ))}
@@ -338,7 +354,7 @@ export function SiteNavbar({
                   }}
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 >
-                  <HugeiconsIcon icon={EyeIcon} className="size-4" strokeWidth={2} />
+                  <HugeiconsIcon icon={EyeIcon} className="size-4 text-indigo-500" strokeWidth={2} />
                   Reading Preferences
                 </button>
                 <button
@@ -348,7 +364,7 @@ export function SiteNavbar({
                   }}
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 >
-                  <HugeiconsIcon icon={Bookmark02Icon} className="size-4" strokeWidth={2} />
+                  <HugeiconsIcon icon={Bookmark02Icon} className="size-4 text-yellow-500" strokeWidth={2} />
                   All Favorites
                 </button>
                 <button
@@ -358,7 +374,7 @@ export function SiteNavbar({
                   }}
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 >
-                  <HugeiconsIcon icon={UserIcon} className="size-4" strokeWidth={2} />
+                  <HugeiconsIcon icon={UserIcon} className="size-4 text-blue-500" strokeWidth={2} />
                   About Author
                 </button>
               </div>
@@ -393,6 +409,7 @@ export function SiteNavbar({
         favorites={favorites}
         isMounted={isMounted}
         toggleFavorite={toggleFavorite}
+        importFavorites={importFavorites}
       />
     </>
   );

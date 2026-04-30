@@ -15,6 +15,46 @@ type Props = {
   activeSlug?: string;
 };
 
+function CategoryBadge({
+  cat,
+  isActive,
+  size = "md",
+}: {
+  cat: Category;
+  isActive: boolean;
+  size?: "sm" | "md";
+}) {
+  return (
+    <Badge
+      variant={isActive ? "default" : "secondary"}
+      className={cn(
+        "cursor-pointer transition-all rounded-full font-medium border",
+        size === "md"
+          ? "px-2.5 py-1 text-xs sm:px-4 sm:py-1.5 sm:text-sm"
+          : "px-2 py-0.5 text-[11px]",
+        isActive
+          ? size === "md"
+            ? "shadow-md hover:shadow-lg"
+            : "shadow-sm"
+          : cn("hover:opacity-80", getCategoryColorClass(cat.name)),
+      )}
+    >
+      {cat.name}
+      <span
+        className={cn(
+          "rounded-full leading-none",
+          size === "md"
+            ? "ml-1 px-1 py-0.5 text-[9px] sm:ml-1.5 sm:px-1.5 sm:text-[10px]"
+            : "ml-1 px-1 py-0.5 text-[9px]",
+          isActive ? "bg-primary-foreground/20" : "bg-background/50",
+        )}
+      >
+        {cat.count}
+      </span>
+    </Badge>
+  );
+}
+
 export function CategoryNav({ categories, activeSlug }: Props) {
   const router = useRouter();
   const sortedCategories = [...categories].sort((a, b) => b.count - a.count);
@@ -43,27 +83,7 @@ export function CategoryNav({ categories, activeSlug }: Props) {
           href={`/categories/${cat.slug}`}
           className="shrink-0"
         >
-          <Badge
-            variant={activeSlug === cat.slug ? "default" : "secondary"}
-            className={cn(
-              "cursor-pointer transition-all rounded-full px-2.5 py-1 text-xs font-medium sm:px-4 sm:py-1.5 sm:text-sm border",
-              activeSlug === cat.slug
-                ? "shadow-md hover:shadow-lg"
-                : cn("hover:opacity-80", getCategoryColorClass(cat.name)),
-            )}
-          >
-            {cat.name}
-            <span
-              className={cn(
-                "ml-1 rounded-full px-1 py-0.5 text-[9px] leading-none sm:ml-1.5 sm:px-1.5 sm:text-[10px]",
-                activeSlug === cat.slug
-                  ? "bg-primary-foreground/20"
-                  : "bg-background/50",
-              )}
-            >
-              {cat.count}
-            </span>
-          </Badge>
+          <CategoryBadge cat={cat} isActive={activeSlug === cat.slug} size="md" />
         </Link>
       ))}
       {hasMore && (
@@ -87,32 +107,7 @@ export function CategoryNav({ categories, activeSlug }: Props) {
               <div className="flex flex-wrap gap-2 pt-1 max-w-[280px]">
                 {hiddenCategories.map((cat) => (
                   <Link key={cat.slug} href={`/categories/${cat.slug}`}>
-                    <Badge
-                      variant={
-                        activeSlug === cat.slug ? "default" : "secondary"
-                      }
-                      className={cn(
-                        "cursor-pointer transition-all rounded-full px-2 py-0.5 text-[11px] font-medium border",
-                        activeSlug === cat.slug
-                          ? "shadow-sm"
-                          : cn(
-                              "hover:opacity-80",
-                              getCategoryColorClass(cat.name),
-                            ),
-                      )}
-                    >
-                      {cat.name}
-                      <span
-                        className={cn(
-                          "ml-1 rounded-full px-1 py-0.5 text-[9px] leading-none",
-                          activeSlug === cat.slug
-                            ? "bg-primary-foreground/20"
-                            : "bg-background/50",
-                        )}
-                      >
-                        {cat.count}
-                      </span>
-                    </Badge>
+                    <CategoryBadge cat={cat} isActive={activeSlug === cat.slug} size="sm" />
                   </Link>
                 ))}
               </div>

@@ -17,7 +17,7 @@ function FeaturedPostCard({ post }: { post: Post }) {
     <div className="group flex flex-col gap-5 h-full">
       <Link
         href={postPath(post.slug)}
-        className="block w-full overflow-hidden rounded-2xl bg-muted/20 h-64 sm:h-72 md:h-80 shrink-0"
+        className="block w-full overflow-hidden rounded-2xl border border-border/50 bg-muted/20 h-64 sm:h-72 md:h-80 shrink-0"
       >
         <img
           src={post.coverImage}
