@@ -13,7 +13,7 @@ This file gives coding agents a fast, reliable way to work in this repository wi
 - **Component primitives**: `@base-ui/react` (all shadcn components use base-ui, NOT Radix)
 - **Icons**: `@hugeicons/react` + `@hugeicons/core-free-icons` (do NOT use Lucide icons, which have been entirely removed)
 - **Content**: DB-backed blog content in PostgreSQL (Supabase) rendered with `next-mdx-remote`
-- **Package manager**: `npm` (lockfile is `package-lock.json`)
+- **Package manager**: `pnpm` (lockfile is `pnpm-lock.yaml`)
 - **Linting**: `oxlint` (Primary) + `eslint`
 
 ## Repository Layout
@@ -64,11 +64,11 @@ lib/
 
 ## Runbook
 
-- Install deps: `npm install`
-- Start dev server: `npm run dev`
-- Lint: `npm run lint` (runs oxlint first, then eslint)
-- Build production bundle: `npm run build`
-- Start production server: `npm run start`
+- Install deps: `pnpm install`
+- Start dev server: `pnpm run dev`
+- Lint: `pnpm run lint` (runs oxlint first, then eslint)
+- Build production bundle: `pnpm run build`
+- Start production server: `pnpm run start`
 
 ## Code Style and Conventions
 
@@ -136,7 +136,7 @@ lib/
 - Make use of `loading.tsx` and `Suspense` for loading states on heavy server-rendering routes (e.g., categories, blog, graph).
 - Never call functions imported from client-only modules inside Server Components.
 - You may render a client component from a Server Component, but do not invoke client exports directly.
-- Before finishing high-impact changes, run `npm run lint` and `npm run build` to catch errors.
+- Before finishing high-impact changes, run `pnpm run lint` and `pnpm run build` to catch errors.
 
 ## Agent Guardrails
 
@@ -151,6 +151,6 @@ lib/
 
 1. Read relevant files before editing to match local conventions.
 2. Make the smallest change that satisfies the task.
-3. Run `npm run lint` after code changes when feasible.
-4. Run `npm run build` for high-impact changes (routing, layout, config, or shared UI).
+3. Run `pnpm run lint` after code changes when feasible.
+4. Run `pnpm run build` for high-impact changes (routing, layout, config, or shared UI).
 5. In your final note, list changed files and any verification commands executed.

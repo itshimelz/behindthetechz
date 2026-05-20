@@ -80,11 +80,39 @@ export async function POST(request: Request) {
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 
+  const ALLOWED_EXTENSIONS = ["png", "jpg", "jpeg", "webp", "gif", "svg"];
+  const ALLOWED_MIME_TYPES = [
+    "image/png",
+    "image/jpeg",
+    "image/jpg",
+    "image/webp",
+    "image/gif",
+    "image/svg+xml",
+  ];
+  const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
+
   const results: Array<{ name: string; url: string; error?: string }> = [];
 
   for (const file of files) {
-    // Generate a unique path to avoid collisions
-    const ext = file.name.split(".").pop() ?? "bin";
+    if (file.size > MAX_FILE_SIZE_BYTES) {
+      results.push({
+        name: file.name,
+        url: "",
+        error: "FILE_TOO_LARGE: Maximum file size is 10MB",
+      });
+      continue;
+    }
+
+    const ext = file.name.split(".").pop()?.toLowerCase() ?? "bin";
+    if (!ALLOWED_EXTENSIONS.includes(ext) || !ALLOWED_MIME_TYPES.includes(file.type)) {
+      results.push({
+        name: file.name,
+        url: "",
+        error: "INVALID_FILE_TYPE: Only image uploads are allowed",
+      });
+      continue;
+    }
+
     const base = file.name
       .replace(/\.[^.]+$/, "")
       .replace(/[^a-z0-9-_]/gi, "-");

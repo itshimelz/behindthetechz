@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import crypto from "crypto";
 
 import { BLOG_DEFAULT_REVALIDATE_TAGS, revalidateCacheTags } from "@/lib/blog/cache-tags";
 
@@ -8,7 +9,24 @@ export async function POST(request: Request) {
     request.headers.get("x-revalidate-token") ||
     new URL(request.url).searchParams.get("secret");
 
-  if (secret && providedToken !== secret) {
+  if (!secret) {
+    return NextResponse.json(
+      { ok: false, error: "REVALIDATE_AUTH_NOT_CONFIGURED" },
+      { status: 503 },
+    );
+  }
+
+  const tokenBuffer = Buffer.from(providedToken || "");
+  const secretBuffer = Buffer.from(secret);
+
+  let isMatch = false;
+  if (tokenBuffer.length === secretBuffer.length) {
+    isMatch = crypto.timingSafeEqual(tokenBuffer, secretBuffer);
+  } else {
+    crypto.timingSafeEqual(tokenBuffer, tokenBuffer);
+  }
+
+  if (!isMatch) {
     return NextResponse.json(
       { ok: false, message: "Unauthorized" },
       { status: 401 },

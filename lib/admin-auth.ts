@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import crypto from "crypto";
 
 /**
  * Validates incoming admin API requests via static Bearer token.
@@ -20,7 +21,25 @@ export function validateAdminRequest(request: Request): NextResponse | null {
     );
   }
 
-  if (!token || token !== expected) {
+  if (!token) {
+    return NextResponse.json(
+      { ok: false, error: "UNAUTHORIZED" },
+      { status: 401 },
+    );
+  }
+
+  const tokenBuffer = Buffer.from(token);
+  const expectedBuffer = Buffer.from(expected);
+
+  let isMatch = false;
+  if (tokenBuffer.length === expectedBuffer.length) {
+    isMatch = crypto.timingSafeEqual(tokenBuffer, expectedBuffer);
+  } else {
+    // Prevent timing analysis of lengths
+    crypto.timingSafeEqual(tokenBuffer, tokenBuffer);
+  }
+
+  if (!isMatch) {
     return NextResponse.json(
       { ok: false, error: "UNAUTHORIZED" },
       { status: 401 },

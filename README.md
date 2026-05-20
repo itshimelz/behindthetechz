@@ -51,13 +51,13 @@ behindTheTechz is a modern, high-performance blog platform designed for interlin
 2. Install dependencies:
 
    ```bash
-   npm install
+   pnpm install
    ```
 
 3. Run the development server:
 
    ```bash
-   npm run dev
+   pnpm run dev
    ```
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser.
@@ -72,7 +72,7 @@ behindTheTechz is a modern, high-performance blog platform designed for interlin
 
 ## Database Operations
 
-- Export DB snapshot: `npm run db:backup:json`
+- Export DB snapshot: `pnpm run db:backup:json`
 
 ## Cache Revalidation
 

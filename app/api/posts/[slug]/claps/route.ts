@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import crypto from "crypto";
 import { prisma } from "@/lib/prisma";
 
 type Params = { slug: string };
@@ -15,15 +16,18 @@ let lastRateLimitCleanup = Date.now();
 const RATE_LIMIT_CLEANUP_INTERVAL_MS = 2 * 60 * 1000; // Clean up every 2 minutes
 
 function getClientIp(request: NextRequest): string {
+  if (request.ip) return request.ip;
+
+  const realIp = request.headers.get("x-real-ip");
+  if (realIp) return realIp;
+
   const forwardedFor = request.headers.get("x-forwarded-for");
   if (forwardedFor) {
     const firstIp = forwardedFor.split(",")[0]?.trim();
-    if (firstIp) {
-      return firstIp;
-    }
+    if (firstIp) return firstIp;
   }
 
-  return request.headers.get("x-real-ip") ?? "unknown";
+  return "unknown";
 }
 
 function cleanupRateLimitStore(): void {
@@ -39,10 +43,24 @@ function cleanupRateLimitStore(): void {
       clapRateLimitStore.set(key, recent);
     }
   }
+
+  if (clapRateLimitStore.size > 10000) {
+    const keysToDelete = Array.from(clapRateLimitStore.keys()).slice(0, 1000);
+    for (const key of keysToDelete) {
+      clapRateLimitStore.delete(key);
+    }
+  }
 }
 
 function isRateLimited(request: NextRequest, slug: string): boolean {
   cleanupRateLimitStore();
+
+  if (clapRateLimitStore.size > 12000) {
+    const keysToDelete = Array.from(clapRateLimitStore.keys()).slice(0, 3000);
+    for (const key of keysToDelete) {
+      clapRateLimitStore.delete(key);
+    }
+  }
 
   const key = `${getClientIp(request)}:${slug}`;
   const now = Date.now();
@@ -93,7 +111,9 @@ export async function POST(
   }
 
   const existingSessionId = request.cookies.get(CLAP_SESSION_COOKIE)?.value;
-  const sessionId = existingSessionId ?? crypto.randomUUID();
+  const clientIp = getClientIp(request);
+  const ipHash = crypto.createHash("sha256").update(clientIp + "btz_clap_salt_2026").digest("hex");
+  const sessionId = existingSessionId ?? `ip-${ipHash}`;
 
   try {
     const result = await prisma.$transaction(async (tx) => {
