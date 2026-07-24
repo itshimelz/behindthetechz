@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   AnalyticsUpIcon,
@@ -65,14 +64,12 @@ function SocialOption({
       rel="noopener noreferrer"
       className="group"
     >
-      <motion.div
-        whileHover={{ y: -1 }}
-        transition={{ type: "spring", stiffness: 420, damping: 24 }}
-        className="flex items-center gap-2 rounded-md border border-border bg-muted/20 px-3 py-2.5 transition-colors group-hover:bg-muted/35"
+      <div
+        className="flex items-center gap-2 rounded-md border border-border bg-muted/20 px-3 py-2.5 transition-all duration-200 hover:-translate-y-[1px] group-hover:bg-muted/35"
       >
         <span className="text-muted-foreground shrink-0">{icon}</span>
         <span className="truncate text-xs text-foreground">{label}</span>
-      </motion.div>
+      </div>
     </Link>
   );
 }

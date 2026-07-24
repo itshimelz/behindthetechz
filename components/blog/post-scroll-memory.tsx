@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { usePostScrollMemoryPreference } from "@/hooks/use-post-scroll-memory";
+import { usePostScrollMemoryPreference } from "@/hooks/use-local-storage-pref";
 
 type ScrollMemoryPayload = {
   y: number;

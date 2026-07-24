@@ -21,29 +21,29 @@ const SECTION_CONFIG: Record<
     label: "New",
     icon: SparklesIcon,
     badgeClass:
-      "bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/20",
-    dotClass: "bg-violet-500",
+      "bg-muted text-foreground border-border",
+    dotClass: "bg-foreground",
   },
   improvement: {
     label: "Improved",
     icon: PaintBrushIcon,
     badgeClass:
-      "bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20",
-    dotClass: "bg-sky-500",
+      "bg-muted text-foreground border-border",
+    dotClass: "bg-foreground",
   },
   fix: {
     label: "Fixed",
     icon: BugIcon,
     badgeClass:
-      "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
-    dotClass: "bg-amber-500",
+      "bg-muted text-foreground border-border",
+    dotClass: "bg-foreground",
   },
   launch: {
     label: "Launch",
     icon: Rocket01Icon,
     badgeClass:
-      "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
-    dotClass: "bg-emerald-500",
+      "bg-muted text-foreground border-border",
+    dotClass: "bg-foreground",
   },
 };
 

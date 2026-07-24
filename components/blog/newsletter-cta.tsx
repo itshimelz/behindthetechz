@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, type FormEvent } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Mail01Icon, Tick02Icon, Alert02Icon } from "@hugeicons/core-free-icons";
 import { Button } from "@/components/ui/button";
@@ -54,60 +54,57 @@ export function NewsletterCTA({ category }: Props) {
 
   return (
     <section className="mx-auto w-full max-w-3xl">
-      <AnimatePresence mode="wait" initial={false}>
-        {submitted ? (
-          <motion.div
-            key="success"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{
-              type: "spring",
-              stiffness: 350,
-              damping: 25,
-            }}
-            className="flex flex-col items-center gap-2 rounded-xl border border-border/50 bg-muted/20 px-6 py-8 text-center dark:bg-muted/10"
-          >
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{
-                type: "spring",
-                stiffness: 400,
-                damping: 12,
-                delay: 0.1,
-              }}
-              className="flex size-10 items-center justify-center rounded-full bg-primary/10"
-            >
-              <HugeiconsIcon
-                icon={Tick02Icon}
-                className="size-5 text-primary"
-                strokeWidth={2}
-              />
-            </motion.div>
-            <motion.p
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15, duration: 0.25 }}
-              className="text-sm font-medium text-foreground"
-            >
-              You&apos;re on the list!
-            </motion.p>
-            <motion.p
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25, duration: 0.25 }}
-              className="text-xs text-muted-foreground"
-            >
-              We&apos;ll notify you when new posts are published.
-            </motion.p>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="form"
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.15 }}
-            className="rounded-xl border border-border/50 bg-muted/20 px-6 py-6 dark:bg-muted/10"
-          >
+      <style>{`
+        @keyframes ctaScaleIn {
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+        @keyframes ctaCheckScaleIn {
+          from { transform: scale(0); }
+          to { transform: scale(1); }
+        }
+        @keyframes ctaFadeInUp {
+          from { opacity: 0; transform: translateY(6px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-cta-scale-in {
+          animation: ctaScaleIn 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+        .animate-cta-check {
+          animation: ctaCheckScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+        }
+        .animate-cta-fade-up-1 {
+          animation: ctaFadeInUp 0.25s ease-out 0.15s both;
+        }
+        .animate-cta-fade-up-2 {
+          animation: ctaFadeInUp 0.25s ease-out 0.25s both;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .animate-cta-scale-in, .animate-cta-check, .animate-cta-fade-up-1, .animate-cta-fade-up-2 {
+            animation: none !important;
+            opacity: 1 !important;
+            transform: none !important;
+          }
+        }
+      `}</style>
+      {submitted ? (
+        <div className="animate-cta-scale-in flex flex-col items-center gap-2 rounded-xl border border-border/50 bg-muted/20 px-6 py-8 text-center dark:bg-muted/10">
+          <div className="animate-cta-check flex size-10 items-center justify-center rounded-full bg-primary/10">
+            <HugeiconsIcon
+              icon={Tick02Icon}
+              className="size-5 text-primary"
+              strokeWidth={2}
+            />
+          </div>
+          <p className="animate-cta-fade-up-1 text-sm font-medium text-foreground">
+            You&apos;re on the list!
+          </p>
+          <p className="animate-cta-fade-up-2 text-xs text-muted-foreground">
+            We&apos;ll notify you when new posts are published.
+          </p>
+        </div>
+      ) : (
+        <div className="rounded-xl border border-border/50 bg-muted/20 px-6 py-6 dark:bg-muted/10">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:gap-6">
               {/* Text content */}
               <div className="flex-1 space-y-1.5">
@@ -155,39 +152,29 @@ export function NewsletterCTA({ category }: Props) {
                     aria-hidden="true"
                     className="absolute left-[-9999px] size-0 overflow-hidden opacity-0"
                   />
-                  <motion.div
-                    whileTap={{ scale: 0.95 }}
-                    transition={{ duration: 0.1 }}
-                  >
                     <Button
                       type="submit"
                       size="default"
                       disabled={loading}
-                      className="h-9 shrink-0 px-4"
+                      className="h-9 shrink-0 px-4 active:scale-95 transition-transform duration-100"
                     >
                       {loading ? "..." : "Subscribe"}
                     </Button>
-                  </motion.div>
                 </div>
                 {error && (
-                  <motion.p
-                    initial={{ opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center gap-1.5 text-xs text-destructive"
-                  >
+                  <p className="flex items-center gap-1.5 text-xs text-destructive animate-cta-fade-up-1">
                     <HugeiconsIcon
                       icon={Alert02Icon}
                       className="size-3.5 shrink-0"
                       strokeWidth={2}
                     />
                     {error}
-                  </motion.p>
+                  </p>
                 )}
               </form>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        </div>
+      )}
     </section>
   );
 }

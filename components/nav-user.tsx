@@ -27,9 +27,11 @@ import {
 } from "@/components/ui/sidebar";
 import { useTheme } from "@/hooks/use-theme";
 import { useFavorites } from "@/hooks/use-favorites";
-import { useReadingProgressPreference } from "@/hooks/use-reading-progress";
-import { usePostScrollMemoryPreference } from "@/hooks/use-post-scroll-memory";
-import { useTocPreference } from "@/hooks/use-toc";
+import {
+  useReadingProgressPreference,
+  usePostScrollMemoryPreference,
+  useTocPreference,
+} from "@/hooks/use-local-storage-pref";
 import { AuthorDialog } from "@/components/user/author-dialog";
 import { FavoritesDialog } from "@/components/user/favorites-dialog";
 import { PreferencesDialog } from "@/components/user/preferences-dialog";

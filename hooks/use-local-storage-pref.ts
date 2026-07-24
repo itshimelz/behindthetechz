@@ -69,3 +69,28 @@ export function useLocalStorageBooleanPref(
     toggleEnabled,
   };
 }
+
+export function useTocPreference() {
+  return useLocalStorageBooleanPref(
+    "behindthetechz-toc-enabled",
+    "toc-preference-updated",
+    true,
+  );
+}
+
+export function useReadingProgressPreference() {
+  return useLocalStorageBooleanPref(
+    "behindthetechz-reading-progress",
+    "reading-progress-updated",
+    true,
+  );
+}
+
+export function usePostScrollMemoryPreference() {
+  return useLocalStorageBooleanPref(
+    "behindthetechz-post-scroll-memory",
+    "post-scroll-memory-updated",
+    true,
+  );
+}
+

@@ -121,15 +121,7 @@ export function GraphView({ data }: Props) {
   const graphColors = useGraphColors(isDark);
 
   const categoryColorMap = useMemo(() => {
-    const palette = [
-      "#6F8196",
-      "#7C7F93",
-      "#8A7E96",
-      "#7B8F7A",
-      "#8F8572",
-      "#6F8D8C",
-      "#7C8591",
-    ];
+    const monoColor = isDark ? "#E4E4E7" : "#18181B";
 
     const categories = Array.from(
       new Set(data.nodes.map((node) => node.category)),
@@ -137,12 +129,12 @@ export function GraphView({ data }: Props) {
     categories.sort((a, b) => a.localeCompare(b));
 
     return new Map(
-      categories.map((category, index) => [
+      categories.map((category) => [
         category,
-        palette[index % palette.length],
+        monoColor,
       ]),
     );
-  }, [data.nodes]);
+  }, [data.nodes, isDark]);
 
   const adjacencyMap = useMemo(() => {
     const map = new Map<string, Set<string>>();

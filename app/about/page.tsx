@@ -109,8 +109,8 @@ const links = [
     href: `mailto:${process.env.EMAIL_ADDRESS}`,
     icon: Mail01Icon,
     hoverClass:
-      "group-hover:border-emerald-500/60 group-hover:text-emerald-500",
-    textHoverClass: "group-hover:text-emerald-500",
+      "group-hover:border-foreground/60 group-hover:text-foreground",
+    textHoverClass: "group-hover:text-foreground",
   },
 ];
 
@@ -366,17 +366,17 @@ export default function AboutPage() {
               aria-label="Explore graph"
             >
               <div className="flex min-w-0 items-center gap-4">
-                <div className="flex shrink-0 items-center justify-center text-muted-foreground transition-colors group-hover:border-violet-500/60 group-hover:text-violet-500">
+                <div className="flex shrink-0 items-center justify-center text-muted-foreground transition-colors group-hover:border-foreground/60 group-hover:text-foreground">
                   <HugeiconsIcon
                     icon={ChartBubble02Icon}
                     className="h-5 w-5"
                   />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground transition-colors group-hover:text-violet-500">
+                  <p className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground transition-colors group-hover:text-foreground">
                     Knowledge graph
                   </p>
-                  <p className="truncate text-sm font-medium text-foreground transition-colors group-hover:text-violet-500">
+                  <p className="truncate text-sm font-medium text-foreground transition-colors group-hover:text-foreground">
                     Explore topic connections
                   </p>
                 </div>

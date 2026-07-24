@@ -49,7 +49,7 @@ export function CodeBlock({ children, className, ...props }: CodeBlockProps) {
       <div className="flex h-11 items-center justify-between border-b border-zinc-100 bg-white px-4 text-xs font-medium text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950/50">
         <div className="flex items-center gap-2">
           {/* Minimalist language badge similar to the screenshot */}
-          <span className="font-mono text-[13px] font-semibold text-blue-600 dark:text-blue-400 tracking-wide">
+          <span className="font-mono text-[13px] font-semibold text-zinc-900 dark:text-zinc-100 tracking-wide">
             {language === "Text"
               ? "Code"
               : language.charAt(0).toUpperCase() + language.slice(1)}
@@ -91,9 +91,9 @@ export function CodeBlock({ children, className, ...props }: CodeBlockProps) {
                 <>
                   <HugeiconsIcon
                     icon={Tick01Icon}
-                    className="h-4 w-4 text-green-500"
+                    className="h-4 w-4 text-zinc-900 dark:text-zinc-100"
                   />
-                  <span className="text-green-500">Copied</span>
+                  <span className="text-zinc-900 dark:text-zinc-100">Copied</span>
                 </>
               ) : (
                 <>

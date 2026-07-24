@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useReadingProgressPreference } from "@/hooks/use-reading-progress";
+import { useReadingProgressPreference } from "@/hooks/use-local-storage-pref";
 
 export function ReadingProgress() {
   const [progress, setProgress] = useState(0);

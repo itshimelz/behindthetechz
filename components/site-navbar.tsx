@@ -41,9 +41,11 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useTheme } from "@/hooks/use-theme";
 import { useFavorites } from "@/hooks/use-favorites";
-import { useReadingProgressPreference } from "@/hooks/use-reading-progress";
-import { usePostScrollMemoryPreference } from "@/hooks/use-post-scroll-memory";
-import { useTocPreference } from "@/hooks/use-toc";
+import {
+  useReadingProgressPreference,
+  usePostScrollMemoryPreference,
+  useTocPreference,
+} from "@/hooks/use-local-storage-pref";
 import { useBlogReadingPreferences } from "@/hooks/use-blog-reading-preferences";
 import { AuthorDialog } from "@/components/user/author-dialog";
 import { FavoritesDialog } from "@/components/user/favorites-dialog";
@@ -55,17 +57,17 @@ import { cn } from "@/lib/utils";
 // ---------------------------------------------------------------------------
 
 const navMain = [
-  { title: "Home", url: "/", icon: Home02Icon, color: "text-sky-500" },
-  { title: "All Posts", url: "/blog", icon: Notebook01Icon, color: "text-emerald-500" },
-  { title: "Categories", url: "/categories", icon: GridViewIcon, color: "text-purple-500" },
-  { title: "Tags", url: "/tags", icon: Tag01Icon, color: "text-rose-500" },
-  { title: "Graph View", url: "/graph", icon: ChartBubble02Icon, color: "text-amber-500" },
+  { title: "Home", url: "/", icon: Home02Icon, color: "text-foreground" },
+  { title: "All Posts", url: "/blog", icon: Notebook01Icon, color: "text-foreground" },
+  { title: "Categories", url: "/categories", icon: GridViewIcon, color: "text-foreground" },
+  { title: "Tags", url: "/tags", icon: Tag01Icon, color: "text-foreground" },
+  { title: "Graph View", url: "/graph", icon: ChartBubble02Icon, color: "text-foreground" },
 ];
 
 const navSecondary = [
-  { title: "What's New", url: "/changelog", icon: Notification03Icon, color: "text-pink-500" },
-  { title: "About", url: "/about", icon: UserIcon, color: "text-blue-500" },
-  { title: "Help", url: "/help", icon: MessageQuestionIcon, color: "text-teal-500" },
+  { title: "What's New", url: "/changelog", icon: Notification03Icon, color: "text-foreground" },
+  { title: "About", url: "/about", icon: UserIcon, color: "text-foreground" },
+  { title: "Help", url: "/help", icon: MessageQuestionIcon, color: "text-foreground" },
 ];
 
 // ---------------------------------------------------------------------------
@@ -279,18 +281,18 @@ export function SiteNavbar({
                 >
                   <DropdownMenuGroup>
                     <DropdownMenuItem onClick={() => setPreferencesOpen(true)}>
-                      <HugeiconsIcon icon={EyeIcon} strokeWidth={2} aria-hidden="true" className="text-indigo-500" />
+                      <HugeiconsIcon icon={EyeIcon} strokeWidth={2} aria-hidden="true" className="text-foreground" />
                       Reading Preferences
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => setFavoritesOpen(true)}>
-                      <HugeiconsIcon icon={Bookmark02Icon} strokeWidth={2} aria-hidden="true" className="text-yellow-500" />
+                      <HugeiconsIcon icon={Bookmark02Icon} strokeWidth={2} aria-hidden="true" className="text-foreground" />
                       All Favorites
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
                   <DropdownMenuGroup>
                     <DropdownMenuItem onClick={() => setAuthorOpen(true)}>
-                      <HugeiconsIcon icon={UserIcon} strokeWidth={2} aria-hidden="true" className="text-blue-500" />
+                      <HugeiconsIcon icon={UserIcon} strokeWidth={2} aria-hidden="true" className="text-foreground" />
                       About Author
                     </DropdownMenuItem>
                   </DropdownMenuGroup>
@@ -354,7 +356,7 @@ export function SiteNavbar({
                   }}
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 >
-                  <HugeiconsIcon icon={EyeIcon} className="size-4 text-indigo-500" strokeWidth={2} />
+                  <HugeiconsIcon icon={EyeIcon} className="size-4 text-foreground" strokeWidth={2} />
                   Reading Preferences
                 </button>
                 <button
@@ -364,7 +366,7 @@ export function SiteNavbar({
                   }}
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 >
-                  <HugeiconsIcon icon={Bookmark02Icon} className="size-4 text-yellow-500" strokeWidth={2} />
+                  <HugeiconsIcon icon={Bookmark02Icon} className="size-4 text-foreground" strokeWidth={2} />
                   All Favorites
                 </button>
                 <button
@@ -374,7 +376,7 @@ export function SiteNavbar({
                   }}
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 >
-                  <HugeiconsIcon icon={UserIcon} className="size-4 text-blue-500" strokeWidth={2} />
+                  <HugeiconsIcon icon={UserIcon} className="size-4 text-foreground" strokeWidth={2} />
                   About Author
                 </button>
               </div>

@@ -8,10 +8,9 @@ import {
   ArrowDown01Icon,
 } from "@hugeicons/core-free-icons";
 import { cn } from "@/lib/utils";
-import { useTocPreference } from "@/hooks/use-toc";
+import { useTocPreference } from "@/hooks/use-local-storage-pref";
 import type { TocHeading } from "@/lib/blog/extract-toc-headings";
 
-const HEADING_SELECTOR = "h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]";
 
 function getDepthOffset(level: TocHeading["level"]) {
   return Math.max(0, level - 1);
@@ -24,35 +23,14 @@ export function TableOfContents({
   headings: TocHeading[];
   isDesktop?: boolean;
 }) {
-  const [activeId, setActiveId] = useState<string>("");
+  const [activeId, setActiveId] = useState<string>(headings[0]?.id ?? "");
   const [isExpanded, setIsExpanded] = useState(false);
   const { enabled: tocEnabled } = useTocPreference();
   const headingIds = useMemo(
     () => headings.map((heading) => heading.id),
     [headings],
   );
-  const scrollContainerRef = useRef<HTMLElement | Window | null>(null);
   const highlightTimeoutRef = useRef<number | null>(null);
-
-  const getScrollContainer = useCallback((): HTMLElement | Window => {
-    const article = document.querySelector("article");
-    const firstHeading =
-      article?.querySelector<HTMLElement>(HEADING_SELECTOR) ?? null;
-
-    let current = firstHeading?.parentElement ?? null;
-    while (current && current !== document.body) {
-      const style = window.getComputedStyle(current);
-      const overflowY = style.overflowY;
-      const isScrollable =
-        (overflowY === "auto" || overflowY === "scroll" || overflowY === "overlay") &&
-        current.scrollHeight > current.clientHeight;
-
-      if (isScrollable) return current;
-      current = current.parentElement;
-    }
-
-    return window;
-  }, []);
 
   useEffect(() => {
     return () => {
@@ -61,24 +39,6 @@ export function TableOfContents({
       }
     };
   }, []);
-
-  const getContainerScrollTop = (container: HTMLElement | Window) =>
-    container === window ? window.scrollY : (container as HTMLElement).scrollTop;
-
-  const getElementTopInContainer = (
-    el: HTMLElement,
-    container: HTMLElement | Window,
-  ) => {
-    if (container === window) {
-      return el.getBoundingClientRect().top + window.scrollY;
-    }
-
-    const elementContainer = container as HTMLElement;
-    const containerRect = elementContainer.getBoundingClientRect();
-    return (
-      el.getBoundingClientRect().top - containerRect.top + elementContainer.scrollTop
-    );
-  };
 
   const highlightSection = useCallback((el: HTMLElement) => {
     if (highlightTimeoutRef.current !== null) {
@@ -104,64 +64,30 @@ export function TableOfContents({
   useEffect(() => {
     if (headingIds.length === 0) return;
 
-    const container = getScrollContainer();
-    scrollContainerRef.current = container;
-
-    const updateActiveHeading = () => {
-      const scrollAnchor = getContainerScrollTop(container) + 130;
-      let nextActiveId = headingIds[0] ?? "";
-
-      for (const id of headingIds) {
-        const el = document.getElementById(id);
-        if (!el) continue;
-        if (getElementTopInContainer(el, container) <= scrollAnchor) {
-          nextActiveId = id;
-        } else {
-          break;
-        }
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveId(entry.target.id);
+          }
+        });
+      },
+      {
+        rootMargin: "-100px 0px -70% 0px",
+        threshold: 0,
       }
+    );
 
-      setActiveId(nextActiveId);
-    };
+    headingIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
 
-    updateActiveHeading();
-    if (container === window) {
-      window.addEventListener("scroll", updateActiveHeading, { passive: true });
-    } else {
-      container.addEventListener("scroll", updateActiveHeading, { passive: true });
-    }
-    window.addEventListener("resize", updateActiveHeading);
-
-    return () => {
-      if (container === window) {
-        window.removeEventListener("scroll", updateActiveHeading);
-      } else {
-        container.removeEventListener("scroll", updateActiveHeading);
-      }
-      window.removeEventListener("resize", updateActiveHeading);
-    };
-  }, [headingIds, getScrollContainer]);
+    return () => observer.disconnect();
+  }, [headingIds]);
 
   const getCurrentHeadingIndex = () => {
-    if (headingIds.length === 0) return -1;
-
-    const container = scrollContainerRef.current ?? getScrollContainer();
-    scrollContainerRef.current = container;
-
-    const scrollAnchor = getContainerScrollTop(container) + 130;
-    let currentIndex = 0;
-
-    for (let i = 0; i < headingIds.length; i++) {
-      const el = document.getElementById(headingIds[i]);
-      if (!el) continue;
-      if (getElementTopInContainer(el, container) <= scrollAnchor) {
-        currentIndex = i;
-      } else {
-        break;
-      }
-    }
-
-    return currentIndex;
+    return headingIds.indexOf(activeId);
   };
 
   const handleClick = (id: string, e?: React.MouseEvent) => {
@@ -169,25 +95,7 @@ export function TableOfContents({
     const el = document.getElementById(id);
     if (!el) return;
 
-    const container = scrollContainerRef.current ?? getScrollContainer();
-    scrollContainerRef.current = container;
-
-    const scrollOffset = 80;
-
-    if (container === window) {
-      const top = getElementTopInContainer(el, window);
-      window.scrollTo({
-        top: Math.max(0, top - scrollOffset),
-        behavior: "smooth",
-      });
-    } else {
-      const htmlContainer = container as HTMLElement;
-      const top = getElementTopInContainer(el, htmlContainer);
-      htmlContainer.scrollTo({
-        top: Math.max(0, top - scrollOffset),
-        behavior: "smooth",
-      });
-    }
+    el.scrollIntoView({ behavior: "smooth" });
 
     setActiveId(id);
     highlightSection(el);

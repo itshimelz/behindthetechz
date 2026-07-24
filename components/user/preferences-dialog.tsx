@@ -104,7 +104,7 @@ export function PreferencesDialog({
             icon={theme === "dark" ? Moon02Icon : Sun03Icon}
             label="Dark Mode"
             description="Toggle between light and dark theme"
-            iconColor="text-sky-500"
+            iconColor="text-foreground"
           >
             <Switch checked={theme === "dark"} onCheckedChange={toggleTheme} />
           </SettingRow>
@@ -112,7 +112,7 @@ export function PreferencesDialog({
             icon={EyeIcon}
             label="Reading Progress"
             description="Show reading progress bar on posts"
-            iconColor="text-indigo-500"
+            iconColor="text-foreground"
           >
             <Switch
               checked={readingProgressEnabled}
@@ -123,7 +123,7 @@ export function PreferencesDialog({
             icon={Menu01Icon}
             label="Table of Contents"
             description="Show in-page table of contents"
-            iconColor="text-rose-500"
+            iconColor="text-foreground"
           >
             <Switch checked={tocEnabled} onCheckedChange={setTocEnabled} />
           </SettingRow>
@@ -131,7 +131,7 @@ export function PreferencesDialog({
             icon={Bookmark02Icon}
             label="Resume Post Position"
             description="Remember where you left off in each post"
-            iconColor="text-yellow-500"
+            iconColor="text-foreground"
           >
             <Switch
               checked={postScrollMemoryEnabled}
@@ -142,7 +142,7 @@ export function PreferencesDialog({
             icon={Settings01Icon}
             label="Blog Background"
             description="Choose a softer page surface for long reads"
-            iconColor="text-slate-500"
+            iconColor="text-foreground"
           >
             <Select
               value={blogBgTone}

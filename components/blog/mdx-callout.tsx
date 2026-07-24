@@ -24,28 +24,28 @@ const CALLOUT_STYLES: Record<
 > = {
   note: {
     icon: InformationCircleIcon,
-    wrapperClasses: "border-primary/20 bg-muted/10",
-    contentClasses: "text-primary",
+    wrapperClasses: "border-border bg-muted/40",
+    contentClasses: "text-foreground",
   },
   tip: {
     icon: BulbIcon,
-    wrapperClasses: "border-callout-tip/30 bg-muted/10",
-    contentClasses: "text-callout-tip",
+    wrapperClasses: "border-border bg-muted/40",
+    contentClasses: "text-foreground",
   },
   important: {
     icon: Alert02Icon,
-    wrapperClasses: "border-primary/20 bg-muted/10",
-    contentClasses: "text-primary",
+    wrapperClasses: "border-border bg-muted/40",
+    contentClasses: "text-foreground",
   },
   warning: {
     icon: Alert01Icon,
-    wrapperClasses: "border-destructive/30 bg-muted/10",
-    contentClasses: "text-destructive",
+    wrapperClasses: "border-border bg-muted/40",
+    contentClasses: "text-foreground",
   },
   caution: {
     icon: Shield01Icon,
-    wrapperClasses: "border-destructive/30 bg-muted/10",
-    contentClasses: "text-destructive",
+    wrapperClasses: "border-border bg-muted/40",
+    contentClasses: "text-foreground",
   },
 };
 

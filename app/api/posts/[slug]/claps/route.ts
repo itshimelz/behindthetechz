@@ -16,7 +16,8 @@ let lastRateLimitCleanup = Date.now();
 const RATE_LIMIT_CLEANUP_INTERVAL_MS = 2 * 60 * 1000; // Clean up every 2 minutes
 
 function getClientIp(request: NextRequest): string {
-  if (request.ip) return request.ip;
+  const ip = (request as NextRequest & { ip?: string }).ip;
+  if (ip) return ip;
 
   const realIp = request.headers.get("x-real-ip");
   if (realIp) return realIp;

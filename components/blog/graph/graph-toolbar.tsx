@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
   Settings01Icon,
@@ -47,12 +47,18 @@ export function GraphToolbar({
   setShowArrows,
 }: GraphToolbarProps) {
   return (
-    <motion.div
-      initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, x: 12 }}
-      animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, x: 0 }}
-      transition={{ duration: 0.28, ease: "easeOut", delay: 0.14 }}
+    <div
       className="absolute top-4 right-4 flex flex-col gap-2"
+      style={prefersReducedMotion ? undefined : {
+        animation: "graphToolbarFadeIn 0.28s ease-out 0.14s both"
+      }}
     >
+      <style>{`
+        @keyframes graphToolbarFadeIn {
+          from { opacity: 0; transform: translateX(12px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+      `}</style>
       <Popover>
         <PopoverTrigger
           render={
@@ -150,6 +156,6 @@ export function GraphToolbar({
           <HugeiconsIcon icon={Remove01Icon} className="size-4" />
         </Button>
       </div>
-    </motion.div>
+    </div>
   );
 }
