@@ -1,2 +1,3 @@
-export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://behindthetechz.live";
+export const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL || "https://www.behindthetechz.live"
+).replace(/\/+$/, "");
