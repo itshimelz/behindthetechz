@@ -1,14 +1,14 @@
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
-const LONG_DATE_FORMAT: Intl.DateTimeFormatOptions = {
-  year: "numeric",
-  month: "long",
-  day: "numeric",
-};
+export const DATE_PRESETS = {
+  compact: { month: "short", day: "numeric" } as Intl.DateTimeFormatOptions,
+  standard: { month: "short", day: "numeric", year: "numeric" } as Intl.DateTimeFormatOptions,
+  full: { month: "long", day: "numeric", year: "numeric" } as Intl.DateTimeFormatOptions,
+} as const;
 
 export function formatPostDate(
   dateStr: string,
-  options: Intl.DateTimeFormatOptions = LONG_DATE_FORMAT,
+  options: Intl.DateTimeFormatOptions = DATE_PRESETS.full,
 ): string {
   return new Date(dateStr).toLocaleDateString("en-US", options);
 }
@@ -46,8 +46,5 @@ export function relativeDate(date: Date | string | null): string {
   if (diffDays < 7) return `${diffDays}d`;
   if (diffDays < 30) return `${Math.floor(diffDays / 7)}w`;
 
-  return formatPostDate(parsedDate.toISOString(), {
-    month: "short",
-    day: "numeric",
-  });
+  return formatPostDate(parsedDate.toISOString(), DATE_PRESETS.compact);
 }

@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { postPath } from "@/lib/blog/post-path";
 import { copyToClipboard } from "@/lib/clipboard";
 import { formatPostDate } from "@/lib/format-date";
+import { AUTHOR_CONFIG } from "@/lib/site";
 import type { Post } from "@/lib/blog/types";
 
 type Props = {
@@ -92,7 +93,7 @@ export function PostCard({ post, searchQuery }: Props) {
       {/* Right Metadata: Author, Date, Comment/Reading Pill */}
       <div className="flex items-center gap-3 shrink-0 text-xs text-muted-foreground">
         <span className="hidden md:inline font-medium text-muted-foreground/90">
-          Rahat Hossain Himel
+          {AUTHOR_CONFIG.name}
         </span>
 
         <span className="text-[11px] tabular-nums">

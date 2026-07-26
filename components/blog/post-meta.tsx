@@ -12,16 +12,11 @@ import type { SeriesWithPosts } from "@/lib/blog/get-series";
 import { SeriesNav } from "@/components/blog/series-nav";
 import { ViewCounter } from "@/components/blog/view-counter";
 import { formatPostDate, getRelativeTimeString } from "@/lib/format-date";
-import { getCategoryColorClass, cn } from "@/lib/utils";
+import { AUTHOR_CONFIG } from "@/lib/site";
 
 type Props = {
   post: Post;
   series?: SeriesWithPosts | null;
-};
-
-const AUTHOR = {
-  name: "Rahat Hossain Himel",
-  avatar: process.env.NEXT_PUBLIC_AUTHOR_AVATAR || "/himel-avatar.jpg",
 };
 
 function hasSignificantUpdate(post: Post): boolean {
@@ -40,10 +35,7 @@ export function PostMeta({ post, series }: Props) {
     <header className="space-y-4">
       {/* Category + Series + updated badge */}
       <div className="flex flex-wrap items-center gap-2">
-        <Badge
-          variant="secondary"
-          className={cn("border", getCategoryColorClass(post.category))}
-        >
+        <Badge variant="secondary">
           {post.category}
         </Badge>
         {series && (
@@ -93,16 +85,16 @@ export function PostMeta({ post, series }: Props) {
       {/* Author byline */}
       <div className="flex items-center gap-3 border-y-2 border-border/60 py-3">
         <Image
-          src={AUTHOR.avatar}
-          alt={AUTHOR.name}
+          src={AUTHOR_CONFIG.avatar}
+          alt={AUTHOR_CONFIG.name}
           width={36}
           height={36}
           className="aspect-square size-9 rounded-full object-cover"
-          unoptimized={AUTHOR.avatar.startsWith("http")}
+          unoptimized={AUTHOR_CONFIG.avatar.startsWith("http")}
         />
         <div className="flex flex-col gap-0.5 sm:flex-row sm:items-center sm:gap-0">
           <span className="text-sm font-medium text-foreground">
-            {AUTHOR.name}
+            {AUTHOR_CONFIG.name}
           </span>
           <span
             aria-hidden="true"

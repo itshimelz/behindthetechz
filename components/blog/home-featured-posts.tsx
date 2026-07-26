@@ -3,8 +3,9 @@
 import Link from "next/link";
 import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { formatPostDate } from "@/lib/format-date";
 import { postPath } from "@/lib/blog/post-path";
+import { formatPostDate } from "@/lib/format-date";
+import { AUTHOR_CONFIG } from "@/lib/site";
 import type { Post } from "@/lib/blog/types";
 import { SectionIntro } from "@/components/shared/section-intro";
 
@@ -58,7 +59,7 @@ function FeaturedPostCard({ post }: { post: Post }) {
 
         {/* Action Link */}
         <div className="pt-1 flex items-center justify-between text-xs text-muted-foreground">
-          <span className="font-medium">by Rahat Hossain Himel</span>
+          <span className="font-medium">by {AUTHOR_CONFIG.name}</span>
           <span className="inline-flex items-center gap-1 font-medium text-foreground transition-transform duration-200 group-hover:translate-x-1">
             Read essay
             <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" strokeWidth={2} />

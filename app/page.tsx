@@ -17,13 +17,15 @@ import { PretextArticleEnhancer } from "@/components/blog/pretext-article-enhanc
 import { SectionReveal } from "@/components/shared/section-reveal";
 import { Button } from "@/components/ui/button";
 import { getAllPosts } from "@/lib/blog/get-all-posts";
+import { getFeaturedHeroItems } from "@/lib/blog/get-featured-hero-data";
 import { getAllSeries } from "@/lib/blog/get-series";
 import { postPath } from "@/lib/blog/post-path";
 
 export default async function HomePage() {
-  const [allPosts, allSeries] = await Promise.all([
+  const [allPosts, allSeries, featuredHeroItems] = await Promise.all([
     getAllPosts(),
     getAllSeries(),
+    getFeaturedHeroItems(),
   ]);
 
   return (
@@ -134,7 +136,7 @@ export default async function HomePage() {
         <main className="col-span-12 lg:col-span-9 space-y-8">
           {/* Featured Essay Banner */}
           <SectionReveal>
-            <HomeHeroMinimal />
+            <HomeHeroMinimal items={featuredHeroItems} />
           </SectionReveal>
 
           {/* Curated Grid */}

@@ -9,7 +9,7 @@ import {
 import { postPath } from "@/lib/blog/post-path";
 import type { Post } from "@/lib/blog/types";
 import { formatPostDate } from "@/lib/format-date";
-import { getCategoryColorClass, cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 type Props = {
   posts: Post[];
@@ -67,8 +67,7 @@ export function RelatedPosts({ posts }: Props) {
               <div className="flex items-center justify-between gap-2 text-xs">
                 <span
                   className={cn(
-                    "inline-block rounded-md border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider",
-                    getCategoryColorClass(post.category)
+                    "inline-block rounded-md border border-border/40 bg-muted/60 px-2 py-0.5 text-[10px] font-medium text-foreground/90 uppercase tracking-wider",
                   )}
                 >
                   {post.category}

@@ -8,7 +8,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { Category } from "@/lib/blog/types";
-import { cn, getCategoryColorClass } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 type HomeDiscoveryStripProps = {
   categories: Category[];
@@ -30,8 +30,7 @@ export function HomeDiscoveryStrip({ categories }: HomeDiscoveryStripProps) {
                   variant="secondary"
                   render={<Link href={`/categories/${category.slug}`} />}
                   className={cn(
-                    "rounded-full border px-3.5 py-1 text-xs font-medium transition-transform duration-150 hover:-translate-y-0.5",
-                    getCategoryColorClass(category.name),
+                    "rounded-full border border-border/40 px-3.5 py-1 text-xs font-medium transition-transform duration-150 hover:-translate-y-0.5 hover:bg-muted/80 text-foreground/90",
                   )}
                 >
                   {category.name}

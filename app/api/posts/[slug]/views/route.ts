@@ -112,11 +112,20 @@ export async function POST(
       return NextResponse.json({ viewCount: post.viewCount, counted: false });
     }
 
-    const post = await prisma.post.update({
+    await prisma.$executeRaw`
+      UPDATE "posts"
+      SET "view_count" = "view_count" + 1
+      WHERE "slug" = ${slug}
+    `;
+
+    const post = await prisma.post.findUnique({
       where: { slug },
-      data: { viewCount: { increment: 1 } },
       select: { viewCount: true },
     });
+
+    if (!post) {
+      return NextResponse.json({ viewCount: 0 }, { status: 404 });
+    }
 
     const response = NextResponse.json({ viewCount: post.viewCount, counted: true });
     const nextViewedSlugs = [...viewedSlugs, slug].slice(-MAX_TRACKED_SLUGS);

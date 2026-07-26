@@ -1,4 +1,4 @@
-import type { Blockquote, Paragraph, Root, Strong, Text } from "mdast";
+import type { Blockquote, Paragraph, Root, Text } from "mdast";
 import type { Plugin } from "unified";
 
 const CALLOUT_LABELS = {

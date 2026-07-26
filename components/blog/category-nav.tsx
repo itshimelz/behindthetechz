@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/hover-card";
 import { useRouter } from "next/navigation";
 import type { Category } from "@/lib/blog/types";
-import { getCategoryColorClass, cn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 type Props = {
   categories: Category[];
@@ -36,7 +36,7 @@ function CategoryBadge({
           ? size === "md"
             ? "shadow-md hover:shadow-lg"
             : "shadow-sm"
-          : cn("hover:opacity-80", getCategoryColorClass(cat.name)),
+          : "hover:bg-muted/80 text-foreground/90 border-border/40",
       )}
     >
       {cat.name}
