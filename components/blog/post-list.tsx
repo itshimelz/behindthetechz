@@ -17,7 +17,7 @@ export function PostList({ posts, emptyMessage, searchQuery, compact = false }: 
   }
 
   return (
-    <div className={`flex flex-col ${compact ? "gap-6 sm:gap-7" : "gap-8"}`}>
+    <div className={`flex flex-col ${compact ? "gap-1" : "gap-1.5"}`}>
       <style>{`
         @keyframes postListFadeIn {
           from { opacity: 0; transform: scale(0.985); }

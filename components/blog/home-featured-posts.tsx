@@ -16,7 +16,7 @@ function FeaturedPostCard({ post }: { post: Post }) {
   return (
     <Link
       href={postPath(post.slug)}
-      className="group flex flex-col md:flex-row items-stretch gap-5 sm:gap-6 rounded-2xl border border-border/50 bg-[#FAF8F5]/60 p-4 sm:p-5 transition-colors duration-200 hover:border-foreground/40 hover:bg-[#FAF8F5] dark:bg-zinc-900/30 dark:hover:bg-zinc-900/50"
+      className="group flex flex-col md:flex-row items-stretch gap-5 sm:gap-6 rounded-2xl border border-border/50 bg-[#FAF8F5]/60 p-4 sm:p-5 transition-all duration-150 ease-out hover:-translate-y-1 hover:bg-[#FAF8F5] dark:bg-zinc-900/30 dark:hover:bg-zinc-900/50"
     >
       {/* Cover Image Frame */}
       <div className="w-full md:w-5/12 h-48 sm:h-52 md:h-auto min-h-[180px] rounded-xl overflow-hidden border border-border/40 bg-muted/20 shrink-0 relative">

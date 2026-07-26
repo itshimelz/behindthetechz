@@ -4,7 +4,7 @@ import { getAllPosts } from "@/lib/blog/get-all-posts";
 import { getCategories } from "@/lib/blog/get-categories";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollToTop } from "@/components/blog/scroll-to-top";
-import { LessWrongLayout } from "@/components/shared/lesswrong-layout";
+import { BehindTheTechzLayout } from "@/components/shared/behindthetechz-layout";
 
 const BlogSearchWrapper = dynamic(
   () =>
@@ -31,7 +31,7 @@ export default async function BlogPage() {
   return (
     <>
       <ScrollToTop />
-      <LessWrongLayout activePath="/blog">
+      <BehindTheTechzLayout activePath="/blog">
         <div className="space-y-6">
           <div className="space-y-1">
             <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
@@ -44,7 +44,7 @@ export default async function BlogPage() {
 
           <BlogSearchWrapper posts={posts} categories={categories} />
         </div>
-      </LessWrongLayout>
+      </BehindTheTechzLayout>
     </>
   );
 }

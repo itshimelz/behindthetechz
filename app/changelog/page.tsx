@@ -3,7 +3,7 @@ import { CHANGELOG, dateToId } from "@/lib/changelog";
 import { ChangelogEntryBlock } from "@/components/changelog/changelog-entry";
 import { ChangelogNav } from "@/components/changelog/changelog-nav";
 import { SectionReveal } from "@/components/shared/section-reveal";
-import { LessWrongLayout } from "@/components/shared/lesswrong-layout";
+import { BehindTheTechzLayout } from "@/components/shared/behindthetechz-layout";
 
 export const metadata: Metadata = {
   title: "What's New",
@@ -15,7 +15,7 @@ export default function ChangelogPage() {
   const dates = CHANGELOG.map((e) => e.date);
 
   return (
-    <LessWrongLayout activePath="/changelog">
+    <BehindTheTechzLayout activePath="/changelog">
       <div className="flex w-full items-start gap-10">
         {/* Timeline */}
         <div className="min-w-0 flex-1">
@@ -49,6 +49,6 @@ export default function ChangelogPage() {
         {/* Sticky date nav — xl+ */}
         <ChangelogNav dates={dates} />
       </div>
-    </LessWrongLayout>
+    </BehindTheTechzLayout>
   );
 }

@@ -67,6 +67,12 @@ const getAllSeriesCached = unstable_cache(
         _count: {
           select: { posts: true },
         },
+        posts: {
+          where: getPostStatusWhere(false),
+          take: 1,
+          orderBy: { seriesOrder: "asc" },
+          select: { slug: true },
+        },
       },
       orderBy: { name: "asc" },
     });
@@ -76,6 +82,7 @@ const getAllSeriesCached = unstable_cache(
       slug: s.slug,
       description: s.description,
       postCount: s._count.posts,
+      firstPostSlug: s.posts[0]?.slug ?? null,
     }));
   },
   ["blog-all-series"],

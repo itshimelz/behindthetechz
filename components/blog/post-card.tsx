@@ -56,20 +56,13 @@ export function PostCard({ post, searchQuery }: Props) {
     }
   };
 
-  // LessWrong-style score calculation from viewCount or reading time fallback
-  const karmaScore = (post.viewCount && post.viewCount > 0) ? post.viewCount : (post.readingTime * 45 + 120);
-
   return (
     <Link
       href={postPath(post.slug)}
-      className="group flex items-center justify-between gap-3 py-2.5 px-3 rounded-lg hover:bg-muted/40 transition-colors border-b border-border/30 last:border-0"
+      className="group flex items-center justify-between gap-3 py-2.5 px-3 rounded-lg hover:bg-muted/40 transition-transform duration-150 ease-out hover:-translate-y-0.5 border-b border-border/30 last:border-0"
     >
-      {/* Left Score & Title Container */}
+      {/* Left Title Container */}
       <div className="flex items-center gap-3 min-w-0 flex-1">
-        {/* Karma / Score */}
-        <span className="w-9 font-mono text-xs font-semibold text-muted-foreground/80 shrink-0 text-right tabular-nums">
-          {karmaScore}
-        </span>
 
         {/* Star Icon for Featured */}
         {post.featured ? (

@@ -7,11 +7,8 @@ import {
   Book02Icon,
   ChartBubble02Icon,
   Folder01Icon,
-  RssIcon,
-  UserIcon,
-  HelpCircleIcon,
-  Notification02Icon,
   Bookmark02Icon,
+  Notebook01Icon,
 } from "@hugeicons/core-free-icons";
 
 import { HomeFeaturedPosts } from "@/components/blog/home-featured-posts";
@@ -20,9 +17,14 @@ import { PretextArticleEnhancer } from "@/components/blog/pretext-article-enhanc
 import { SectionReveal } from "@/components/shared/section-reveal";
 import { Button } from "@/components/ui/button";
 import { getAllPosts } from "@/lib/blog/get-all-posts";
+import { getAllSeries } from "@/lib/blog/get-series";
+import { postPath } from "@/lib/blog/post-path";
 
 export default async function HomePage() {
-  const allPosts = await getAllPosts();
+  const [allPosts, allSeries] = await Promise.all([
+    getAllPosts(),
+    getAllSeries(),
+  ]);
 
   return (
     <div
@@ -37,7 +39,7 @@ export default async function HomePage() {
 
       {/* Main Grid: LessWrong Sidebar + Feed */}
       <div className="grid gap-8 lg:grid-cols-12">
-        {/* Left Desktop Sidebar Navigation Column (LessWrong Style) */}
+        {/* Left Desktop Sidebar Navigation Column */}
         <aside className="hidden lg:col-span-3 lg:block sticky top-20 h-fit space-y-6 text-sm text-muted-foreground pr-2 border-r border-border/40">
           {/* Main Links */}
           <div className="space-y-1">
@@ -53,14 +55,14 @@ export default async function HomePage() {
               className="flex items-center gap-2.5 rounded-lg px-3 py-1.5 transition-colors hover:text-foreground hover:bg-muted/40"
             >
               <HugeiconsIcon icon={Book02Icon} className="size-4" strokeWidth={2} />
-              <span>All Posts</span>
+              <span>All Articles</span>
             </Link>
             <Link
               href="/categories"
               className="flex items-center gap-2.5 rounded-lg px-3 py-1.5 transition-colors hover:text-foreground hover:bg-muted/40"
             >
               <HugeiconsIcon icon={Folder01Icon} className="size-4" strokeWidth={2} />
-              <span>Concepts</span>
+              <span>Categories</span>
             </Link>
           </div>
 
@@ -76,7 +78,7 @@ export default async function HomePage() {
                   className="flex items-center gap-2 rounded-lg px-3 py-1.5 transition-colors hover:text-foreground hover:bg-muted/40"
                 >
                   <HugeiconsIcon icon={Bookmark02Icon} className="size-3.5" strokeWidth={2} />
-                  Best of behind the TechZ
+                  Featured Articles
                 </Link>
               </li>
               <li>
@@ -85,7 +87,7 @@ export default async function HomePage() {
                   className="flex items-center gap-2 rounded-lg px-3 py-1.5 transition-colors hover:text-foreground hover:bg-muted/40"
                 >
                   <HugeiconsIcon icon={ChartBubble02Icon} className="size-3.5" strokeWidth={2} />
-                  Sequence Highlights
+                  Knowledge Graph
                 </Link>
               </li>
               <li>
@@ -94,56 +96,38 @@ export default async function HomePage() {
                   className="flex items-center gap-2 rounded-lg px-3 py-1.5 transition-colors hover:text-foreground hover:bg-muted/40"
                 >
                   <HugeiconsIcon icon={SparklesIcon} className="size-3.5" strokeWidth={2} />
-                  The Codex
+                  Topics & Tags
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Community & Meta Section */}
-          <div className="space-y-2 pt-2 border-t border-border/40">
-            <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80">
-              Community & Meta
-            </p>
-            <ul className="space-y-1 text-xs">
-              <li>
-                <Link
-                  href="/feed.xml"
-                  className="flex items-center gap-2 rounded-lg px-3 py-1.5 transition-colors hover:text-foreground hover:bg-muted/40"
-                >
-                  <HugeiconsIcon icon={RssIcon} className="size-3.5" strokeWidth={2} />
-                  Subscribe (RSS)
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/about"
-                  className="flex items-center gap-2 rounded-lg px-3 py-1.5 transition-colors hover:text-foreground hover:bg-muted/40"
-                >
-                  <HugeiconsIcon icon={UserIcon} className="size-3.5" strokeWidth={2} />
-                  About Author
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/changelog"
-                  className="flex items-center gap-2 rounded-lg px-3 py-1.5 transition-colors hover:text-foreground hover:bg-muted/40"
-                >
-                  <HugeiconsIcon icon={Notification02Icon} className="size-3.5" strokeWidth={2} />
-                  Changelog
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/help"
-                  className="flex items-center gap-2 rounded-lg px-3 py-1.5 transition-colors hover:text-foreground hover:bg-muted/40"
-                >
-                  <HugeiconsIcon icon={HelpCircleIcon} className="size-3.5" strokeWidth={2} />
-                  FAQ & Help
-                </Link>
-              </li>
-            </ul>
-          </div>
+          {/* Dynamic Series Section */}
+          {allSeries.length > 0 && (
+            <div className="space-y-2 pt-2 border-t border-border/40">
+              <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80">
+                Series & Multi-part Guides
+              </p>
+              <ul className="space-y-1 text-xs">
+                {allSeries.map((s) => (
+                  <li key={s.slug}>
+                    <Link
+                      href={s.firstPostSlug ? postPath(s.firstPostSlug) : `/blog?search=${encodeURIComponent(s.name)}`}
+                      className="flex items-center justify-between gap-1.5 rounded-lg px-3 py-1.5 transition-colors hover:text-foreground hover:bg-muted/40"
+                    >
+                      <span className="flex items-center gap-2 min-w-0">
+                        <HugeiconsIcon icon={Notebook01Icon} className="size-3.5 shrink-0 text-foreground/80" strokeWidth={2} />
+                        <span className="truncate font-medium">{s.name}</span>
+                      </span>
+                      <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-mono text-muted-foreground shrink-0">
+                        {s.postCount} {s.postCount === 1 ? "part" : "parts"}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
         </aside>
 
         {/* Main Content Feed Area (LessWrong Style) */}

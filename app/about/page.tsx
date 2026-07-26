@@ -18,7 +18,7 @@ import {
 
 import { SectionReveal } from "@/components/shared/section-reveal";
 import { SectionIntro } from "@/components/shared/section-intro";
-import { LessWrongLayout } from "@/components/shared/lesswrong-layout";
+import { BehindTheTechzLayout } from "@/components/shared/behindthetechz-layout";
 
 export const metadata: Metadata = {
   title: "About | behind the TechZ",
@@ -117,7 +117,7 @@ const links = [
 
 export default function AboutPage() {
   return (
-    <LessWrongLayout activePath="/about">
+    <BehindTheTechzLayout activePath="/about">
       <div className="space-y-12">
       {/* ── Hero ── */}
       <SectionReveal>
@@ -418,6 +418,6 @@ export default function AboutPage() {
         </section>
       </SectionReveal>
       </div>
-    </LessWrongLayout>
+    </BehindTheTechzLayout>
   );
 }

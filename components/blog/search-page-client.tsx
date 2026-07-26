@@ -183,7 +183,7 @@ export function SearchPageClient({ posts }: Props) {
             <li key={post.slug}>
               <Link
                 href={postPath(post.slug)}
-                className="block rounded-xl px-1 py-4 transition-colors hover:bg-muted/40"
+                className="block rounded-xl px-1 py-4 transition-all duration-150 ease-out hover:-translate-y-0.5 hover:bg-muted/40"
               >
                 <div className="flex items-start gap-3">
                   <div className="min-w-0 flex-1">

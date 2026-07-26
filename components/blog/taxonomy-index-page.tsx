@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { LessWrongLayout } from "@/components/shared/lesswrong-layout";
+import { BehindTheTechzLayout } from "@/components/shared/behindthetechz-layout";
 
 type TaxonomyItem = {
   name: string;
@@ -28,7 +28,7 @@ export function TaxonomyIndexPage({
   renderIcon,
 }: TaxonomyIndexPageProps) {
   return (
-    <LessWrongLayout activePath={hrefBase}>
+    <BehindTheTechzLayout activePath={hrefBase}>
       <div className="space-y-6">
         <section className="space-y-1">
           <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
@@ -65,6 +65,6 @@ export function TaxonomyIndexPage({
           </section>
         )}
       </div>
-    </LessWrongLayout>
+    </BehindTheTechzLayout>
   );
 }
