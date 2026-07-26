@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Link04Icon, Tick02Icon } from "@hugeicons/core-free-icons";
+import { Link04Icon, Tick02Icon, StarIcon } from "@hugeicons/core-free-icons";
 import { toast } from "sonner";
 import { postPath } from "@/lib/blog/post-path";
 import { copyToClipboard } from "@/lib/clipboard";
@@ -56,39 +56,61 @@ export function PostCard({ post, searchQuery }: Props) {
     }
   };
 
+  // LessWrong-style score calculation from viewCount or reading time fallback
+  const karmaScore = (post.viewCount && post.viewCount > 0) ? post.viewCount : (post.readingTime * 45 + 120);
+
   return (
-    <Link href={postPath(post.slug)} className="group flex flex-col gap-2">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-4">
-        <div className="flex items-center gap-2 min-w-0 flex-1">
-          <h3 className="text-lg font-medium group-hover:text-primary transition-colors line-clamp-1 text-foreground">
+    <Link
+      href={postPath(post.slug)}
+      className="group flex items-center justify-between gap-3 py-2.5 px-3 rounded-lg hover:bg-muted/40 transition-colors border-b border-border/30 last:border-0"
+    >
+      {/* Left Score & Title Container */}
+      <div className="flex items-center gap-3 min-w-0 flex-1">
+        {/* Karma / Score */}
+        <span className="w-9 font-mono text-xs font-semibold text-muted-foreground/80 shrink-0 text-right tabular-nums">
+          {karmaScore}
+        </span>
+
+        {/* Star Icon for Featured */}
+        {post.featured ? (
+          <HugeiconsIcon icon={StarIcon} className="size-3.5 text-muted-foreground/60 shrink-0" strokeWidth={2} />
+        ) : null}
+
+        {/* Post Title */}
+        <div className="min-w-0 flex-1 flex items-center gap-2">
+          <h3 className="text-sm font-medium text-foreground group-hover:text-foreground group-hover:underline decoration-foreground/40 underline-offset-4 line-clamp-1">
             {highlightText(post.title, searchQuery)}
           </h3>
           <button
             type="button"
             onClick={handleCopyLink}
-            className="opacity-0 group-hover:opacity-100 focus:opacity-100 shrink-0 p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-all"
+            className="opacity-0 group-hover:opacity-100 focus:opacity-100 shrink-0 p-0.5 rounded text-muted-foreground hover:text-foreground transition-all"
             title="Copy post link"
           >
             <HugeiconsIcon
               icon={copied ? Tick02Icon : Link04Icon}
-              className="size-3.5"
+              className="size-3"
               strokeWidth={2}
             />
           </button>
         </div>
-        <span className="text-xs italic text-muted-foreground/70 shrink-0 tabular-nums sm:text-sm sm:text-muted-foreground">
-          {formatPostDate(post.date, {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          })}
-          <span className="mx-1">·</span>
-          {post.readingTime} min read
+      </div>
+
+      {/* Right Metadata: Author, Date, Comment/Reading Pill */}
+      <div className="flex items-center gap-3 shrink-0 text-xs text-muted-foreground">
+        <span className="hidden md:inline font-medium text-muted-foreground/90">
+          Rahat Hossain Himel
+        </span>
+
+        <span className="text-[11px] tabular-nums">
+          {formatPostDate(post.date, { month: "short", day: "numeric" })}
+        </span>
+
+        {/* Comment count / Reading time pill */}
+        <span className="min-w-8 text-center rounded bg-muted/80 px-2 py-0.5 text-[11px] font-medium text-foreground border border-border/50 tabular-nums">
+          {post.readingTime}m
         </span>
       </div>
-      <p className="text-muted-foreground text-sm line-clamp-2">
-        {post.excerpt}
-      </p>
     </Link>
   );
 }

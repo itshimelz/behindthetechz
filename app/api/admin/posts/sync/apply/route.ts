@@ -8,6 +8,7 @@ import {
   revalidateCacheTags,
 } from "@/lib/blog/cache-tags";
 import { prisma } from "@/lib/prisma";
+import { slugify } from "@/lib/admin/slug";
 
 const ADMIN_HEADERS = { "Cache-Control": "no-store" };
 
@@ -71,11 +72,21 @@ export async function POST(request: Request) {
                 coverImage: postFields.coverImage ?? null,
                 isFeatured: postFields.isFeatured ?? false,
                 publishedAt: publishedAt ? new Date(publishedAt) : null,
-                series: series ? { connect: { slug: series } } : undefined,
+                series: series
+                  ? {
+                      connectOrCreate: {
+                        where: { slug: series },
+                        create: {
+                          slug: series,
+                          name: humanizeSlug(series),
+                        },
+                      },
+                    }
+                  : undefined,
                 seriesOrder: seriesOrder ?? undefined,
                 categories: {
                   create:
-                    categories?.map((categorySlug) => ({
+                    categories?.map((c) => slugify(c)).filter(Boolean).map((categorySlug) => ({
                       category: {
                         connectOrCreate: {
                           where: { slug: categorySlug },
@@ -89,7 +100,7 @@ export async function POST(request: Request) {
                 },
                 tags: {
                   create:
-                    tags?.map((tagSlug) => ({
+                    tags?.map((t) => slugify(t)).filter(Boolean).map((tagSlug) => ({
                       tag: {
                         connectOrCreate: {
                           where: { slug: tagSlug },
@@ -144,7 +155,17 @@ export async function POST(request: Request) {
             const updateData: Prisma.PostUpdateInput = { ...postFields };
 
             if (series !== undefined) {
-              updateData.series = series ? { connect: { slug: series } } : { disconnect: true };
+              updateData.series = series
+                ? {
+                    connectOrCreate: {
+                      where: { slug: series },
+                      create: {
+                        slug: series,
+                        name: humanizeSlug(series),
+                      },
+                    },
+                  }
+                : { disconnect: true };
             }
 
             if (seriesOrder !== undefined) {

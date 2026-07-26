@@ -4,7 +4,7 @@ import { getAllPosts } from "@/lib/blog/get-all-posts";
 import { getCategories } from "@/lib/blog/get-categories";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollToTop } from "@/components/blog/scroll-to-top";
-import { BlogReadingSurface } from "@/components/blog/blog-reading-surface";
+import { LessWrongLayout } from "@/components/shared/lesswrong-layout";
 
 const BlogSearchWrapper = dynamic(
   () =>
@@ -13,7 +13,7 @@ const BlogSearchWrapper = dynamic(
     ),
   {
     loading: () => (
-      <div className="mx-auto w-full max-w-4xl space-y-4">
+      <div className="w-full space-y-4">
         <Skeleton className="h-10 w-full" />
         <Skeleton className="h-20 w-full" />
         <Skeleton className="h-20 w-full" />
@@ -31,20 +31,20 @@ export default async function BlogPage() {
   return (
     <>
       <ScrollToTop />
-      <BlogReadingSurface>
-        <div className="flex flex-1 flex-col gap-5 px-4 pb-10 pt-4 md:px-8 md:pt-6">
-          <div className="mx-auto w-full max-w-4xl space-y-1.5">
-            <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
-              All Posts
+      <LessWrongLayout activePath="/blog">
+        <div className="space-y-6">
+          <div className="space-y-1">
+            <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+              All Essays & Dispatches
             </h1>
             <p className="text-sm text-muted-foreground sm:text-base">
-              Browse all published articles.
+              Search, filter, and explore all published technical notes.
             </p>
           </div>
 
           <BlogSearchWrapper posts={posts} categories={categories} />
         </div>
-      </BlogReadingSurface>
+      </LessWrongLayout>
     </>
   );
 }

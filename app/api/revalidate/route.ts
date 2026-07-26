@@ -4,12 +4,19 @@ import crypto from "crypto";
 import { BLOG_DEFAULT_REVALIDATE_TAGS, revalidateCacheTags } from "@/lib/blog/cache-tags";
 
 export async function POST(request: Request) {
-  const secret = process.env.REVALIDATE_SECRET;
+  const bearerToken = request.headers.get("authorization")?.replace("Bearer ", "");
   const providedToken =
     request.headers.get("x-revalidate-token") ||
+    bearerToken ||
     new URL(request.url).searchParams.get("secret");
 
-  if (!secret) {
+  const validSecrets = [
+    process.env.REVALIDATE_SECRET,
+    process.env.BEHINDTHETECHZ_API_TOKEN,
+    process.env.ADMIN_API_TOKEN,
+  ].filter(Boolean) as string[];
+
+  if (validSecrets.length === 0) {
     return NextResponse.json(
       { ok: false, error: "REVALIDATE_AUTH_NOT_CONFIGURED" },
       { status: 503 },
@@ -17,18 +24,21 @@ export async function POST(request: Request) {
   }
 
   const tokenBuffer = Buffer.from(providedToken || "");
-  const secretBuffer = Buffer.from(secret);
-
   let isMatch = false;
-  if (tokenBuffer.length === secretBuffer.length) {
-    isMatch = crypto.timingSafeEqual(tokenBuffer, secretBuffer);
-  } else {
-    crypto.timingSafeEqual(tokenBuffer, tokenBuffer);
+
+  for (const secret of validSecrets) {
+    const secretBuffer = Buffer.from(secret);
+    if (tokenBuffer.length === secretBuffer.length) {
+      if (crypto.timingSafeEqual(tokenBuffer, secretBuffer)) {
+        isMatch = true;
+        break;
+      }
+    }
   }
 
   if (!isMatch) {
     return NextResponse.json(
-      { ok: false, message: "Unauthorized" },
+      { ok: false, error: "UNAUTHORIZED", message: "Unauthorized" },
       { status: 401 },
     );
   }

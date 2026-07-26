@@ -16,7 +16,6 @@ import { ReadingProgress } from "@/components/blog/reading-progress";
 import { RelatedPosts } from "@/components/blog/related-posts";
 import { BlogReadingSurface } from "@/components/blog/blog-reading-surface";
 import { ScrollToTop } from "@/components/blog/scroll-to-top";
-import { SeriesNav } from "@/components/blog/series-nav";
 import { SiteBreadcrumb } from "@/components/site-breadcrumb";
 import { TableOfContents } from "@/components/blog/table-of-contents";
 import { TagPill } from "@/components/blog/tag-pill";
@@ -126,7 +125,7 @@ export default async function BlogPostPage({
           <article className="flex w-full max-w-3xl min-w-0 flex-1 flex-col gap-6">
             <div className="mx-auto w-full max-w-3xl space-y-4">
               <SiteBreadcrumb />
-              <PostMeta post={post} />
+              <PostMeta post={post} series={seriesData} />
               <TagPill tags={post.tags} />
             </div>
 
@@ -140,11 +139,6 @@ export default async function BlogPostPage({
                   sizes="(max-width: 768px) 100vw, 768px"
                 />
               </div>
-            )}
-
-            {/* Series Navigation */}
-            {seriesData && (
-              <SeriesNav series={seriesData} currentSlug={decodedSlug} />
             )}
 
             {/* Table of Contents - Mobile/Tablet inline only */}

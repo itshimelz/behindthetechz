@@ -8,12 +8,15 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react";
 import { RefreshIcon, TimeQuarter02Icon } from "@hugeicons/core-free-icons";
 import type { Post } from "@/lib/blog/types";
+import type { SeriesWithPosts } from "@/lib/blog/get-series";
+import { SeriesNav } from "@/components/blog/series-nav";
 import { ViewCounter } from "@/components/blog/view-counter";
 import { formatPostDate, getRelativeTimeString } from "@/lib/format-date";
 import { getCategoryColorClass, cn } from "@/lib/utils";
 
 type Props = {
   post: Post;
+  series?: SeriesWithPosts | null;
 };
 
 const AUTHOR = {
@@ -29,13 +32,13 @@ function hasSignificantUpdate(post: Post): boolean {
   return updated - published > ONE_DAY;
 }
 
-export function PostMeta({ post }: Props) {
+export function PostMeta({ post, series }: Props) {
   const showUpdated = hasSignificantUpdate(post);
   const publishedDate = new Date(post.date);
 
   return (
     <header className="space-y-4">
-      {/* Category + updated badge */}
+      {/* Category + Series + updated badge */}
       <div className="flex flex-wrap items-center gap-2">
         <Badge
           variant="secondary"
@@ -43,6 +46,9 @@ export function PostMeta({ post }: Props) {
         >
           {post.category}
         </Badge>
+        {series && (
+          <SeriesNav series={series} currentSlug={post.slug} />
+        )}
         {showUpdated && (
           <Tooltip>
             <TooltipTrigger>

@@ -5,6 +5,9 @@ import { validateAdminRequest } from "@/lib/admin-auth";
 import { createPostSchema, formatZodErrors } from "@/lib/admin/validation";
 import { BLOG_DEFAULT_REVALIDATE_TAGS, revalidateCacheTags } from "@/lib/blog/cache-tags";
 
+import { slugify } from "@/lib/admin/slug";
+import { formatFullPost } from "@/lib/admin/post-response";
+
 const ADMIN_HEADERS = { "Cache-Control": "no-store" };
 
 // ---------------------------------------------------------------------------
@@ -112,7 +115,9 @@ export async function POST(request: Request) {
       // Upsert categories
       const categoryIds: string[] = [];
       if (categories?.length) {
-        for (const catSlug of categories) {
+        for (const rawCat of categories) {
+          const catSlug = slugify(rawCat);
+          if (!catSlug) continue;
           const cat = await tx.category.upsert({
             where: { slug: catSlug },
             update: {},
@@ -130,7 +135,9 @@ export async function POST(request: Request) {
       // Upsert tags
       const tagIds: string[] = [];
       if (tags?.length) {
-        for (const tagSlug of tags) {
+        for (const rawTag of tags) {
+          const tagSlug = slugify(rawTag);
+          if (!tagSlug) continue;
           const tag = await tx.tag.upsert({
             where: { slug: tagSlug },
             update: {},
@@ -191,13 +198,7 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         ok: true,
-        post: {
-          id: post.id,
-          slug: post.slug,
-          title: post.title,
-          status: post.status,
-          revisionId: post.updatedAt.toISOString(),
-        },
+        post: formatFullPost(post),
       },
       { status: 201, headers: ADMIN_HEADERS },
     );

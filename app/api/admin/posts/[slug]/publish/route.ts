@@ -5,6 +5,8 @@ import { prisma } from "@/lib/prisma";
 import { validateAdminRequest } from "@/lib/admin-auth";
 import { BLOG_DEFAULT_REVALIDATE_TAGS, revalidateCacheTags } from "@/lib/blog/cache-tags";
 import { notifySubscribers } from "@/lib/blog/notify-subscribers";
+import { slugify } from "@/lib/admin/slug";
+import { formatFullPost } from "@/lib/admin/post-response";
 
 const ADMIN_HEADERS = { "Cache-Control": "no-store" };
 
@@ -73,7 +75,9 @@ export async function POST(request: Request, context: RouteContext) {
       const created = await prisma.$transaction(async (tx) => {
         const categoryIds: string[] = [];
         if (categories?.length) {
-          for (const catSlug of categories) {
+          for (const rawCat of categories) {
+            const catSlug = slugify(rawCat);
+            if (!catSlug) continue;
             const cat = await tx.category.upsert({
               where: { slug: catSlug },
               update: {},
@@ -90,7 +94,9 @@ export async function POST(request: Request, context: RouteContext) {
 
         const tagIds: string[] = [];
         if (tags?.length) {
-          for (const tagSlug of tags) {
+          for (const rawTag of tags) {
+            const tagSlug = slugify(rawTag);
+            if (!tagSlug) continue;
             const tag = await tx.tag.upsert({
               where: { slug: tagSlug },
               update: {},
@@ -122,6 +128,10 @@ export async function POST(request: Request, context: RouteContext) {
               create: tagIds.map((id) => ({ tagId: id })),
             },
           },
+          include: {
+            categories: { include: { category: true } },
+            tags: { include: { tag: true } },
+          },
         });
       });
 
@@ -140,12 +150,7 @@ export async function POST(request: Request, context: RouteContext) {
         {
           ok: true,
           created: true,
-          post: {
-            slug: created.slug,
-            status: created.status,
-            publishedAt: created.publishedAt?.toISOString() ?? null,
-            revisionId: created.updatedAt.toISOString(),
-          },
+          post: formatFullPost(created),
         },
         { status: 201, headers: ADMIN_HEADERS },
       );
@@ -169,6 +174,10 @@ export async function POST(request: Request, context: RouteContext) {
         status: "PUBLISHED",
         publishedAt: post.publishedAt ?? new Date(),
       },
+      include: {
+        categories: { include: { category: true } },
+        tags: { include: { tag: true } },
+      },
     });
 
     console.log(
@@ -187,12 +196,7 @@ export async function POST(request: Request, context: RouteContext) {
     return NextResponse.json(
       {
         ok: true,
-        post: {
-          slug: updated.slug,
-          status: updated.status,
-          publishedAt: updated.publishedAt?.toISOString() ?? null,
-          revisionId: updated.updatedAt.toISOString(),
-        },
+        post: formatFullPost(updated),
       },
       { headers: ADMIN_HEADERS },
     );

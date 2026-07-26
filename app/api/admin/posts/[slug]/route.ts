@@ -8,6 +8,8 @@ import {
   revalidateCacheTags,
 } from "@/lib/blog/cache-tags";
 import { prisma } from "@/lib/prisma";
+import { slugify } from "@/lib/admin/slug";
+import { formatFullPost } from "@/lib/admin/post-response";
 
 const ADMIN_HEADERS = { "Cache-Control": "no-store" };
 
@@ -48,22 +50,7 @@ export async function GET(request: Request, context: RouteContext) {
     return NextResponse.json(
       {
         ok: true,
-        post: {
-          id: post.id,
-          slug: post.slug,
-          title: post.title,
-          excerpt: post.excerpt,
-          contentMdx: post.contentMdx,
-          status: post.status,
-          isFeatured: post.isFeatured,
-          coverImage: post.coverImage,
-          publishedAt: post.publishedAt?.toISOString() ?? null,
-          updatedAt: post.updatedAt.toISOString(),
-          createdAt: post.createdAt.toISOString(),
-          categories: post.categories.map((pc) => pc.category.slug),
-          tags: post.tags.map((pt) => pt.tag.slug),
-          revisionId: post.updatedAt.toISOString(),
-        },
+        post: formatFullPost(post),
       },
       { headers: ADMIN_HEADERS },
     );
@@ -160,9 +147,10 @@ export async function PATCH(request: Request, context: RouteContext) {
     }
 
     if (categories !== undefined) {
+      const cleanCategories = categories.map((c) => slugify(c)).filter(Boolean);
       updateData.categories = {
         deleteMany: { postId: existing.id },
-        create: categories.map((categorySlug) => ({
+        create: cleanCategories.map((categorySlug) => ({
           category: {
             connectOrCreate: {
               where: { slug: categorySlug },
@@ -179,9 +167,10 @@ export async function PATCH(request: Request, context: RouteContext) {
     }
 
     if (tags !== undefined) {
+      const cleanTags = tags.map((t) => slugify(t)).filter(Boolean);
       updateData.tags = {
         deleteMany: { postId: existing.id },
-        create: tags.map((tagSlug) => ({
+        create: cleanTags.map((tagSlug) => ({
           tag: {
             connectOrCreate: {
               where: { slug: tagSlug },
@@ -220,13 +209,7 @@ export async function PATCH(request: Request, context: RouteContext) {
     return NextResponse.json(
       {
         ok: true,
-        post: {
-          id: post.id,
-          slug: post.slug,
-          title: post.title,
-          status: post.status,
-          revisionId: post.updatedAt.toISOString(),
-        },
+        post: formatFullPost(post),
       },
       { headers: ADMIN_HEADERS },
     );

@@ -1,13 +1,24 @@
+"use client";
+
 import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  ArrowLeft02Icon,
-  ArrowRight02Icon,
   Notebook01Icon,
+  Tick02Icon,
+  UnfoldMoreIcon,
 } from "@hugeicons/core-free-icons";
 import { postPath } from "@/lib/blog/post-path";
 import type { SeriesWithPosts } from "@/lib/blog/get-series";
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type Props = {
   series: SeriesWithPosts;
@@ -16,92 +27,93 @@ type Props = {
 
 export function SeriesNav({ series, currentSlug }: Props) {
   const currentIndex = series.posts.findIndex((p) => p.slug === currentSlug);
-  const prevPost = currentIndex > 0 ? series.posts[currentIndex - 1] : null;
-  const nextPost =
-    currentIndex < series.posts.length - 1
-      ? series.posts[currentIndex + 1]
-      : null;
+  const totalPosts = series.posts.length;
+  const partNumber = currentIndex !== -1 ? currentIndex + 1 : 1;
+  const progressPercent = Math.round((partNumber / totalPosts) * 100);
 
   return (
-    <div className="mx-auto w-full max-w-3xl rounded-xl border border-border/50 bg-muted/20 p-4 space-y-3">
-      {/* Series header */}
-      <div className="flex items-center gap-2 text-sm">
-        <HugeiconsIcon
-          icon={Notebook01Icon}
-          className="size-4 text-primary"
-          strokeWidth={2}
-        />
-        <span className="font-medium text-foreground">
-          {series.name}
-        </span>
-        <span className="text-muted-foreground">
-          — Part {currentIndex + 1} of {series.posts.length}
-        </span>
-      </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <button
+            type="button"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-border/70 bg-muted/40 px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:bg-muted hover:border-border"
+          />
+        }
+      >
+        <HugeiconsIcon icon={Notebook01Icon} className="size-3 text-primary" strokeWidth={2} />
+        <span className="font-semibold text-foreground/90">{series.name}</span>
+        <span className="text-muted-foreground">· Part {partNumber} of {totalPosts}</span>
+        <HugeiconsIcon icon={UnfoldMoreIcon} className="size-3 text-muted-foreground ml-0.5" strokeWidth={2} />
+      </DropdownMenuTrigger>
 
-      {/* All parts (collapsible could be added later) */}
-      <ol className="space-y-1 pl-1">
-        {series.posts.map((post, i) => (
-          <li key={post.slug}>
-            {post.slug === currentSlug ? (
-              <span
-                className="flex items-center gap-2 text-sm py-1 pl-2 rounded-md bg-primary/10 text-primary font-medium"
-              >
-                <span className="text-xs text-primary/60 w-5 shrink-0 tabular-nums">
-                  {i + 1}.
-                </span>
-                {post.title}
-              </span>
-            ) : (
-              <Link
-                href={postPath(post.slug)}
-                className="flex items-center gap-2 text-sm py-1 pl-2 rounded-md text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <span className="text-xs opacity-60 w-5 shrink-0 tabular-nums">
-                  {i + 1}.
-                </span>
-                {post.title}
-              </Link>
-            )}
-          </li>
-        ))}
-      </ol>
+      <DropdownMenuContent align="start" className="w-80 p-2 sm:w-96">
+        <DropdownMenuGroup>
+          <div className="p-2 space-y-1.5">
+            <div className="flex items-center justify-between text-xs font-medium">
+              <span className="text-muted-foreground">Series Progress</span>
+              <span className="text-foreground font-semibold">{progressPercent}%</span>
+            </div>
+            <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+              <div
+                className="h-full bg-primary rounded-full transition-all duration-300"
+                style={{ width: `${progressPercent}%` }}
+              />
+            </div>
+          </div>
+        </DropdownMenuGroup>
 
-      {/* Prev / Next navigation */}
-      {(prevPost || nextPost) && (
-        <div className="flex items-center justify-between gap-4 pt-2 border-t border-border/50">
-          {prevPost ? (
-            <Link
-              href={postPath(prevPost.slug)}
-              className={cn(
-                "flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors",
-              )}
-            >
-              <HugeiconsIcon
-                icon={ArrowLeft02Icon}
-                className="size-3.5"
-                strokeWidth={2}
-              />
-              <span className="truncate max-w-[150px]">{prevPost.title}</span>
-            </Link>
-          ) : (
-            <span />
-          )}
-          {nextPost && (
-            <Link
-              href={postPath(nextPost.slug)}
-              className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors ml-auto"
-            >
-              <span className="truncate max-w-[150px]">{nextPost.title}</span>
-              <HugeiconsIcon
-                icon={ArrowRight02Icon}
-                className="size-3.5"
-                strokeWidth={2}
-              />
-            </Link>
-          )}
-        </div>
-      )}
-    </div>
+        <DropdownMenuSeparator />
+
+        <DropdownMenuGroup className="max-h-64 overflow-y-auto space-y-0.5 p-1">
+          <DropdownMenuLabel className="px-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+            Series Outline ({totalPosts} Parts)
+          </DropdownMenuLabel>
+          {series.posts.map((post, i) => {
+            const isCurrent = post.slug === currentSlug;
+            const isPast = i < currentIndex;
+
+            return (
+              <DropdownMenuItem
+                key={post.slug}
+                className={cn(
+                  "p-2 rounded-lg cursor-pointer flex items-center justify-between gap-2.5 text-xs",
+                  isCurrent && "bg-primary/10 text-primary font-semibold focus:bg-primary/15"
+                )}
+                render={isCurrent ? <div /> : <Link href={postPath(post.slug)} />}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <span
+                    className={cn(
+                      "flex size-4.5 shrink-0 items-center justify-center rounded-full text-[10px] font-medium border",
+                      isCurrent
+                        ? "border-primary bg-primary text-primary-foreground font-bold"
+                        : isPast
+                          ? "border-primary/40 bg-primary/10 text-primary"
+                          : "border-border/80 text-muted-foreground"
+                    )}
+                  >
+                    {isPast ? (
+                      <HugeiconsIcon icon={Tick02Icon} className="size-2.5" strokeWidth={2.5} />
+                    ) : (
+                      i + 1
+                    )}
+                  </span>
+                  <span className={cn("truncate", isPast && "line-through opacity-75")}>
+                    {post.title}
+                  </span>
+                </div>
+
+                {post.readingTime && (
+                  <span className="text-[10px] text-muted-foreground/80 shrink-0">
+                    {post.readingTime}m
+                  </span>
+                )}
+              </DropdownMenuItem>
+            );
+          })}
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

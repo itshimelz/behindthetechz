@@ -193,20 +193,28 @@ export function SiteNavbar({
 
   return (
     <>
-      <header className={cn(
-        "sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-lg transition-colors duration-200",
-        scrolled ? "border-border/60" : "border-transparent",
-      )}>
-        <div className="mx-auto flex h-14 max-w-6xl items-center gap-4 px-4 md:px-6">
+      <header
+        className={cn(
+          "sticky top-0 z-40 w-full backdrop-blur-xl bg-background/80 dark:bg-background/75 transition-all duration-300",
+          scrolled
+            ? "border-b border-border/70 shadow-xs shadow-black/5 dark:shadow-black/20"
+            : "border-b border-border/30",
+        )}
+      >
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           {/* Logo */}
-          <Link href="/" className="shrink-0" aria-label="behind the TechZ home">
+          <Link
+            href="/"
+            className="shrink-0 transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
+            aria-label="behind the TechZ home"
+          >
             <Image
               src="/logo_h.png"
               alt="behind the TechZ"
               width={220}
               height={70}
               priority
-              className="h-auto w-[140px] sm:w-[160px]"
+              className="h-auto w-[135px] sm:w-[155px]"
             />
           </Link>
 
@@ -222,10 +230,10 @@ export function SiteNavbar({
                   key={item.title}
                   href={item.url}
                   className={cn(
-                    "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors",
+                    "flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium tracking-tight transition-all duration-200",
                     isActive
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                      ? "bg-foreground/10 text-foreground font-semibold dark:bg-zinc-800/90 dark:text-zinc-100"
+                      : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
                   )}
                 >
                   {item.title}
@@ -235,11 +243,24 @@ export function SiteNavbar({
           </nav>
 
           {/* Right-side actions */}
-          <div className="ml-auto flex items-center gap-1">
-            {/* Search */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            {/* Search Pill (desktop) */}
+            <Link
+              href="/search"
+              className="hidden sm:flex items-center gap-2 rounded-full border border-border/60 bg-muted/30 px-3 py-1.5 text-xs text-muted-foreground transition-all hover:border-border hover:bg-muted/70 hover:text-foreground shadow-2xs"
+            >
+              <HugeiconsIcon icon={Search01Icon} className="size-3.5" strokeWidth={2} />
+              <span className="hidden md:inline font-medium">Search notes...</span>
+              <kbd className="hidden lg:inline-flex items-center gap-0.5 rounded border border-border/70 bg-background/80 px-1.5 py-0.5 text-[10px] font-mono font-medium text-muted-foreground/80 shadow-2xs">
+                ⌘K
+              </kbd>
+            </Link>
+
+            {/* Mobile Search Icon Button */}
             <Button
               variant="ghost"
               size="icon-sm"
+              className="sm:hidden rounded-full transition-all hover:bg-muted/60"
               render={<Link href="/search" />}
               aria-label="Search"
             >
@@ -251,17 +272,18 @@ export function SiteNavbar({
               variant="ghost"
               size="icon-sm"
               onClick={toggleTheme}
+              className="rounded-full transition-all duration-300 hover:bg-muted/60 hover:rotate-12"
               aria-label={themeLabel}
             >
               <HugeiconsIcon
                 icon={theme === "dark" ? Sun03Icon : Moon02Icon}
-                className="size-4"
+                className="size-4 text-foreground"
                 strokeWidth={2}
               />
             </Button>
 
             {/* Preferences dropdown (desktop) */}
-            <div 
+            <div
               className="hidden md:flex"
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
@@ -269,13 +291,18 @@ export function SiteNavbar({
               <DropdownMenu open={desktopMenuOpen} onOpenChange={setDesktopMenuOpen}>
                 <DropdownMenuTrigger
                   render={
-                    <Button variant="ghost" size="icon-sm" aria-label="Menu" />
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      className="rounded-full transition-all hover:bg-muted/60"
+                      aria-label="Menu"
+                    />
                   }
                 >
-                  <HugeiconsIcon icon={Menu01Icon} className="size-4" strokeWidth={2} />
+                  <HugeiconsIcon icon={Menu01Icon} className="size-4 text-foreground" strokeWidth={2} />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
-                  className="min-w-48 rounded-lg"
+                  className="min-w-52 rounded-xl border border-border/80 bg-popover/95 p-1.5 backdrop-blur-md shadow-lg"
                   align="end"
                   sideOffset={8}
                 >
@@ -313,11 +340,11 @@ export function SiteNavbar({
             <Button
               variant="ghost"
               size="icon-sm"
-              className="md:hidden"
+              className="md:hidden rounded-full transition-all hover:bg-muted/60"
               onClick={() => setMobileOpen(true)}
               aria-label="Open menu"
             >
-              <HugeiconsIcon icon={Menu01Icon} className="size-4" strokeWidth={2} />
+              <HugeiconsIcon icon={Menu01Icon} className="size-4 text-foreground" strokeWidth={2} />
             </Button>
           </div>
         </div>
