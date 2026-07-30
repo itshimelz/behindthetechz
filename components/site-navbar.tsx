@@ -193,81 +193,25 @@ export function SiteNavbar({
 
   return (
     <>
+      {/* Sticky Top Header Section (Stays pinned at top on scroll) */}
       <header
         className={cn(
-          "sticky top-0 z-40 w-full backdrop-blur-xl bg-background/80 dark:bg-background/75 transition-all duration-300",
-          scrolled
-            ? "border-b border-border/70 shadow-xs shadow-black/5 dark:shadow-black/20"
-            : "border-b border-border/30",
+          "sticky top-0 z-40 w-full backdrop-blur-xl bg-background/90 dark:bg-background/85 transition-all duration-300 border-b border-border/40",
+          scrolled && "shadow-xs shadow-black/5 dark:shadow-black/20 border-border/70",
         )}
       >
-        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
-          {/* Logo */}
-          <Link
-            href="/"
-            className="shrink-0 transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
-            aria-label="behind the TechZ home"
-          >
-            <Image
-              src="/logo_h.png"
-              alt="behind the TechZ"
-              width={220}
-              height={70}
-              priority
-              className="h-auto w-[135px] sm:w-[155px]"
-            />
-          </Link>
-
-          {/* Desktop nav links */}
-          <nav className="hidden items-center gap-1 md:flex">
-            {navMain.map((item) => {
-              const isActive =
-                item.url === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(item.url);
-              return (
-                <Link
-                  key={item.title}
-                  href={item.url}
-                  className={cn(
-                    "flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-medium tracking-tight transition-all duration-200",
-                    isActive
-                      ? "bg-foreground/10 text-foreground font-semibold dark:bg-zinc-800/90 dark:text-zinc-100"
-                      : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
-                  )}
-                >
-                  {item.title}
-                </Link>
-              );
-            })}
-          </nav>
-
-          {/* Right-side actions */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            {/* Search Pill (desktop) */}
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+          {/* Left Side: Search + Theme Toggle */}
+          <div className="flex items-center gap-2">
             <Link
               href="/search"
-              className="hidden sm:flex items-center gap-2 rounded-full border border-border/60 bg-muted/30 px-3 py-1.5 text-xs text-muted-foreground transition-all hover:border-border hover:bg-muted/70 hover:text-foreground shadow-2xs"
+              className="flex items-center gap-2 rounded-full border border-border/60 bg-muted/40 px-3 py-1 text-xs text-muted-foreground transition-all hover:border-border hover:bg-muted/70 hover:text-foreground"
+              aria-label="Search articles"
             >
               <HugeiconsIcon icon={Search01Icon} className="size-3.5" strokeWidth={2} />
-              <span className="hidden md:inline font-medium">Search notes...</span>
-              <kbd className="hidden lg:inline-flex items-center gap-0.5 rounded border border-border/70 bg-background/80 px-1.5 py-0.5 text-[10px] font-mono font-medium text-muted-foreground/80 shadow-2xs">
-                ⌘K
-              </kbd>
+              <span className="hidden sm:inline uppercase text-[11px] font-medium tracking-wider">Search</span>
             </Link>
 
-            {/* Mobile Search Icon Button */}
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              className="sm:hidden rounded-full transition-all hover:bg-muted/60"
-              render={<Link href="/search" />}
-              aria-label="Search"
-            >
-              <HugeiconsIcon icon={Search01Icon} className="size-4" strokeWidth={2} />
-            </Button>
-
-            {/* Theme toggle */}
             <Button
               variant="ghost"
               size="icon-sm"
@@ -281,8 +225,43 @@ export function SiteNavbar({
                 strokeWidth={2}
               />
             </Button>
+          </div>
 
-            {/* Preferences dropdown (desktop) */}
+          {/* Center Logo */}
+          <div className="flex justify-center flex-1">
+            <Link
+              href="/"
+              className="shrink-0 transition-transform duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              aria-label="behind the TechZ home"
+            >
+              <Image
+                src="/logo_h.png"
+                alt="behind the TechZ"
+                width={220}
+                height={70}
+                priority
+                className="h-auto w-[140px] sm:w-[170px]"
+              />
+            </Link>
+          </div>
+
+          {/* Right Side: About Link + Subscribe Button + Menu */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Link
+              href="/about"
+              className="hidden sm:inline-block text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground font-semibold"
+            >
+              About
+            </Link>
+
+            <Button
+              render={<Link href="/feed.xml" />}
+              className="rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-xs uppercase font-bold tracking-wider px-3.5 py-1.5 h-8 shadow-xs border-none"
+            >
+              Subscribe
+            </Button>
+
+            {/* Desktop Preferences dropdown */}
             <div
               className="hidden md:flex"
               onMouseEnter={handleMouseEnter}
@@ -349,6 +328,33 @@ export function SiteNavbar({
           </div>
         </div>
       </header>
+
+      {/* Non-sticky Navigation Link Strip (Scrolls away under sticky header) */}
+      <nav className="w-full border-b border-border/40 bg-muted/20 py-2.5">
+        <div className="mx-auto flex max-w-7xl items-center justify-center gap-5 sm:gap-7 text-[11px] uppercase tracking-widest text-muted-foreground">
+          <Link href="/about" className="hover:text-foreground transition-colors font-semibold">
+            ABOUT
+          </Link>
+          <Link href="/blog" className="hover:text-foreground transition-colors font-semibold">
+            ALL POSTS
+          </Link>
+          <Link href="/categories" className="hover:text-foreground transition-colors font-semibold">
+            CATEGORIES
+          </Link>
+          <Link href="/tags" className="hover:text-foreground transition-colors font-semibold">
+            TAGS
+          </Link>
+          <Link href="/graph" className="hover:text-foreground transition-colors font-semibold">
+            GRAPH VIEW
+          </Link>
+          <Link href="/changelog" className="hover:text-foreground transition-colors font-semibold">
+            CHANGELOG
+          </Link>
+          <Link href="/feed.xml" className="hover:text-foreground transition-colors font-semibold">
+            RSS
+          </Link>
+        </div>
+      </nav>
 
       {/* Mobile side-sheet */}
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>

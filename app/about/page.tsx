@@ -16,7 +16,6 @@ import {
   StructureCheckIcon,
 } from "@hugeicons/core-free-icons";
 
-import { SectionReveal } from "@/components/shared/section-reveal";
 import { SectionIntro } from "@/components/shared/section-intro";
 import { BehindTheTechzLayout } from "@/components/shared/behindthetechz-layout";
 
@@ -119,8 +118,7 @@ export default function AboutPage() {
   return (
     <BehindTheTechzLayout activePath="/about">
       <div className="space-y-12">
-      {/* ── Hero ── */}
-      <SectionReveal>
+        {/* ── Hero ── */}
         <section className="space-y-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/80 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
             <HugeiconsIcon icon={InformationCircleIcon} className="h-3.5 w-3.5" />
@@ -153,19 +151,15 @@ export default function AboutPage() {
             ))}
           </div>
         </section>
-      </SectionReveal>
 
-      {/* ── What you'll find ── */}
-      <div className="space-y-4 md:space-y-6">
-        <SectionReveal delay={0.04}>
+        {/* ── What you'll find ── */}
+        <div className="space-y-4 md:space-y-6">
           <SectionIntro
             eyebrow="Overview"
             title="What you'll find here"
             description="Articles, experiments, and engineering notes from real projects — written to teach, not to trend."
           />
-        </SectionReveal>
 
-        <SectionReveal delay={0.08}>
           <div className="space-y-6">
             <div className="flex items-center gap-2">
               <HugeiconsIcon
@@ -194,20 +188,16 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
-        </SectionReveal>
-      </div>
+        </div>
 
-      {/* ── Key features ── */}
-      <div className="space-y-4 md:space-y-6">
-        <SectionReveal delay={0.04}>
+        {/* ── Key features ── */}
+        <div className="space-y-4 md:space-y-6">
           <SectionIntro
             eyebrow="Features"
             title="Built for deep reading"
             description="Every feature exists to help you focus on learning, not on fighting the UI."
           />
-        </SectionReveal>
 
-        <SectionReveal delay={0.08}>
           <section className="grid gap-6 sm:grid-cols-2">
             {features.map((feature) => (
               <div
@@ -229,20 +219,16 @@ export default function AboutPage() {
               </div>
             ))}
           </section>
-        </SectionReveal>
-      </div>
+        </div>
 
-      {/* ── Principles + Tech stack ── */}
-      <div className="space-y-4 md:space-y-6">
-        <SectionReveal delay={0.04}>
+        {/* ── Principles + Tech stack ── */}
+        <div className="space-y-4 md:space-y-6">
           <SectionIntro
             eyebrow="Under the hood"
             title="Principles and tech stack"
             description="The values that guide content decisions and the tools that power the platform."
           />
-        </SectionReveal>
 
-        <SectionReveal delay={0.08}>
           <div className="grid gap-10 sm:grid-cols-2">
             <div className="space-y-5">
               <div className="flex items-center gap-2">
@@ -288,20 +274,16 @@ export default function AboutPage() {
               </div>
             </div>
           </div>
-        </SectionReveal>
-      </div>
+        </div>
 
-      {/* ── Links ── */}
-      <div className="space-y-4 md:space-y-6">
-        <SectionReveal delay={0.04}>
+        {/* ── Links ── */}
+        <div className="space-y-4 md:space-y-6">
           <SectionIntro
             eyebrow="Links"
             title="Explore and connect"
             description="Check out the source, reach out, or start reading."
           />
-        </SectionReveal>
 
-        <SectionReveal delay={0.08}>
           <section className="grid gap-4 sm:grid-cols-2">
             {links.map((item) => (
               <Link
@@ -389,11 +371,9 @@ export default function AboutPage() {
               />
             </Link>
           </section>
-        </SectionReveal>
-      </div>
+        </div>
 
-      {/* ── Footer note ── */}
-      <SectionReveal delay={0.12}>
+        {/* ── Footer note ── */}
         <section className="border-t border-border/40 pt-8">
           <div className="flex items-start gap-3">
             <HugeiconsIcon
@@ -416,7 +396,6 @@ export default function AboutPage() {
             </p>
           </div>
         </section>
-      </SectionReveal>
       </div>
     </BehindTheTechzLayout>
   );

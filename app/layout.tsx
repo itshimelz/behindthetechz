@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
+import { AnnouncementBanner } from "@/components/announcement-banner";
 import { BlogBreadcrumbTitleProvider } from "@/components/blog/blog-breadcrumb-title-context";
 import { SiteNavbar } from "@/components/site-navbar";
 import { SiteFooter } from "@/components/site-footer";
@@ -152,6 +153,7 @@ export default async function RootLayout({
         <TooltipProvider>
           <BlogBreadcrumbTitleProvider>
             <div className="flex min-h-svh w-full flex-col bg-background">
+              <AnnouncementBanner />
               <SiteNavbar publishedPostsCount={publishedPostsCount} />
               <main id="main-content" className="flex flex-1 flex-col">
                 {children}

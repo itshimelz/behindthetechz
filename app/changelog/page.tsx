@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { CHANGELOG, dateToId } from "@/lib/changelog";
 import { ChangelogEntryBlock } from "@/components/changelog/changelog-entry";
 import { ChangelogNav } from "@/components/changelog/changelog-nav";
-import { SectionReveal } from "@/components/shared/section-reveal";
 import { BehindTheTechzLayout } from "@/components/shared/behindthetechz-layout";
 
 export const metadata: Metadata = {
@@ -28,19 +27,18 @@ export default function ChangelogPage() {
 
             <div className="divide-y divide-border/40">
               {CHANGELOG.map((entry, index) => (
-                <SectionReveal key={entry.date} delay={index * 0.04}>
+                <div
+                  key={entry.date}
+                  id={dateToId(entry.date)}
+                  className="relative pt-12 first:pt-0"
+                >
+                  {/* Timeline dot — md+ only */}
                   <div
-                    id={dateToId(entry.date)}
-                    className="relative pt-12 first:pt-0"
-                  >
-                    {/* Timeline dot — md+ only */}
-                    <div
-                      className="absolute left-33 top-[3.35rem] hidden h-2 w-2 -translate-x-1/2 rounded-full border-2 border-background bg-foreground ring-2 ring-foreground/20 md:block"
-                      aria-hidden="true"
-                    />
-                    <ChangelogEntryBlock entry={entry} isLatest={index === 0} />
-                  </div>
-                </SectionReveal>
+                    className="absolute left-33 top-[3.35rem] hidden h-2 w-2 -translate-x-1/2 rounded-full border-2 border-background bg-foreground ring-2 ring-foreground/20 md:block"
+                    aria-hidden="true"
+                  />
+                  <ChangelogEntryBlock entry={entry} isLatest={index === 0} />
+                </div>
               ))}
             </div>
           </div>

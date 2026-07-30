@@ -1,13 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight01Icon } from "@hugeicons/core-free-icons";
-import { HugeiconsIcon } from "@hugeicons/react";
 import { postPath } from "@/lib/blog/post-path";
 import { formatPostDate } from "@/lib/format-date";
 import { AUTHOR_CONFIG } from "@/lib/site";
 import type { Post } from "@/lib/blog/types";
-import { SectionIntro } from "@/components/shared/section-intro";
 
 type Props = {
   posts: Post[];
@@ -17,53 +14,53 @@ function FeaturedPostCard({ post }: { post: Post }) {
   return (
     <Link
       href={postPath(post.slug)}
-      className="group flex flex-col md:flex-row items-stretch gap-5 sm:gap-6 rounded-2xl border border-border/50 bg-[#FAF8F5]/60 p-4 sm:p-5 transition-all duration-150 ease-out hover:-translate-y-1 hover:bg-[#FAF8F5] dark:bg-zinc-900/30 dark:hover:bg-zinc-900/50"
+      className="group flex flex-col justify-between space-y-3 sm:space-y-4 rounded-xl border-none p-0"
     >
-      {/* Cover Image Frame */}
-      <div className="w-full md:w-5/12 h-48 sm:h-52 md:h-auto min-h-[180px] rounded-xl overflow-hidden border border-border/40 bg-muted/20 shrink-0 relative">
+      {/* Top Cover Image (Borderless) */}
+      <div className="w-full aspect-[16/10] rounded-xl overflow-hidden bg-muted/20 shrink-0 relative border-none">
         <img
-          src={post.coverImage}
+          src={post.coverImage || "/images/placeholder.png"}
           alt={post.title}
-          className="w-full h-full object-cover transition-opacity duration-200 group-hover:opacity-90"
+          className="w-full h-full object-cover"
           loading="lazy"
         />
       </div>
 
-      {/* Content Area */}
-      <div className="flex flex-col justify-between flex-1 space-y-2.5 py-0.5 min-w-0">
+      {/* Content Section */}
+      <div className="flex flex-col justify-between flex-1 space-y-2.5">
         <div className="space-y-2">
-          {/* Metadata */}
-          <div className="flex items-center justify-between text-xs text-muted-foreground tabular-nums">
-            <span className="font-medium text-foreground/80 uppercase tracking-wider text-[10px] bg-muted/60 px-2 py-0.5 rounded border border-border/40">
+          {/* Category Tag with Green Accent Underline */}
+          <div className="w-fit">
+            <span className="text-xs font-bold uppercase tracking-wider text-foreground border-b-2 border-emerald-600 dark:border-emerald-500 pb-0.5 inline-block">
               {post.category}
             </span>
-            <div className="flex items-center gap-2">
-              <time dateTime={post.date}>
-                {formatPostDate(post.date, { month: "short", day: "numeric", year: "numeric" })}
-              </time>
-              <span>·</span>
-              <span>{post.readingTime}m read</span>
-            </div>
           </div>
 
-          {/* Headline */}
-          <h3 className="text-lg sm:text-xl font-bold tracking-tight text-foreground group-hover:underline decoration-foreground/40 underline-offset-4 line-clamp-2 leading-snug">
+          {/* Headline / Title */}
+          <h3 className="text-lg sm:text-xl font-bold tracking-tight text-foreground group-hover:underline decoration-foreground/30 underline-offset-4 line-clamp-3 leading-[1.25]">
             {post.title}
           </h3>
 
           {/* Excerpt */}
-          <p className="line-clamp-2 text-xs sm:text-sm leading-relaxed text-muted-foreground">
+          <p className="line-clamp-3 text-xs sm:text-sm leading-relaxed text-muted-foreground font-normal">
             {post.excerpt}
           </p>
         </div>
 
-        {/* Action Link */}
-        <div className="pt-1 flex items-center justify-between text-xs text-muted-foreground">
-          <span className="font-medium">by {AUTHOR_CONFIG.name}</span>
-          <span className="inline-flex items-center gap-1 font-medium text-foreground transition-transform duration-200 group-hover:translate-x-1">
-            Read essay
-            <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" strokeWidth={2} />
+        {/* Author & Date Metadata Bar */}
+        <div className="flex items-center gap-2 text-xs text-muted-foreground pt-1.5">
+          <img
+            src={AUTHOR_CONFIG.avatar}
+            alt={AUTHOR_CONFIG.name}
+            className="size-4.5 rounded-full object-cover shrink-0"
+          />
+          <span className="font-bold uppercase tracking-wider text-foreground text-[11px]">
+            {AUTHOR_CONFIG.name}
           </span>
+          <span className="text-muted-foreground/60">·</span>
+          <time dateTime={post.date} className="uppercase tracking-wider text-[11px] font-medium text-muted-foreground">
+            {formatPostDate(post.date, { month: "short", day: "numeric", year: "numeric" }).toUpperCase()}
+          </time>
         </div>
       </div>
     </Link>
@@ -71,21 +68,17 @@ function FeaturedPostCard({ post }: { post: Post }) {
 }
 
 export function HomeFeaturedPosts({ posts }: Props) {
-  const featuredPosts = posts.filter((p) => p.coverImage).slice(0, 2);
+  // Show up to 6 published posts in the 3-column grid
+  const displayPosts = posts.slice(0, 6);
 
-  if (featuredPosts.length === 0) {
+  if (displayPosts.length === 0) {
     return null;
   }
 
   return (
-    <section className="w-full space-y-6">
-      <SectionIntro
-        eyebrow="Curated Essays"
-        title="Foundational & Deep Essays"
-        description="High-signal technical breakdowns and core architectural principles."
-      />
-      <div className="flex flex-col gap-6">
-        {featuredPosts.map((post) => (
+    <section className="w-full py-4 border-none">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+        {displayPosts.map((post) => (
           <FeaturedPostCard key={post.slug} post={post} />
         ))}
       </div>

@@ -9,6 +9,7 @@
   --color-foreground: var(--foreground);
   --font-sans: "Google Sans", "Tiro Bangla", sans-serif;
   --font-heading: "Google Sans", "Tiro Bangla", sans-serif;
+  --font-serif: "Google Sans", "Tiro Bangla", sans-serif;
   --font-mono: "FiraCode Nerd Font Mono", "FiraCode Nerd Font",
     "FiraCode Nerd Font Propo", "Fira Code", ui-monospace, SFMono-Regular, Menlo,
     Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
