@@ -36,10 +36,10 @@ export function HomeHeroMinimal({ items }: Props) {
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* 2-Column Grid with fixed height on desktop */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-10 items-stretch lg:h-[350px]">
+      {/* 2-Column Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-stretch">
         {/* Left Column: Post details */}
-        <div className="lg:col-span-7 flex flex-col justify-between space-y-4 sm:space-y-5 py-1 h-full">
+        <div className="lg:col-span-7 flex flex-col justify-between space-y-4 sm:space-y-5 py-1">
           <div className="space-y-3 sm:space-y-4">
             {/* Category Tag with Green Accent Underline */}
             <div className="w-fit">
@@ -86,9 +86,9 @@ export function HomeHeroMinimal({ items }: Props) {
             </p>
           </div>
 
-          {/* Bottom Bar: Discrete Navigation Dots (if multiple featured items exist) */}
+          {/* Bottom Bar: Discrete Navigation Dots (Permanent anchored position) */}
           {items.length > 1 && (
-            <div className="flex items-center gap-1.5 pt-2" aria-label="Featured essays switcher">
+            <div className="flex items-center gap-1.5 pt-4 mt-auto" aria-label="Featured essays switcher">
               {items.map((item, idx) => (
                 <button
                   key={item.slug}
@@ -96,7 +96,7 @@ export function HomeHeroMinimal({ items }: Props) {
                   onClick={() => setActiveIndex(idx)}
                   onMouseEnter={() => setActiveIndex(idx)}
                   aria-label={`View essay ${idx + 1}: ${item.title}`}
-                  className={`h-2 rounded-full transition-all duration-300 ${idx === activeIndex
+                  className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${idx === activeIndex
                       ? "w-6 bg-foreground"
                       : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/60"
                     }`}
@@ -107,16 +107,16 @@ export function HomeHeroMinimal({ items }: Props) {
         </div>
 
         {/* Right Column: Featured Image */}
-        <div className="lg:col-span-5 h-full order-first lg:order-last">
+        <div className="lg:col-span-5 order-first lg:order-last flex items-center">
           <Link
             href={postPath(currentItem.slug)}
-            className="group relative block w-full h-full min-h-[200px] sm:min-h-[280px] lg:min-h-full rounded-xl overflow-hidden bg-muted/20 border-none"
+            className="relative block w-full aspect-[16/10] sm:aspect-[16/9] lg:aspect-[4/3] rounded-2xl overflow-hidden bg-card border border-border/60 dark:border-zinc-800/80 shadow-xs"
           >
             <img
               key={currentItem.slug}
               src={currentItem.coverImage || "/images/placeholder.png"}
               alt={currentItem.title}
-              className="w-full h-full object-contain transition-opacity duration-300"
+              className="w-full h-full object-cover"
               loading="eager"
             />
           </Link>

@@ -22,6 +22,7 @@ import {
 } from "@hugeicons/core-free-icons";
 
 import { Button } from "@/components/ui/button";
+import { SubscribeDialog } from "@/components/blog/subscribe-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -243,12 +244,7 @@ export function SiteNavbar({
 
           {/* Right Side: About Link + Subscribe Button + Menu */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <Button
-              render={<Link href="/feed.xml" />}
-              className="rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-xs uppercase font-bold tracking-wider px-3.5 py-1.5 h-8 shadow-xs border-none"
-            >
-              Subscribe
-            </Button>
+            <SubscribeDialog />
 
             {/* Desktop Preferences dropdown */}
             <div

@@ -9,15 +9,34 @@ import { toast } from "sonner";
 
 export function SiteFooter() {
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !email.includes("@")) {
+    if (!email || !email.includes("@") || loading) {
       toast.error("Please enter a valid email address");
       return;
     }
-    toast.success("Thank you for subscribing to behind the TechZ!");
-    setEmail("");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/newsletter/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+      const data = await res.json();
+
+      if (!res.ok && data.error) {
+        toast.error(data.error);
+      } else {
+        toast.success("Thank you for subscribing to behind the TechZ!");
+        setEmail("");
+      }
+    } catch {
+      toast.error("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -79,6 +98,11 @@ export function SiteFooter() {
                     RSS
                   </Link>
                 </li>
+                <li>
+                  <Link href="/unsubscribe" className="underline underline-offset-4 decoration-zinc-500 hover:text-white transition-colors">
+                    Unsubscribe
+                  </Link>
+                </li>
               </ul>
             </div>
 
@@ -124,17 +148,28 @@ export function SiteFooter() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Your email"
+                  disabled={loading}
                   className="w-full rounded-md border border-zinc-800 bg-zinc-900/90 px-3 py-2 pr-10 text-xs text-zinc-100 placeholder:text-zinc-500 focus:outline-hidden focus:border-zinc-400 transition-colors"
                   required
                 />
                 <button
                   type="submit"
-                  className="absolute right-1.5 p-1 text-zinc-400 hover:text-white transition-colors"
+                  disabled={loading}
+                  className="absolute right-1.5 p-1 text-zinc-400 hover:text-white transition-colors disabled:opacity-50"
                   title="Subscribe"
                 >
                   <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" strokeWidth={2} />
                 </button>
               </form>
+              <p className="text-[11px] text-zinc-400">
+                Need to leave the list?{" "}
+                <Link
+                  href="/unsubscribe"
+                  className="underline underline-offset-4 decoration-zinc-500 text-zinc-300 hover:text-white transition-colors font-medium"
+                >
+                  Unsubscribe here
+                </Link>
+              </p>
             </div>
           </div>
         </div>
