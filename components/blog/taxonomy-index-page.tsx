@@ -12,7 +12,6 @@ type TaxonomyItem = {
 type TaxonomyIndexPageProps = {
   eyebrow?: string;
   title: string;
-  subtitle: string;
   emptyTitle: string;
   emptyDescription: string;
   items: TaxonomyItem[];

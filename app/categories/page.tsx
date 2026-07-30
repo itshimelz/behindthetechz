@@ -10,8 +10,7 @@ export default async function CategoriesPage() {
     <TaxonomyIndexPage
       eyebrow="CATEGORIES"
       title="All Categories"
-      subtitle="Pick a category to open related posts."
-      emptyTitle="No categories found"
+      emptyTitle="No Categories Found"
       emptyDescription="Categories will appear here once you publish some posts."
       items={categories}
       hrefBase="/categories"

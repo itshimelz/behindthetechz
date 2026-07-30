@@ -80,14 +80,13 @@ export async function POST(request: Request) {
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 
-  const ALLOWED_EXTENSIONS = ["png", "jpg", "jpeg", "webp", "gif", "svg"];
+  const ALLOWED_EXTENSIONS = ["png", "jpg", "jpeg", "webp", "gif"];
   const ALLOWED_MIME_TYPES = [
     "image/png",
     "image/jpeg",
     "image/jpg",
     "image/webp",
     "image/gif",
-    "image/svg+xml",
   ];
   const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
 
