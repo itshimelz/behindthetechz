@@ -9,22 +9,12 @@ import {
   postWithRelationsInclude,
 } from "@/lib/blog/get-all-posts";
 
-export async function getPostBySlug(slug: string): Promise<Post | null> {
-  const includeDrafts = false; // Always hide drafts
-  return getPostBySlugCached(slug, includeDrafts);
-}
-
-export async function getAllSlugs(): Promise<string[]> {
-  const includeDrafts = false; // Always hide drafts
-  return getAllSlugsCached(includeDrafts);
-}
-
-const getPostBySlugCached = unstable_cache(
-  async (slug: string, includeDrafts: boolean) => {
+export const getPostBySlug = unstable_cache(
+  async (slug: string): Promise<Post | null> => {
     const post = await prisma.post.findFirst({
       where: {
         slug,
-        ...getPostStatusWhere(includeDrafts),
+        ...getPostStatusWhere(false),
       },
       include: postWithRelationsInclude,
     });
@@ -39,10 +29,10 @@ const getPostBySlugCached = unstable_cache(
   },
 );
 
-const getAllSlugsCached = unstable_cache(
-  async (includeDrafts: boolean) => {
+export const getAllSlugs = unstable_cache(
+  async (): Promise<string[]> => {
     const posts = await prisma.post.findMany({
-      where: getPostStatusWhere(includeDrafts),
+      where: getPostStatusWhere(false),
       select: { slug: true },
     });
 

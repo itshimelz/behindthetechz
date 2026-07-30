@@ -16,6 +16,8 @@ export type FeaturedHeroItem = {
   readingTime: number;
   wordCount: number;
   author: string;
+  authorAvatar?: string;
+  coverImage?: string;
   insights: FeaturedHeroInsight[];
 };
 
@@ -89,6 +91,8 @@ export async function getFeaturedHeroItems(): Promise<FeaturedHeroItem[]> {
       readingTime: post.readingTime,
       wordCount: post.wordCount,
       author: AUTHOR_CONFIG.name,
+      authorAvatar: AUTHOR_CONFIG.avatar,
+      coverImage: post.coverImage,
       insights,
     };
   });

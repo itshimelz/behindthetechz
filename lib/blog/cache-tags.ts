@@ -18,12 +18,10 @@ export const BLOG_DEFAULT_REVALIDATE_TAGS = [
   BLOG_CACHE_TAGS.graph,
 ] as const;
 
-export function revalidateCacheTags(tags: readonly string[]) {
-  const uniqueTags = [...new Set(tags.filter(Boolean))];
-
+export function revalidateCacheTags(tags: readonly string[]): string[] {
+  const uniqueTags = Array.from(new Set(tags.filter(Boolean)));
   for (const tag of uniqueTags) {
     revalidateTag(tag, "max");
   }
-
   return uniqueTags;
 }

@@ -12,6 +12,7 @@ import {
   Tick02Icon,
 } from "@hugeicons/core-free-icons";
 import { useFavorites } from "@/hooks/use-favorites";
+import { usePostViews } from "@/hooks/use-post-views";
 import { postPath } from "@/lib/blog/post-path";
 import { copyToClipboard } from "@/lib/clipboard";
 import { toast } from "sonner";
@@ -64,8 +65,8 @@ export function PostFooter({
   const [isLoadingClaps, setIsLoadingClaps] = useState(true);
   const [copied, setCopied] = useState(false);
 
-  // — View state (live-synced) —
-  const [liveViewCount, setLiveViewCount] = useState(initialViewCount);
+  // — View state (live-synced via usePostViews) —
+  const { count: liveViewCount } = usePostViews(slug, initialViewCount);
 
   // — Favorites —
   const { isFavorite, toggleFavorite, isMounted: favMounted } = useFavorites();
@@ -115,22 +116,8 @@ export function PostFooter({
         if (isActive) setIsLoadingClaps(false);
       });
 
-    // Fetch latest view count (delayed slightly so ViewCounter's POST has time to land)
-    const viewTimer = setTimeout(() => {
-      fetch(`/api/posts/${slug}/views`, { cache: "no-store" })
-        .then((response) => (response.ok ? response.json() : null))
-        .then((data: { viewCount?: number } | null) => {
-          if (!isActive) return;
-          if (typeof data?.viewCount === "number") {
-            setLiveViewCount(data.viewCount);
-          }
-        })
-        .catch(() => {});
-    }, 2500);
-
     return () => {
       isActive = false;
-      clearTimeout(viewTimer);
     };
   }, [slug]);
 

@@ -5,6 +5,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { EyeIcon } from "@hugeicons/core-free-icons";
 
 import { LoadingPill } from "@/components/ui/loading-pill";
+import { usePostViews } from "@/hooks/use-post-views";
 
 type Props = {
   slug: string;
@@ -14,7 +15,7 @@ type Props = {
 const VIEW_TIMER_MS = 1800;
 
 export function ViewCounter({ slug, initialCount = 0 }: Props) {
-  const [count, setCount] = useState(initialCount);
+  const { count, updateCount } = usePostViews(slug, initialCount);
   const [isUpdating, setIsUpdating] = useState(true);
 
   useEffect(() => {
@@ -41,7 +42,7 @@ export function ViewCounter({ slug, initialCount = 0 }: Props) {
           }
 
           if (typeof nextCount === "number") {
-            setCount(nextCount);
+            updateCount(nextCount);
           }
         })
         .catch(() => {
@@ -73,7 +74,7 @@ export function ViewCounter({ slug, initialCount = 0 }: Props) {
           }
 
           if (typeof nextCount === "number") {
-            setCount(nextCount);
+            updateCount(nextCount);
           }
         })
         .catch(() => {
@@ -158,7 +159,7 @@ export function ViewCounter({ slug, initialCount = 0 }: Props) {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       window.removeEventListener("pagehide", handlePageHide);
     };
-  }, [slug]);
+  }, [slug, updateCount]);
 
   return (
     <span className="inline-flex items-center gap-1 text-sm text-muted-foreground">
