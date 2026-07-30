@@ -23,11 +23,11 @@ export function SiteFooter() {
   return (
     <footer className="mt-auto w-full overflow-hidden">
       {/* Dark Main Footer Block (Full Bleed Parallel Diagonal Tilted Top & Bottom Edges) */}
-      <div className="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] bg-zinc-950 text-zinc-100 dark:bg-black pt-20 sm:pt-28 pb-20 sm:pb-28 px-4 sm:px-6 md:px-8 shadow-2xl [clip-path:polygon(0_3vw,100%_0,100%_calc(100%-3vw),0_100%)]">
+      <div className="relative w-screen left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] bg-zinc-950 text-zinc-100 dark:bg-black pt-16 sm:pt-24 md:pt-28 pb-16 sm:pb-24 md:pb-28 px-4 sm:px-6 md:px-8 [clip-path:polygon(0_3vw,100%_0,100%_calc(100%-3vw),0_100%)]">
         <div className="mx-auto max-w-7xl space-y-12">
           {/* Top Right Tagline Banner */}
-          <div className="flex justify-end pt-2 pb-6 border-b border-zinc-800/60">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl text-right leading-snug tracking-tight max-w-xl text-zinc-100 font-bold">
+          <div className="flex justify-start sm:justify-end pt-2 pb-6 border-b border-zinc-800/60">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-left sm:text-right leading-snug tracking-tight max-w-xl text-zinc-100 font-bold">
               Unparalleled access to hidden engineering concepts both online and IRL.
             </h2>
           </div>

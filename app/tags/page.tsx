@@ -8,6 +8,7 @@ export default async function TagsPage() {
 
   return (
     <TaxonomyIndexPage
+      eyebrow="TAGS"
       title="All Tags"
       subtitle="Pick a tag to open related posts."
       emptyTitle="No tags found"

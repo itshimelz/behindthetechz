@@ -6,14 +6,10 @@ import {
   BookOpen02Icon,
   Settings02Icon,
   Link04Icon,
-  PencilEdit02Icon,
   Rocket01Icon,
-  CodeIcon,
   ArrowUpRight01Icon,
   SourceCodeIcon,
   Mail01Icon,
-  InformationCircleIcon,
-  StructureCheckIcon,
 } from "@hugeicons/core-free-icons";
 
 import { SectionIntro } from "@/components/shared/section-intro";
@@ -70,28 +66,6 @@ const features = [
   },
 ];
 
-const principles = [
-  "Depth over virality",
-  "No ads, no paywalls",
-  "Show real code, not toy examples",
-  "Open source and transparent",
-];
-
-const techStack = [
-  "Next.js",
-  "React",
-  "TypeScript",
-  "Tailwind CSS",
-  "MDX",
-  "Prisma",
-  "PostgreSQL",
-  "Supabase",
-  "Shiki",
-  "KaTeX",
-  "Framer Motion",
-  "D3.js",
-];
-
 const links = [
   {
     label: "Source Code",
@@ -117,85 +91,55 @@ const links = [
 export default function AboutPage() {
   return (
     <BehindTheTechzLayout activePath="/about">
-      <div className="space-y-12">
-        {/* ── Hero ── */}
-        <section className="space-y-8">
-          <div className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/80 px-3 py-1 text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground">
-            <HugeiconsIcon icon={InformationCircleIcon} className="h-3.5 w-3.5" />
-            About the site
-          </div>
+      <div className="space-y-12 py-4">
+        {/* ── Centered Header (404 Media Style) ── */}
+        <section className="text-center space-y-4 max-w-3xl mx-auto">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-foreground">
+            Who We Are
+          </h1>
+        </section>
 
-          <div className="space-y-4">
-            <h1 className="text-3xl font-bold tracking-tight md:text-5xl">
-              Practical engineering notes without the noise
-            </h1>
-            <p className="text-lg leading-8 text-muted-foreground">
-              <strong className="text-foreground">behind the TechZ</strong> is a
-              knowledge-driven blog focused on real-world software engineering.
-              Every article is written to be useful — covering in-depth topics
-              with honest code, connected context, and a distraction-free reading
-              experience.
-            </p>
-          </div>
+        {/* ── Centered Paragraph Flow ── */}
+        <section className="max-w-2xl mx-auto space-y-6 text-base sm:text-lg leading-relaxed text-muted-foreground font-normal">
+          <p>
+            <strong className="text-foreground font-semibold">behind the TechZ</strong> is an independent technology publication founded by Rahat Hossain Himel exploring the ways software engineering, AI systems, and software architecture shape our digital world.
+          </p>
 
-          <div className="grid gap-6 border-t border-border/40 pt-8 sm:grid-cols-3">
-            {highlights.map((item) => (
-              <div key={item.label} className="space-y-2">
-                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                  {item.label}
-                </p>
-                <p className="text-sm font-medium leading-6 text-foreground">
-                  {item.value}
-                </p>
-              </div>
-            ))}
+          <p>
+            We&apos;re focused on technical deep-dives, production engineering notes, system architecture patterns, and developer tooling — written with honest code, real constraints, and zero clickbait.
+          </p>
+
+          <p>
+            Read more about us, our principles, and our connected topics below.
+          </p>
+        </section>
+
+        {/* ── Theme Green Callout Banner (No Shadows) ── */}
+        <section className="max-w-2xl mx-auto">
+          <div className="rounded-2xl bg-emerald-600/10 text-emerald-950 dark:bg-emerald-950/40 dark:text-emerald-200 border border-emerald-600/30 p-6 sm:p-8 text-center font-medium text-sm sm:text-base leading-relaxed">
+            behind the TechZ is an independent publication whose work is written, researched, and published by software engineers. Our intended audience is real developers, not AI scrapers, bots, or search algorithms.
           </div>
         </section>
 
-        {/* ── What you'll find ── */}
-        <div className="space-y-4 md:space-y-6">
-          <SectionIntro
-            eyebrow="Overview"
-            title="What you'll find here"
-            description="Articles, experiments, and engineering notes from real projects — written to teach, not to trend."
-          />
-
-          <div className="space-y-6">
-            <div className="flex items-center gap-2">
-              <HugeiconsIcon
-                icon={PencilEdit02Icon}
-                className="h-5 w-5 text-primary"
-              />
-              <h3 className="text-lg font-semibold text-foreground">
-                Content focus
-              </h3>
-            </div>
-            <div className="prose prose-neutral max-w-none text-muted-foreground dark:prose-invert">
-              <p>
-                Posts cover a range of topics across{" "}
-                <strong>web development</strong>,{" "}
-                <strong>mobile engineering</strong>,{" "}
-                <strong>system design</strong>, and{" "}
-                <strong>developer tooling</strong>. Each article aims to go
-                beyond surface-level tutorials — exploring trade-offs,
-                real-world constraints, and lessons learned while building.
+        {/* ── Highlights Grid ── */}
+        <section className="max-w-3xl mx-auto grid gap-6 border-t border-border/40 pt-10 sm:grid-cols-3">
+          {highlights.map((item) => (
+            <div key={item.label} className="space-y-2 text-center sm:text-left">
+              <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                {item.label}
               </p>
-              <p>
-                Whether it&apos;s dissecting a framework upgrade, walking
-                through a production debugging session, or documenting a
-                side-project build log — the goal is always the same: share
-                practical knowledge that&apos;s immediately useful.
+              <p className="text-sm font-medium leading-relaxed text-foreground">
+                {item.value}
               </p>
             </div>
-          </div>
-        </div>
+          ))}
+        </section>
 
         {/* ── Key features ── */}
-        <div className="space-y-4 md:space-y-6">
+        <div className="space-y-4 md:space-y-6 max-w-3xl mx-auto">
           <SectionIntro
             eyebrow="Features"
             title="Built for deep reading"
-            description="Every feature exists to help you focus on learning, not on fighting the UI."
           />
 
           <section className="grid gap-6 sm:grid-cols-2">
@@ -221,67 +165,11 @@ export default function AboutPage() {
           </section>
         </div>
 
-        {/* ── Principles + Tech stack ── */}
-        <div className="space-y-4 md:space-y-6">
-          <SectionIntro
-            eyebrow="Under the hood"
-            title="Principles and tech stack"
-            description="The values that guide content decisions and the tools that power the platform."
-          />
-
-          <div className="grid gap-10 sm:grid-cols-2">
-            <div className="space-y-5">
-              <div className="flex items-center gap-2">
-                <HugeiconsIcon
-                  icon={StructureCheckIcon}
-                  className="h-4 w-4 text-primary"
-                />
-                <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                  Guiding principles
-                </h3>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {principles.map((item) => (
-                  <span
-                    key={item}
-                    className="rounded-md bg-muted/50 px-3 py-1.5 text-xs text-muted-foreground"
-                  >
-                    {item}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-5">
-              <div className="flex items-center gap-2">
-                <HugeiconsIcon
-                  icon={CodeIcon}
-                  className="h-4 w-4 text-primary"
-                />
-                <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                  Tech stack
-                </h3>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {techStack.map((tech) => (
-                  <span
-                    key={tech}
-                    className="rounded-md bg-secondary/60 px-3 py-1.5 text-sm text-secondary-foreground select-none"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* ── Links ── */}
-        <div className="space-y-4 md:space-y-6">
+        <div className="space-y-4 md:space-y-6 max-w-3xl mx-auto">
           <SectionIntro
             eyebrow="Links"
             title="Explore and connect"
-            description="Check out the source, reach out, or start reading."
           />
 
           <section className="grid gap-4 sm:grid-cols-2">
@@ -291,7 +179,7 @@ export default function AboutPage() {
                 href={item.href}
                 target={item.href.startsWith("http") ? "_blank" : undefined}
                 rel={item.href.startsWith("http") ? "noreferrer" : undefined}
-                className="group flex items-center justify-between gap-4 rounded-xl px-2 py-3 transition-colors hover:bg-muted/50"
+                className="group flex items-center justify-between gap-4 rounded-xl border border-border/40 p-4 transition-colors hover:bg-muted/50"
                 aria-label={item.label}
               >
                 <div className="flex min-w-0 items-center gap-4">
@@ -322,7 +210,7 @@ export default function AboutPage() {
 
             <Link
               href="/blog"
-              className="group flex items-center justify-between gap-4 rounded-xl px-2 py-3 transition-colors hover:bg-muted/50"
+              className="group flex items-center justify-between gap-4 rounded-xl border border-border/40 p-4 transition-colors hover:bg-muted/50"
               aria-label="Browse all posts"
             >
               <div className="flex min-w-0 items-center gap-4">
@@ -346,7 +234,7 @@ export default function AboutPage() {
 
             <Link
               href="/graph"
-              className="group flex items-center justify-between gap-4 rounded-xl px-2 py-3 transition-colors hover:bg-muted/50"
+              className="group flex items-center justify-between gap-4 rounded-xl border border-border/40 p-4 transition-colors hover:bg-muted/50"
               aria-label="Explore graph"
             >
               <div className="flex min-w-0 items-center gap-4">
@@ -374,7 +262,7 @@ export default function AboutPage() {
         </div>
 
         {/* ── Footer note ── */}
-        <section className="border-t border-border/40 pt-8">
+        <section className="border-t border-border/40 pt-8 max-w-3xl mx-auto">
           <div className="flex items-start gap-3">
             <HugeiconsIcon
               icon={Rocket01Icon}

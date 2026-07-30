@@ -151,47 +151,55 @@ function renderSection(section: HelpData["sections"][number]) {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
+import { BehindTheTechzLayout } from "@/components/shared/behindthetechz-layout";
+
 export default function HelpPage() {
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-12 px-4 py-10 md:px-8">
-      {/* Header */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2">
-          <HugeiconsIcon icon={HelpCircleIcon} className="size-6" strokeWidth={2} />
-          <h1 className="font-heading text-3xl font-bold tracking-tight">
-            {data.header.title}
-          </h1>
+    <BehindTheTechzLayout activePath="/help">
+      <div className="flex w-full flex-col gap-10">
+        {/* Header */}
+        <div className="space-y-3">
+          <div className="w-fit">
+            <span className="text-xs font-bold uppercase tracking-wider text-foreground border-b-2 border-emerald-600 dark:border-emerald-500 pb-0.5 inline-block">
+              Help & FAQ
+            </span>
+          </div>
+          <div className="flex items-center gap-2 pt-1">
+            <HugeiconsIcon icon={HelpCircleIcon} className="size-6" strokeWidth={2} />
+            <h1 className="font-heading text-3xl font-bold tracking-tight">
+              {data.header.title}
+            </h1>
+          </div>
+          <p className="max-w-2xl text-muted-foreground">{data.header.description}</p>
+          <div className="flex flex-wrap gap-3 pt-2">
+            {data.quickLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+              >
+                <HugeiconsIcon
+                  icon={resolveIcon(link.icon)}
+                  className="size-4"
+                  strokeWidth={2}
+                />
+                {link.label}
+              </Link>
+            ))}
+          </div>
         </div>
-        <p className="max-w-2xl text-muted-foreground">{data.header.description}</p>
-        <div className="flex flex-wrap gap-3 pt-2">
-          {data.quickLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
-            >
-              <HugeiconsIcon
-                icon={resolveIcon(link.icon)}
-                className="size-4"
-                strokeWidth={2}
-              />
-              {link.label}
-            </Link>
-          ))}
-        </div>
-      </div>
 
-      {/* Sections */}
-      {data.sections.map((section) => (
-        <section key={section.id} className="space-y-4">
-          <SectionIntro
-            eyebrow={section.eyebrow}
-            title={section.title}
-            description={section.description}
-          />
-          {renderSection(section)}
-        </section>
-      ))}
-    </div>
+        {/* Sections */}
+        {data.sections.map((section) => (
+          <section key={section.id} className="space-y-4">
+            <SectionIntro
+              eyebrow={section.eyebrow}
+              title={section.title}
+            />
+            {renderSection(section)}
+          </section>
+        ))}
+      </div>
+    </BehindTheTechzLayout>
   );
 }

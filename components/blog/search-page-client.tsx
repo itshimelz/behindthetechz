@@ -7,6 +7,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { Cancel01Icon, Search01Icon } from "@hugeicons/core-free-icons";
 
 import { Input } from "@/components/ui/input";
+import { SectionIntro } from "@/components/shared/section-intro";
 import { postPath } from "@/lib/blog/post-path";
 import type { Post } from "@/lib/blog/types";
 
@@ -120,10 +121,8 @@ export function SearchPageClient({ posts }: Props) {
   }, [posts, normalizedQuery]);
 
   return (
-    <section className="mx-auto w-full max-w-3xl px-4 pb-10 pt-4 md:px-6 md:pt-6">
-      <h1 className="font-heading text-3xl font-semibold tracking-tight text-foreground">
-        Search
-      </h1>
+    <section className="mx-auto w-full max-w-4xl px-4 pb-10 pt-4 md:px-6 md:pt-6">
+      <SectionIntro eyebrow="SEARCH" title="Find Articles & Topics" />
 
       <div className="relative mt-5 w-full">
         <span className="pointer-events-none absolute inset-y-0 left-4 flex items-center">

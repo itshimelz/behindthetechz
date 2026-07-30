@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { BehindTheTechzLayout } from "@/components/shared/behindthetechz-layout";
+import { SectionIntro } from "@/components/shared/section-intro";
 
 type TaxonomyItem = {
   name: string;
@@ -9,6 +10,7 @@ type TaxonomyItem = {
 };
 
 type TaxonomyIndexPageProps = {
+  eyebrow?: string;
   title: string;
   subtitle: string;
   emptyTitle: string;
@@ -19,8 +21,8 @@ type TaxonomyIndexPageProps = {
 };
 
 export function TaxonomyIndexPage({
+  eyebrow,
   title,
-  subtitle,
   emptyTitle,
   emptyDescription,
   items,
@@ -30,12 +32,7 @@ export function TaxonomyIndexPage({
   return (
     <BehindTheTechzLayout activePath={hrefBase}>
       <div className="space-y-6">
-        <section className="space-y-1">
-          <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            {title}
-          </h1>
-          <p className="text-sm text-muted-foreground sm:text-base">{subtitle}</p>
-        </section>
+        <SectionIntro eyebrow={eyebrow} title={title} />
 
         {items.length === 0 ? (
           <section className="py-10 text-center">
@@ -56,7 +53,7 @@ export function TaxonomyIndexPage({
                     "size-3.5 text-muted-foreground transition-colors group-hover:text-foreground",
                   )}
                   <span className="font-medium">{item.name}</span>
-                  <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground font-mono">
+                  <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] text-muted-foreground font-medium">
                     {item.count}
                   </span>
                 </Link>

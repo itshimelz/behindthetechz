@@ -26,6 +26,7 @@ export default async function CategoryPage({
 
   return (
     <TaxonomyDetailPage
+      eyebrow="CATEGORY"
       title={title}
       backHref="/categories"
       backLabel="All categories"

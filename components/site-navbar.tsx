@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -14,7 +14,6 @@ import {
   ChartBubble02Icon,
   UserIcon,
   MessageQuestionIcon,
-  Notification03Icon,
   Moon02Icon,
   Sun03Icon,
   Bookmark02Icon,
@@ -62,10 +61,18 @@ const navMain = [
   { title: "Categories", url: "/categories", icon: GridViewIcon, color: "text-foreground" },
   { title: "Tags", url: "/tags", icon: Tag01Icon, color: "text-foreground" },
   { title: "Graph View", url: "/graph", icon: ChartBubble02Icon, color: "text-foreground" },
+  { title: "About", url: "/about", icon: UserIcon, color: "text-foreground" },
+];
+
+const navStripLinks = [
+  { title: "ALL POSTS", href: "/blog", matchPrefix: "/blog" },
+  { title: "CATEGORIES", href: "/categories", matchPrefix: "/categories" },
+  { title: "TAGS", href: "/tags", matchPrefix: "/tags" },
+  { title: "GRAPH VIEW", href: "/graph", matchPrefix: "/graph" },
+  { title: "ABOUT", href: "/about", matchPrefix: "/about" },
 ];
 
 const navSecondary = [
-  { title: "What's New", url: "/changelog", icon: Notification03Icon, color: "text-foreground" },
   { title: "About", url: "/about", icon: UserIcon, color: "text-foreground" },
   { title: "Help", url: "/help", icon: MessageQuestionIcon, color: "text-foreground" },
 ];
@@ -158,7 +165,6 @@ export function SiteNavbar({
   const [favoritesOpen, setFavoritesOpen] = useState(false);
   const [authorOpen, setAuthorOpen] = useState(false);
   const [preferencesOpen, setPreferencesOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [desktopMenuOpen, setDesktopMenuOpen] = useState(false);
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -171,13 +177,6 @@ export function SiteNavbar({
     hoverTimeoutRef.current = setTimeout(() => {
       setDesktopMenuOpen(false);
     }, 150);
-  }, []);
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 2);
-    handleScroll(); // sync on mount
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const closeMobile = useCallback(() => setMobileOpen(false), []);
@@ -195,10 +194,7 @@ export function SiteNavbar({
     <>
       {/* Sticky Top Header Section (Stays pinned at top on scroll) */}
       <header
-        className={cn(
-          "sticky top-0 z-40 w-full backdrop-blur-xl bg-background/90 dark:bg-background/85 transition-all duration-300 border-b border-border/40",
-          scrolled && "shadow-xs shadow-black/5 dark:shadow-black/20 border-border/70",
-        )}
+        className="sticky top-0 z-40 w-full backdrop-blur-xl bg-background/90 dark:bg-background/85 transition-all duration-300 border-b border-border"
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
           {/* Left Side: Search + Theme Toggle */}
@@ -247,13 +243,6 @@ export function SiteNavbar({
 
           {/* Right Side: About Link + Subscribe Button + Menu */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <Link
-              href="/about"
-              className="hidden sm:inline-block text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground font-semibold"
-            >
-              About
-            </Link>
-
             <Button
               render={<Link href="/feed.xml" />}
               className="rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-xs uppercase font-bold tracking-wider px-3.5 py-1.5 h-8 shadow-xs border-none"
@@ -329,30 +318,27 @@ export function SiteNavbar({
         </div>
       </header>
 
-      {/* Non-sticky Navigation Link Strip (Scrolls away under sticky header) */}
-      <nav className="w-full border-b border-border/40 bg-muted/20 py-2.5">
-        <div className="mx-auto flex max-w-7xl items-center justify-center gap-5 sm:gap-7 text-[11px] uppercase tracking-widest text-muted-foreground">
-          <Link href="/about" className="hover:text-foreground transition-colors font-semibold">
-            ABOUT
-          </Link>
-          <Link href="/blog" className="hover:text-foreground transition-colors font-semibold">
-            ALL POSTS
-          </Link>
-          <Link href="/categories" className="hover:text-foreground transition-colors font-semibold">
-            CATEGORIES
-          </Link>
-          <Link href="/tags" className="hover:text-foreground transition-colors font-semibold">
-            TAGS
-          </Link>
-          <Link href="/graph" className="hover:text-foreground transition-colors font-semibold">
-            GRAPH VIEW
-          </Link>
-          <Link href="/changelog" className="hover:text-foreground transition-colors font-semibold">
-            CHANGELOG
-          </Link>
-          <Link href="/feed.xml" className="hover:text-foreground transition-colors font-semibold">
-            RSS
-          </Link>
+      {/* Non-sticky Navigation Link Strip — hidden on mobile; hamburger menu serves navigation there */}
+      <nav className="hidden md:block w-full border-b border-border/40 bg-muted/20 py-2.5">
+        <div className="mx-auto flex max-w-7xl items-center justify-center gap-5 lg:gap-7 text-[11px] uppercase tracking-widest overflow-x-auto px-4">
+          {navStripLinks.map((item) => {
+            const isActive =
+              pathname === item.href || pathname.startsWith(item.matchPrefix + "/");
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  "transition-colors",
+                  isActive
+                    ? "text-foreground font-bold border-b-2 border-emerald-600 dark:border-emerald-500 pb-0.5"
+                    : "text-muted-foreground hover:text-foreground font-semibold",
+                )}
+              >
+                {item.title}
+              </Link>
+            );
+          })}
         </div>
       </nav>
 

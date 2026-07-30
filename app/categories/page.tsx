@@ -8,6 +8,7 @@ export default async function CategoriesPage() {
 
   return (
     <TaxonomyIndexPage
+      eyebrow="CATEGORIES"
       title="All Categories"
       subtitle="Pick a category to open related posts."
       emptyTitle="No categories found"

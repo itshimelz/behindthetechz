@@ -1,12 +1,13 @@
-import Link from "next/link";
 import { HugeiconsIcon } from "@hugeicons/react";
 import { Notebook01Icon } from "@hugeicons/core-free-icons";
 
 import type { Post } from "@/lib/blog/types";
 import { DetailStickyHeader } from "@/components/blog/detail-sticky-header";
 import { PostList } from "@/components/blog/post-list";
+import { SectionIntro } from "@/components/shared/section-intro";
 
 type TaxonomyDetailPageProps = {
+  eyebrow?: string;
   title: string;
   backHref: string;
   backLabel: string;
@@ -18,6 +19,7 @@ type TaxonomyDetailPageProps = {
 };
 
 export function TaxonomyDetailPage({
+  eyebrow,
   title,
   backHref,
   backLabel,
@@ -37,18 +39,8 @@ export function TaxonomyDetailPage({
         showJump={showJump}
       />
 
-      <section className="mx-auto w-full max-w-4xl space-y-2">
-        <div className="flex items-center justify-between gap-3">
-          <h1 className="font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
-            {title}
-          </h1>
-          <Link
-            href={backHref}
-            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            {backLabel}
-          </Link>
-        </div>
+      <section className="mx-auto w-full max-w-6xl space-y-2">
+        <SectionIntro eyebrow={eyebrow} title={title} />
         <p className="text-sm text-muted-foreground sm:text-base">
           {postCountDescription}
         </p>
@@ -62,7 +54,7 @@ export function TaxonomyDetailPage({
         ) : null}
       </section>
 
-      <div id={articleSectionId} className="mx-auto w-full max-w-4xl">
+      <div id={articleSectionId} className="mx-auto w-full max-w-6xl">
         <div className="mb-4 flex items-center gap-3">
           <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             <HugeiconsIcon
@@ -75,7 +67,7 @@ export function TaxonomyDetailPage({
           </span>
           <div className="h-px flex-1 bg-border/60" />
         </div>
-        <PostList posts={posts} compact emptyMessage={emptyMessage} />
+        <PostList posts={posts} viewMode="grid" emptyMessage={emptyMessage} />
       </div>
     </div>
   );

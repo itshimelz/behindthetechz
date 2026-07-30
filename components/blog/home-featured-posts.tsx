@@ -14,7 +14,7 @@ function FeaturedPostCard({ post }: { post: Post }) {
   return (
     <Link
       href={postPath(post.slug)}
-      className="group flex flex-col justify-between space-y-3 sm:space-y-4 rounded-xl border-none p-0"
+      className="group flex flex-col justify-between space-y-3 sm:space-y-4 rounded-xl border-none p-0 transition-transform duration-200 ease-out hover:-translate-y-1.5 active:translate-y-0"
     >
       {/* Top Cover Image (Borderless) */}
       <div className="w-full aspect-[16/10] rounded-xl overflow-hidden bg-muted/20 shrink-0 relative border-none">
@@ -37,7 +37,7 @@ function FeaturedPostCard({ post }: { post: Post }) {
           </div>
 
           {/* Headline / Title */}
-          <h3 className="text-lg sm:text-xl font-bold tracking-tight text-foreground group-hover:underline decoration-foreground/30 underline-offset-4 line-clamp-3 leading-[1.25]">
+          <h3 className="text-lg sm:text-xl font-bold tracking-tight text-foreground line-clamp-3 leading-[1.25]">
             {post.title}
           </h3>
 

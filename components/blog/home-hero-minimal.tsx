@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { postPath } from "@/lib/blog/post-path";
 import { formatPostDate } from "@/lib/format-date";
@@ -12,6 +12,17 @@ type Props = {
 
 export function HomeHeroMinimal({ items }: Props) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (!items || items.length <= 1 || isPaused) return;
+
+    const timer = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % items.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [items, isPaused]);
 
   if (!items || items.length === 0) {
     return null;
@@ -20,9 +31,13 @@ export function HomeHeroMinimal({ items }: Props) {
   const currentItem = items[activeIndex] || items[0];
 
   return (
-    <section className="relative w-full py-4 sm:py-6 text-foreground border-none">
+    <section
+      className="relative w-full py-4 sm:py-6 text-foreground border-none"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
       {/* 2-Column Grid with fixed height on desktop */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-stretch lg:h-[350px]">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-10 items-stretch lg:h-[350px]">
         {/* Left Column: Post details */}
         <div className="lg:col-span-7 flex flex-col justify-between space-y-4 sm:space-y-5 py-1 h-full">
           <div className="space-y-3 sm:space-y-4">
@@ -79,28 +94,29 @@ export function HomeHeroMinimal({ items }: Props) {
                   key={item.slug}
                   type="button"
                   onClick={() => setActiveIndex(idx)}
+                  onMouseEnter={() => setActiveIndex(idx)}
                   aria-label={`View essay ${idx + 1}: ${item.title}`}
-                  className={`h-2 rounded-full transition-all duration-200 ${
-                    idx === activeIndex
-                      ? "w-5 bg-foreground"
+                  className={`h-2 rounded-full transition-all duration-300 ${idx === activeIndex
+                      ? "w-6 bg-foreground"
                       : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/60"
-                  }`}
+                    }`}
                 />
               ))}
             </div>
           )}
         </div>
 
-        {/* Right Column: Featured Image (Fixed Height matching left column) */}
-        <div className="lg:col-span-5 h-full">
+        {/* Right Column: Featured Image */}
+        <div className="lg:col-span-5 h-full order-first lg:order-last">
           <Link
             href={postPath(currentItem.slug)}
-            className="group relative block w-full h-full min-h-[240px] sm:min-h-[300px] lg:min-h-full rounded-xl overflow-hidden bg-muted/20 border-none"
+            className="group relative block w-full h-full min-h-[200px] sm:min-h-[280px] lg:min-h-full rounded-xl overflow-hidden bg-muted/20 border-none"
           >
             <img
+              key={currentItem.slug}
               src={currentItem.coverImage || "/images/placeholder.png"}
               alt={currentItem.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain transition-opacity duration-300"
               loading="eager"
             />
           </Link>

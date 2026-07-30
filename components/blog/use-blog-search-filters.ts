@@ -14,8 +14,8 @@ export type SortOption = "newest" | "oldest" | "most-viewed" | "most-clapped";
 export const SORT_OPTIONS: Array<{ value: SortOption; label: string }> = [
   { value: "newest", label: "Newest" },
   { value: "oldest", label: "Oldest" },
-  { value: "most-viewed", label: "Most viewed" },
-  { value: "most-clapped", label: "Most clapped" },
+  { value: "most-viewed", label: "Most Viewed" },
+  { value: "most-clapped", label: "Most Clapped" },
 ];
 
 function toTagSlug(tag: string): string {

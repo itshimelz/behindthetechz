@@ -39,12 +39,12 @@ export function BlogSearchWrapper({ posts, categories }: Props) {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="mx-auto w-full max-w-4xl py-2">
+      <div className="mx-auto w-full max-w-6xl py-2">
         <CategoryNav categories={categories} />
       </div>
 
       {hasFilterChips ? (
-        <div className="mx-auto flex w-full max-w-4xl flex-wrap items-center gap-2">
+        <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-2">
           {tagParam ? <BlogTagFilterChip tag={tagParam} onClear={clearTag} /> : null}
         </div>
       ) : null}

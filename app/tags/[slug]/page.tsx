@@ -26,6 +26,7 @@ export default async function TagPage({
 
   return (
     <TaxonomyDetailPage
+      eyebrow="TAG"
       title={tag.name}
       backHref="/tags"
       backLabel="All tags"
