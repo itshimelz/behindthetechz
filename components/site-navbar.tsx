@@ -327,7 +327,7 @@ export function SiteNavbar({
                 className={cn(
                   "transition-colors",
                   isActive
-                    ? "text-foreground font-bold border-b-2 border-emerald-600 dark:border-emerald-500 pb-0.5"
+                    ? "text-foreground font-bold border-b-2 border-primary pb-0.5"
                     : "text-muted-foreground hover:text-foreground font-semibold",
                 )}
               >

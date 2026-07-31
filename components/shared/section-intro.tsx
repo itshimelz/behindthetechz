@@ -9,7 +9,7 @@ export function SectionIntro({ eyebrow, title }: Props) {
       <div className="space-y-1.5">
         {eyebrow && (
           <div className="w-fit">
-            <span className="text-[11px] font-bold uppercase tracking-widest text-emerald-400 border-b-2 border-emerald-500 pb-0.5 inline-block">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-primary border-b-2 border-primary pb-0.5 inline-block">
               {eyebrow}
             </span>
           </div>

@@ -116,7 +116,7 @@ export default function AboutPage() {
 
         {/* ── Theme Green Callout Banner (No Shadows) ── */}
         <section className="max-w-2xl mx-auto">
-          <div className="rounded-2xl bg-emerald-600/10 text-emerald-950 dark:bg-emerald-950/40 dark:text-emerald-200 border border-emerald-600/30 p-6 sm:p-8 text-center font-medium text-sm sm:text-base leading-relaxed">
+          <div className="rounded-2xl bg-primary/10 text-foreground border border-primary/20 p-6 sm:p-8 text-center font-medium text-sm sm:text-base leading-relaxed">
             behind the TechZ is an independent publication whose work is written, researched, and published by software engineers. Our intended audience is real developers, not AI scrapers, bots, or search algorithms.
           </div>
         </section>

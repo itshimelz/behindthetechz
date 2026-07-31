@@ -690,3 +690,41 @@ html.dark .prose code span {
 }
 
 .prose figure { margin: 0; padding: 0; border: none; background: transparent; }
+
+/* Footnotes Section Styling */
+.prose section[data-footnotes] {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+}
+
+.prose section[data-footnotes] h2 {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--foreground);
+  margin-bottom: 0.75rem;
+  border: none;
+  padding: 0;
+}
+
+.prose section[data-footnotes] ol {
+  padding-left: 1.25rem;
+  margin: 0;
+}
+
+.prose section[data-footnotes] li {
+  margin-bottom: 0.5rem;
+}
+
+.prose [data-footnote-backref] {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  margin-left: 0.25rem;
+  color: var(--primary);
+  text-decoration: none;
+}
+

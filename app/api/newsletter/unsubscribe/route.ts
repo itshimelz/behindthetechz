@@ -1,18 +1,13 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const SUB_COOKIE = "btz_newsletter_sub";
 
 // ---------------------------------------------------------------------------
 // GET /api/newsletter/unsubscribe?token=xxx  (for email footer links)
 // ---------------------------------------------------------------------------
-export async function GET(_request: NextRequest) {
-  // Feature temporarily disabled
-  return new NextResponse(
-    unsubscribePage("Unsubscribe feature is currently unavailable."),
-    {
-      status: 404,
-      headers: { "Content-Type": "text/html; charset=utf-8" },
-    }
-  );
-  /*
+export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get("token");
 
   if (!token || token.length < 10) {
@@ -55,15 +50,19 @@ export async function GET(_request: NextRequest) {
       },
     });
 
-    return new NextResponse(
+    const response = new NextResponse(
       unsubscribePage("You have been successfully unsubscribed. Sorry to see you go!"),
       {
         status: 200,
         headers: { "Content-Type": "text/html; charset=utf-8" },
       },
     );
+
+    response.cookies.delete(SUB_COOKIE);
+
+    return response;
   } catch (error) {
-    console.error("[newsletter/unsubscribe]", error);
+    console.error("[newsletter/unsubscribe] GET error:", error);
     return new NextResponse(
       unsubscribePage("Something went wrong. Please try again later."),
       {
@@ -72,17 +71,13 @@ export async function GET(_request: NextRequest) {
       },
     );
   }
-  */
 }
 
 // ---------------------------------------------------------------------------
 // POST /api/newsletter/unsubscribe  (for website unsubscribe form)
 // Body: { email: "user@example.com" }
 // ---------------------------------------------------------------------------
-export async function POST(_request: NextRequest) {
-  // Feature temporarily disabled
-  return NextResponse.json({ ok: false, error: "Not available" }, { status: 404 });
-  /*
+export async function POST(request: NextRequest) {
   let body: Record<string, unknown>;
   try {
     body = await request.json();
@@ -106,9 +101,18 @@ export async function POST(_request: NextRequest) {
       where: { email },
     });
 
-    // Always return success to avoid leaking whether the email exists
-    if (!subscriber || subscriber.unsubscribedAt) {
-      return NextResponse.json({ ok: true });
+    if (!subscriber) {
+      return NextResponse.json(
+        { ok: false, error: "This email address is not on our subscriber list." },
+        { status: 404 },
+      );
+    }
+
+    if (subscriber.unsubscribedAt) {
+      return NextResponse.json(
+        { ok: false, error: "This email address has already been unsubscribed." },
+        { status: 400 },
+      );
     }
 
     await prisma.subscriber.update({
@@ -119,7 +123,11 @@ export async function POST(_request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ ok: true });
+    const response = NextResponse.json({ ok: true });
+
+    response.cookies.delete(SUB_COOKIE);
+
+    return response;
   } catch (error) {
     console.error("[newsletter/unsubscribe] POST error:", error);
     return NextResponse.json(
@@ -127,7 +135,6 @@ export async function POST(_request: NextRequest) {
       { status: 500 },
     );
   }
-  */
 }
 
 // ---------------------------------------------------------------------------

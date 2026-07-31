@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
   // --- Cookie-based repeat protection ---
   const alreadySubscribed = request.cookies.get(SUB_COOKIE)?.value === "1";
   if (alreadySubscribed) {
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, alreadySubscribed: true });
   }
 
   // --- Parse body ---
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
       value: "1",
       maxAge: SUB_COOKIE_TTL_SECONDS,
       sameSite: "lax",
-      httpOnly: true,
+      httpOnly: false,
       path: "/",
     });
 

@@ -14,6 +14,7 @@ import type { Post } from "@/lib/blog/get-all-posts";
 import remarkObsidianBlockId from "@/lib/blog/remark-obsidian-block-id";
 import remarkCallouts from "@/lib/blog/remark-callouts";
 import remarkWikiLink from "@/lib/blog/remark-wiki-link";
+import { MdxFootnoteLink } from "@/components/blog/mdx-footnote";
 import { Tweet } from "react-tweet";
 
 type MdxConfigParams = {
@@ -113,9 +114,22 @@ export function getPostMdxConfig({ validSlugs, postMetadata }: MdxConfigParams) 
         children,
         ...props
       }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => {
-        const hrefValue = href ?? "";
         const className =
           typeof props.className === "string" ? props.className : "";
+        const isFootnoteRef =
+          "data-footnote-ref" in props ||
+          className.split(/\s+/).includes("data-footnote-ref") ||
+          Boolean((props as Record<string, unknown>)["data-footnote-ref"]);
+
+        if (isFootnoteRef && href) {
+          return (
+            <MdxFootnoteLink href={href} {...props}>
+              {children}
+            </MdxFootnoteLink>
+          );
+        }
+
+        const hrefValue = href ?? "";
         const isWikiLink = className.split(/\s+/).includes("wiki-link");
         const isInternalBlogLink = hrefValue.startsWith("/blog/");
         const isHashLink = hrefValue.startsWith("#");

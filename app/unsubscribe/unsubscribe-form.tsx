@@ -38,6 +38,10 @@ export function UnsubscribeForm() {
         return;
       }
 
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("btz_newsletter_sub");
+        window.dispatchEvent(new Event("storage"));
+      }
       setDone(true);
     } catch {
       setError("Network error. Please try again.");

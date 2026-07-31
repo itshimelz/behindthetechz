@@ -31,7 +31,7 @@ function FeaturedPostCard({ post }: { post: Post }) {
         <div className="space-y-2">
           {/* Category Tag with Green Accent Underline */}
           <div className="w-fit">
-            <span className="text-xs font-bold uppercase tracking-wider text-foreground border-b-2 border-emerald-600 dark:border-emerald-500 pb-0.5 inline-block">
+            <span className="text-xs font-bold uppercase tracking-wider text-foreground border-b-2 border-primary pb-0.5 inline-block">
               {post.category}
             </span>
           </div>
